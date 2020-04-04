@@ -30,5 +30,12 @@ jobs:
     - name: Build
       run: make build
 
-    - name: Test
-      run: make test
+    - name: Test (with coverage)
+      run: make coverage
+
+    - name: Publish code coverage
+      run: |
+        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 --output cc-test-reporter
+        chmod +x cc-test-reporter
+        ./cc-test-reporter format-coverage ./coverage.out -t gocov -o ./coverage.cc --prefix github.com/ericcornelissen/wordrow
+        ./cc-test-reporter upload-coverage -i ./coverage.cc -r ${{ secrets.CODECLIMATE_REPORTER_ID }}
