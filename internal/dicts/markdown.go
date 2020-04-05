@@ -40,18 +40,13 @@ func parseTableHeader(tableLines []string) (rerr error) {
   dividerLine := tableLines[1]
   firstTableRow := tableLines[2]
 
-  _, err := parseTableRow(headerLine)
-  if err != nil {
+  if _, err := parseTableRow(headerLine); err != nil {
     rerr = &parseError{"Incorrect table header", headerLine}
-  }
-
-  _, err = parseTableRow(dividerLine);
-  if err != nil || tableDividerExpr.MatchString(dividerLine) == false {
+  } else if _, err = parseTableRow(dividerLine); err != nil {
     rerr = &parseError{"Missing table header divider", dividerLine}
-  }
-
-  _, err = parseTableRow(firstTableRow)
-  if err != nil {
+  } else if tableDividerExpr.MatchString(dividerLine) == false {
+    rerr = &parseError{"Missing table header divider", dividerLine}
+  } else if _, err = parseTableRow(firstTableRow); err != nil {
     rerr = &parseError{"Missing table body", firstTableRow}
   }
 
