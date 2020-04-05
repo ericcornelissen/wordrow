@@ -9,7 +9,8 @@ import "github.com/ericcornelissen/wordrow/internal/logger"
 import "github.com/ericcornelissen/wordrow/internal/replacer"
 
 func run(args cli.Arguments) {
-  wordmap, err := dicts.WordMapFrom(args.MapFiles...)
+  mapFiles, err := fs.ResolveGlobs(args.MapFiles...)
+  wordmap, err := dicts.WordMapFrom(mapFiles...)
   if err != nil {
     logger.Error(err)
     return
@@ -19,7 +20,8 @@ func run(args cli.Arguments) {
     wordmap.Invert()
   }
 
-  paths := fs.ResolvePaths(args.InputFiles...)
+  inputFiles, err := fs.ResolveGlobs(args.InputFiles...)
+  paths := fs.ResolvePaths(inputFiles...)
   for i := 0; i < len(paths); i++ {
     filePath := paths[i]
 
@@ -39,7 +41,6 @@ func run(args cli.Arguments) {
     }
   }
 }
-
 
 func main() {
   shouldRun, args := cli.ParseArgs(os.Args)
