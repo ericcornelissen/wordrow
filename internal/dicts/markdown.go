@@ -35,28 +35,22 @@ func parseTableRow(row string) ([]string, error) {
 //
 // The error will be set if the table header has an unexpected format, such as
 // an incorrect number of columns or a missing divider.
-func parseTableHead(tableLines []string) error {
+func parseTableHeader(tableLines []string) (rerr error) {
   headerLine := tableLines[0]
   dividerLine := tableLines[1]
   firstTableRow := tableLines[2]
 
   if _, err := parseTableRow(headerLine); err != nil {
-    return &parseError{"Incorrect table header", headerLine}
+    rerr = &parseError{"Incorrect table header", headerLine}
+  } else if _, err = parseTableRow(dividerLine); err != nil {
+    rerr = &parseError{"Missing table header divider", dividerLine}
+  } else if tableDividerExpr.MatchString(dividerLine) == false {
+    rerr = &parseError{"Missing table header divider", dividerLine}
+  } else if _, err = parseTableRow(firstTableRow); err != nil {
+    rerr = &parseError{"Missing table body", firstTableRow}
   }
 
-  if _, err := parseTableRow(dividerLine); err != nil {
-    return &parseError{"Missing table header divider", dividerLine}
-  }
-
-  if tableDividerExpr.MatchString(dividerLine) == false {
-    return &parseError{"Missing table header divider", dividerLine}
-  }
-
-  if _, err := parseTableRow(firstTableRow); err != nil {
-    return &parseError{"Missing table body", firstTableRow}
-  }
-
-  return nil
+  return rerr
 }
 
 // Parse a MarkDown table and put its values into a WordMap.
@@ -64,7 +58,7 @@ func parseTableHead(tableLines []string) error {
 // The error will be set if the table head or any table row has an incorrect
 // format.
 func parseTable(tableLines []string, wordmap *WordMap) (int, error) {
-  if err := parseTableHead(tableLines); err != nil {
+  if err := parseTableHeader(tableLines); err != nil {
     return 0, err
   }
 
