@@ -5,6 +5,7 @@ is based on [Keep a Changelog].
 
 ## [Unreleased]
 
-- _No changes yet_
+- Add support for globs in arguments. ([#9])
 
 [keep a changelog]: https://keepachangelog.com/en/1.0.0/
+[#9]: https://github.com/ericcornelissen/wordrow/pull/9
