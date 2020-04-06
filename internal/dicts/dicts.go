@@ -1,9 +1,8 @@
 package dicts
 
-import "errors"
-import "fmt"
 import "strings"
 
+import "github.com/ericcornelissen/wordrow/internal/errors"
 import "github.com/ericcornelissen/wordrow/internal/fs"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 
@@ -62,7 +61,7 @@ func WordMapFrom(files ...string) (WordMap, error) {
 
     err = parseFile(&fileContent, parserFn, &wordmap)
     if err != nil {
-      return wordmap, fmt.Errorf("Error when parsing %s: %s", filePath, err)
+      return wordmap, errors.Newf("Error when parsing %s: %s", filePath, err)
     }
   }
 

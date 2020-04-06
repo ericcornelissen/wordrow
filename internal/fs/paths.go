@@ -1,11 +1,11 @@
 package fs
 
-import "fmt"
 import "os"
 import "path"
 import "path/filepath"
 import "regexp"
 
+import "github.com/ericcornelissen/wordrow/internal/errors"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 
 
@@ -41,7 +41,7 @@ func ResolveGlobs(patterns ...string) (paths []string, rerr error) {
 
     matches, err := filepath.Glob(pattern)
     if err != nil {
-      rerr = fmt.Errorf("Malformed pattern (%s)", pattern)
+      rerr = errors.Newf("Malformed pattern (%s)", pattern)
     } else {
       paths = append(paths, matches...)
     }
