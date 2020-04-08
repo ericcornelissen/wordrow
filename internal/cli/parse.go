@@ -1,7 +1,6 @@
 package cli
 
-import "errors"
-
+import "github.com/ericcornelissen/wordrow/internal/errors"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 
 
