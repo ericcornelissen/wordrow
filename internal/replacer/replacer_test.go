@@ -226,40 +226,6 @@ func TestReplaceByLongerString(t *testing.T) {
   })
 }
 
-func TestReplaceByNothing(t *testing.T) {
-  var wordmap dicts.WordMap
-  wordmap.AddOne("cool", "")
-
-  t.Run("replace all lowercase by nothing", func(t *testing.T) {
-    source := "This is an awesome cool foo."
-    result := ReplaceAll(source, wordmap)
-
-    expected := "This is an awesome  foo."
-    if result != expected {
-      reportIncorrectReplacement(t, result, expected)
-    }
-  })
-  t.Run("replace all uppercase by nothing", func(t *testing.T) {
-    source := "This is an awesome COOL foo."
-    result := ReplaceAll(source, wordmap)
-
-    expected := "This is an awesome  foo."
-    if result != expected {
-      reportIncorrectReplacement(t, result, expected)
-    }
-  })
-  t.Run("replace multiple instances by nothing", func(t *testing.T) {
-    source := "This is a cool foo and that is a cool bar."
-    result := ReplaceAll(source, wordmap)
-
-    expected := "This is a  foo and that is a  bar."
-    if result != expected {
-      reportIncorrectReplacement(t, result, expected)
-    }
-  })
-}
-
-
 func BenchmarkReplaceOne(b *testing.B) {
   for n := 0; n < b.N; n++ {
     replaceOne("the word foo appears foo times in this foo", "foo", "bar")

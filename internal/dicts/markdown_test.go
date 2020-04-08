@@ -121,6 +121,35 @@ func TestMarkDownTwoTables(t *testing.T) {
   }
 }
 
+func TestMarkDownEmptyColumnValues(t *testing.T) {
+  t.Run("Empty from value", func(t *testing.T) {
+    markdown := `
+      | from | to  |
+      | ---- | --- |
+      |      | bar |
+    `
+
+    _, err := parseMarkDownFile(&markdown)
+
+    if err == nil {
+      t.Errorf("Error should be set if the from value is empty")
+    }
+  })
+  t.Run("Empty to value", func(t *testing.T) {
+    markdown := `
+      | from | to |
+      | ---- | -- |
+      | foo  |    |
+    `
+
+    _, err := parseMarkDownFile(&markdown)
+
+    if err == nil {
+      t.Errorf("Error should be set if the to value is empty")
+    }
+  })
+}
+
 func TestMarkDownIncorrectHeader(t *testing.T) {
   markdown := `
     | foo |

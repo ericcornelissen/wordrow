@@ -30,6 +30,31 @@ func TestWordMapAddOne(t *testing.T)  {
   }
 }
 
+func TestWordMapEmptyValues(t *testing.T) {
+  var wordmap WordMap
+
+  t.Run("Empty from value", func(t *testing.T) {
+    defer func() {
+      if r := recover(); r == nil {
+        t.Error("AddOne did not need recovery, but should have")
+      }
+    }()
+
+    wordmap.AddOne("", "bar")
+    t.Error("AddOne should have panicked but did not")
+  })
+  t.Run("Empty to value", func(t *testing.T) {
+    defer func() {
+      if r := recover(); r == nil {
+        t.Error("AddOne did not need recovery, but should have")
+      }
+    }()
+
+    wordmap.AddOne("foo", "")
+    t.Error("AddOne should have panicked but did not")
+  })
+}
+
 func TestWordMapAddFrom(t *testing.T)  {
   var wordmapA, wordmapB WordMap
 

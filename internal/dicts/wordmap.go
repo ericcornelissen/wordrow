@@ -32,9 +32,18 @@ func (m *WordMap) AddFrom(other WordMap) {
 }
 
 // Add a single mapping from one word to another to the WordMap.
+//
+// This function panics if an empty string is provided as first or second
+// argument.
 func (m *WordMap) AddOne(from, to string) {
-  m.from = append(m.from, strings.TrimSpace(strings.ToLower(from)))
-  m.to = append(m.to, strings.TrimSpace(strings.ToLower(to)))
+  fromValue := strings.TrimSpace(strings.ToLower(from))
+  toValue := strings.TrimSpace(strings.ToLower(to))
+  if fromValue == "" || toValue == "" {
+    panic(1)
+  }
+
+  m.from = append(m.from, fromValue)
+  m.to = append(m.to, toValue)
 }
 
 // Check whether the WordMap contains a mapping from a certain string. Note that
