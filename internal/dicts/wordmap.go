@@ -33,7 +33,8 @@ func (m *WordMap) AddFrom(other WordMap) {
 
 // Add a single mapping from one word to another to the WordMap.
 //
-// This function panics if an empty string is provided as first argument.
+// This function panics if an empty string is provided as first or second
+// argument.
 func (m *WordMap) AddOne(from, to string) {
   fromValue := strings.TrimSpace(strings.ToLower(from))
   toValue := strings.TrimSpace(strings.ToLower(to))
