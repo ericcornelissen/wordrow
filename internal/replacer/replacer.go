@@ -25,9 +25,20 @@ func maintainAllCaps(from, to string) string {
 // starting with a capital letter as well. Otherwise, the `to` string is
 // returned unchanged.
 func maintainCapitalization(from, to string) string {
-  firstChar := []rune(from)[0]
-  if unicode.IsUpper(firstChar) {
-    return strings.ToUpper(to[:1]) + to[1:]
+  isUpperChar := func(s byte) bool {
+    firstChar := rune(s)
+    return unicode.IsUpper(firstChar)
+  }
+  convert := func(s string) string {
+    if len(s) > 0 {
+      return strings.ToUpper(to[:1]) + to[1:]
+    } else {
+      return s
+    }
+  }
+
+  if isUpperChar(from[0]) {
+    return convert(to)
   } else {
     return to
   }
