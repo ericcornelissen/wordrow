@@ -173,6 +173,87 @@ func TestWordAllCaps(t *testing.T) {
   }
 }
 
+func TestReplaceByShorterString(t *testing.T) {
+  var wordmap dicts.WordMap
+  wordmap.AddOne("fooo", "foo")
+
+  t.Run("one instance of word", func(t *testing.T) {
+    source := "This is a fooo."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "This is a foo."
+    if result != expected {
+      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    }
+  })
+  t.Run("multiple instances of word", func(t *testing.T) {
+    source := "This is a FOOO and this is a fooo as well."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "This is a FOO and this is a foo as well."
+    if result != expected {
+      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    }
+  })
+}
+
+func TestReplaceByLongerString(t *testing.T) {
+  var wordmap dicts.WordMap
+  wordmap.AddOne("fo", "foo")
+
+  t.Run("one instance of word", func(t *testing.T) {
+    source := "This is a fo."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "This is a foo."
+    if result != expected {
+      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    }
+  })
+  t.Run("multiple instances of word", func(t *testing.T) {
+    source := "This is a FO and this is a fo as well."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "This is a FOO and this is a foo as well."
+    if result != expected {
+      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    }
+  })
+}
+
+func TestReplaceByNothing(t *testing.T) {
+  var wordmap dicts.WordMap
+  wordmap.AddOne("cool", "")
+
+  t.Run("replace all lowercase by nothing", func(t *testing.T) {
+    source := "This is an awesome cool foo."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "This is an awesome  foo."
+    if result != expected {
+      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    }
+  })
+  t.Run("replace all uppercase by nothing", func(t *testing.T) {
+    source := "This is an awesome COOL foo."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "This is an awesome  foo."
+    if result != expected {
+      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    }
+  })
+  t.Run("replace multiple instances by nothing", func(t *testing.T) {
+    source := "This is a cool foo and that is a cool bar."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "This is a  foo and that is a  bar."
+    if result != expected {
+      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    }
+  })
+}
+
 
 func BenchmarkReplaceOne(b *testing.B) {
   for n := 0; n < b.N; n++ {
