@@ -49,6 +49,17 @@ type Arguments struct {
 }
 
 
+// Check if any arguments were provided to the program.
+func noArgumentsProvided(args []string) bool {
+  return len(args) == 1
+}
+
+// Check if a certain argument is an option.
+func argumentIsOption(arg string) bool {
+  return "-" == arg[:1]
+}
+
+
 // Parse an argument that is not in option within a certain argument context.
 func parseArgument(arg string, context argumentContext, arguments *Arguments) {
   switch context {
@@ -62,16 +73,16 @@ func parseArgument(arg string, context argumentContext, arguments *Arguments) {
 }
 
 // Parse an option argument and get the new argument context.
-func parseOption(arg string, arguments *Arguments) (argumentContext, error) {
-  newState := contextInputFile
+func parseOption(option string, arguments *Arguments) (argumentContext, error) {
+  newContext := contextInputFile
 
-  switch arg {
+  switch option {
     case helpOption:
       printUsage()
-      newState = contextDone
+      newContext = contextDone
     case versionOption:
       printVersion()
-      newState = contextDone
+      newContext = contextDone
 
     // Flags
     case dryRunOption:
@@ -80,22 +91,22 @@ func parseOption(arg string, arguments *Arguments) (argumentContext, error) {
       arguments.Invert = true
     case silentOption, silentOptionAlias:
       arguments.Silent = true
-      logger.Warningf("The %s argument is not yet supported", arg)
+      logger.Warningf("The %s argument is not yet supported", option)
     case verboseOption, verboseOptionAlias:
       arguments.Verbose = true
-      logger.Warningf("The %s argument is not yet supported", arg)
+      logger.Warningf("The %s argument is not yet supported", option)
 
     // Options
     case configOption, configOptionAlias:
-      newState = contextConfigFile
-      logger.Warningf("The %s argument is not yet supported", arg)
+      newContext = contextConfigFile
+      logger.Warningf("The %s argument is not yet supported", option)
     case mapfileOption, mapfileOptionAlias:
-      newState = contextMapFile
+      newContext = contextMapFile
     default:
-      return newState, errors.New("Unknown option")
+      return newContext, errors.Newf("Unknown option '%s'", option)
   }
 
-  return newState, nil
+  return newContext, nil
 }
 
 
@@ -103,15 +114,14 @@ func parseOption(arg string, arguments *Arguments) (argumentContext, error) {
 func ParseArgs(args []string) (bool, Arguments) {
   var arguments Arguments
 
-  if len(args) == 1 {
+  if noArgumentsProvided(args) {
     printUsage()
     return false, arguments
   }
 
   context := contextInputFile
-  for i := 1; i < len(args); i++ {
-    arg := args[i]
-    if "-" == arg[:1] {
+  for _, arg := range args[1:] {
+    if argumentIsOption(arg) {
       if context == contextInputFile {
         newContext, err := parseOption(arg, &arguments)
         if err != nil {
