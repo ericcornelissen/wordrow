@@ -103,39 +103,32 @@ func parseOption(option string, arguments *Arguments) (argumentContext, error) {
     case mapfileOption, mapfileOptionAlias:
       newContext = contextMapFile
     default:
-      return newContext, errors.Newf("Unknown option '%s'", option)
+      return newContext, errors.Newf("Unknown option '%s'. Use %s for help", option, helpOption)
   }
 
   return newContext, nil
 }
 
-
-// Parse a slice of arguments (e.g. `os.Args`) into an Arguments instance.
-func ParseArgs(args []string) (bool, Arguments) {
+// Parse a slice of arguments that contains at least one program argument.
+//
+// The error is set if there is any issue with the provided arguments.
+func parseArgs(args []string) (Arguments, error) {
   var arguments Arguments
-
-  if noArgumentsProvided(args) {
-    printUsage()
-    return false, arguments
-  }
 
   context := contextInputFile
   for _, arg := range args[1:] {
     if argumentIsOption(arg) {
-      if context == contextInputFile {
-        newContext, err := parseOption(arg, &arguments)
-        if err != nil {
-          logger.Errorf("Unknown option '%s'. Use %s for help", arg, helpOption)
-          return false, arguments
-        } else if newContext == contextDone {
-          return false, arguments
-        } else {
-          context = newContext
-        }
+      if context != contextInputFile {
+        return arguments, errors.Newf("Missing value for %d", context)
+      }
+
+      newContext, err := parseOption(arg, &arguments)
+      if err != nil {
+        return arguments, err
+      } else if newContext == contextDone {
+        return arguments, errors.Newf("")
       } else {
-        // TODO missing value for earlier argument
-        logger.Warning("missing value")
-        return false, arguments
+        context = newContext
       }
     } else {
       parseArgument(arg, context, &arguments)
@@ -144,10 +137,26 @@ func ParseArgs(args []string) (bool, Arguments) {
   }
 
   if context != contextInputFile {
-    // TODO arguments incomplete
-    logger.Warning("incomplete")
+    return arguments, errors.New("More arguments expected")
+  }
+
+  return arguments, nil
+}
+
+
+// Parse a slice of arguments (e.g. `os.Args`) into an Arguments instance.
+func ParseArgs(args []string) (bool, Arguments) {
+  var arguments Arguments
+  if noArgumentsProvided(args) {
+    printUsage()
     return false, arguments
   }
 
-  return true, arguments
+  arguments, err := parseArgs(args)
+  if err != nil {
+    logger.Errorf("%s", err)
+    return false, arguments
+  } else {
+    return true, arguments
+  }
 }
