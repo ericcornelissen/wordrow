@@ -166,7 +166,7 @@ func ParseArgs(args []string) (bool, Arguments) {
 
   arguments, err := parseArgs(args)
   if err != nil {
-    logger.Errorf("%s", err)
+    logger.Error(err)
     return false, arguments
   } else {
     return true, arguments
