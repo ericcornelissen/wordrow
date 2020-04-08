@@ -142,24 +142,10 @@ func TestMarkDownEmptyColumnValues(t *testing.T) {
       | foo  |    |
     `
 
-    wordmap, err := parseMarkDownFile(&markdown)
+    _, err := parseMarkDownFile(&markdown)
 
-    if err != nil {
-      t.Fatalf("Error should be nil for this test (Error: %s)", err)
-    }
-
-    if wordmap.Size() != 1 {
-      t.Fatalf("The WordMap size should be 1 (was %d)", wordmap.Size())
-    }
-
-    actual, expected := wordmap.GetFrom(0), "foo"
-    if actual != expected {
-      t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-    }
-
-    actual, expected = wordmap.GetTo(0), ""
-    if actual != expected {
-      t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
+    if err == nil {
+      t.Errorf("Error should be set if the to value is empty")
     }
   })
 }

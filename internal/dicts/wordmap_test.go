@@ -44,21 +44,14 @@ func TestWordMapEmptyValues(t *testing.T) {
     t.Error("AddOne should have panicked but did not")
   })
   t.Run("Empty to value", func(t *testing.T) {
+    defer func() {
+      if r := recover(); r == nil {
+        t.Error("AddOne did not need recovery, but should have")
+      }
+    }()
+
     wordmap.AddOne("foo", "")
-
-    if wordmap.Size() != 1 {
-      t.Fatalf("The WordMap size should be 1 (was %d)", wordmap.Size())
-    }
-
-    actual, expected := wordmap.GetFrom(0), "foo"
-    if actual != expected {
-      t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-    }
-
-    actual, expected = wordmap.GetTo(0), ""
-    if actual != expected {
-      t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
-    }
+    t.Error("AddOne should have panicked but did not")
   })
 }
 

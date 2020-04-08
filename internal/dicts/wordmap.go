@@ -37,7 +37,7 @@ func (m *WordMap) AddFrom(other WordMap) {
 func (m *WordMap) AddOne(from, to string) {
   fromValue := strings.TrimSpace(strings.ToLower(from))
   toValue := strings.TrimSpace(strings.ToLower(to))
-  if fromValue == "" {
+  if fromValue == "" || toValue == "" {
     panic(1)
   }
 

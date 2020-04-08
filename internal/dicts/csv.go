@@ -15,7 +15,7 @@ func parseRow(row string, wordmap *WordMap) error {
 
   fromValue := strings.TrimSpace(rowValues[0])
   toValue := strings.TrimSpace(rowValues[1])
-  if fromValue == "" {
+  if fromValue == "" || toValue == "" {
     return &parseError{"Missing value", row}
   }
 

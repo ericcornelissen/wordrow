@@ -27,7 +27,7 @@ func parseTableRow(row string) ([]string, error) {
 
   fromValue := strings.TrimSpace(rowValues[1])
   toValue := strings.TrimSpace(rowValues[2])
-  if fromValue == "" {
+  if fromValue == "" || toValue == "" {
     return nil, &parseError{"Missing value", row}
   }
 
