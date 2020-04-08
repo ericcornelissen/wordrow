@@ -5,6 +5,11 @@ import "testing"
 import "github.com/ericcornelissen/wordrow/internal/dicts"
 
 
+func reportIncorrectReplacement(t *testing.T, expected, actual string) {
+  t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, actual)
+}
+
+
 func TestEmptyString(t *testing.T) {
   var wordmap dicts.WordMap
 
@@ -23,7 +28,7 @@ func TestEmptyWordmap(t *testing.T) {
   result := ReplaceAll(source, wordmap)
 
   if result != source {
-    t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", source, result)
+    reportIncorrectReplacement(t, result, source)
   }
 }
 
@@ -38,7 +43,7 @@ func TestJustOneWord(t *testing.T) {
     result := ReplaceAll(source, wordmap)
 
     if result != to {
-      t.Errorf("Result was not as expected, got: '%s'", result)
+      reportIncorrectReplacement(t, result, to)
     }
   })
   t.Run("word is not in the WordMap", func(t *testing.T) {
@@ -46,7 +51,7 @@ func TestJustOneWord(t *testing.T) {
     result := ReplaceAll(source, wordmap)
 
     if result != to {
-      t.Errorf("Result was not as expected, got: '%s'", result)
+      reportIncorrectReplacement(t, result, to)
     }
   })
 }
@@ -61,7 +66,7 @@ func TestOneWordOnceInText(t *testing.T) {
 
     expected := "This is an e-mail."
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, result, expected)
     }
   })
   t.Run("Multiple lines", func(t *testing.T) {
@@ -78,7 +83,7 @@ func TestOneWordOnceInText(t *testing.T) {
       are amazing, right?
     `
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, result, expected)
     }
   })
 }
@@ -94,7 +99,7 @@ func TestMultipleWords(t *testing.T) {
 
     expected := "A bar is a creature in this world. It can change its colour."
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, result, expected)
     }
   })
   t.Run("Only one word", func(t *testing.T) {
@@ -103,7 +108,7 @@ func TestMultipleWords(t *testing.T) {
 
     expected := "A bar is a creature in this world."
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, result, expected)
     }
   })
 }
@@ -117,7 +122,7 @@ func TestIgnoreInputCapitalization(t *testing.T) {
 
   expected := "There once was a bar in the world."
   if result != expected {
-    t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    reportIncorrectReplacement(t, result, expected)
   }
 }
 
@@ -130,7 +135,7 @@ func TestMaintainCapitalization(t *testing.T) {
 
   expected := "There once was a bar in the world. Bar did things."
   if result != expected {
-    t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    reportIncorrectReplacement(t, result, expected)
   }
 }
 
@@ -143,7 +148,7 @@ func TestWordWithSuffix(t *testing.T) {
 
   expected := "The vase is coloured beautifully"
   if result != expected {
-    t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    reportIncorrectReplacement(t, result, expected)
   }
 }
 
@@ -156,7 +161,7 @@ func TestWordWithPrefix(t *testing.T) {
 
   expected := "I send them a email. And later another email."
   if result != expected {
-    t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    reportIncorrectReplacement(t, result, expected)
   }
 }
 
@@ -169,7 +174,7 @@ func TestWordAllCaps(t *testing.T) {
 
   expected := "This is the BAR."
   if result != expected {
-    t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    reportIncorrectReplacement(t, result, expected)
   }
 }
 
@@ -183,7 +188,7 @@ func TestReplaceByShorterString(t *testing.T) {
 
     expected := "This is a foo."
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, result, expected)
     }
   })
   t.Run("multiple instances of word", func(t *testing.T) {
@@ -192,7 +197,7 @@ func TestReplaceByShorterString(t *testing.T) {
 
     expected := "This is a FOO and this is a foo as well."
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, result, expected)
     }
   })
 }
@@ -207,7 +212,7 @@ func TestReplaceByLongerString(t *testing.T) {
 
     expected := "This is a foo."
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, result, expected)
     }
   })
   t.Run("multiple instances of word", func(t *testing.T) {
@@ -216,7 +221,7 @@ func TestReplaceByLongerString(t *testing.T) {
 
     expected := "This is a FOO and this is a foo as well."
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, result, expected)
     }
   })
 }
@@ -231,7 +236,7 @@ func TestReplaceByNothing(t *testing.T) {
 
     expected := "This is an awesome  foo."
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, result, expected)
     }
   })
   t.Run("replace all uppercase by nothing", func(t *testing.T) {
@@ -240,7 +245,7 @@ func TestReplaceByNothing(t *testing.T) {
 
     expected := "This is an awesome  foo."
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, result, expected)
     }
   })
   t.Run("replace multiple instances by nothing", func(t *testing.T) {
@@ -249,7 +254,7 @@ func TestReplaceByNothing(t *testing.T) {
 
     expected := "This is a  foo and that is a  bar."
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, result, expected)
     }
   })
 }
