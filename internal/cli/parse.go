@@ -17,6 +17,9 @@ const (
 
   // The context where arguments are interpreted as mapping files.
   contextMapFile
+
+  // The context when parsing finished early.
+  contextDone
 )
 
 
@@ -63,6 +66,13 @@ func parseOption(arg string, arguments *Arguments) (argumentContext, error) {
   newState := contextInputFile
 
   switch arg {
+    case helpOption:
+      printUsage()
+      newState = contextDone
+    case versionOption:
+      printVersion()
+      newState = contextDone
+
     // Flags
     case dryRunOption:
       arguments.DryRun = true
@@ -88,22 +98,13 @@ func parseOption(arg string, arguments *Arguments) (argumentContext, error) {
   return newState, nil
 }
 
+
 // Parse a slice of arguments (e.g. `os.Args`) into an Arguments instance.
 func ParseArgs(args []string) (bool, Arguments) {
   var arguments Arguments
 
   if len(args) == 1 {
     printUsage()
-    return false, arguments
-  }
-
-  if helpOption == args[1] {
-    printUsage()
-    return false, arguments
-  }
-
-  if versionOption == args[1] {
-    printVersion()
     return false, arguments
   }
 
@@ -115,6 +116,8 @@ func ParseArgs(args []string) (bool, Arguments) {
         newContext, err := parseOption(arg, &arguments)
         if err != nil {
           logger.Errorf("Unknown option '%s'. Use %s for help", arg, helpOption)
+          return false, arguments
+        } else if newContext == contextDone {
           return false, arguments
         } else {
           context = newContext
