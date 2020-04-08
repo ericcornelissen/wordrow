@@ -1,6 +1,20 @@
 package errors
 
+import "fmt"
 import "testing"
+
+
+func ExampleNew() {
+  err := New("foobar")
+  fmt.Print(err)
+  // Output: foobar
+}
+
+func ExampleNewf() {
+  err := Newf("foo%s", "bar")
+  fmt.Print(err)
+  // Output: foobar
+}
 
 
 func TestNew(t *testing.T) {
