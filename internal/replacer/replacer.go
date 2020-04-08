@@ -11,6 +11,23 @@ import "github.com/ericcornelissen/wordrow/internal/dicts"
 var reLetter = regexp.MustCompile("[A-Za-z]")
 
 
+// Check if a character (as byte) is an uppercase letter.
+func isUpperChar(s byte) bool {
+  firstChar := rune(s)
+  return unicode.IsUpper(firstChar)
+}
+
+// Convert a string to sentence case. I.e. make the first letter in the string
+// upper case.
+func toSentenceCase(s string) string {
+  if len(s) > 0 {
+    return strings.ToUpper(s[:1]) + s[1:]
+  } else {
+    return s
+  }
+}
+
+
 // If the `from` string is all caps, it will return `to` as all caps as well.
 // Otherwise, the `to` string is returned unchanged.
 func maintainAllCaps(from, to string) string {
@@ -25,20 +42,8 @@ func maintainAllCaps(from, to string) string {
 // starting with a capital letter as well. Otherwise, the `to` string is
 // returned unchanged.
 func maintainCapitalization(from, to string) string {
-  isUpperChar := func(s byte) bool {
-    firstChar := rune(s)
-    return unicode.IsUpper(firstChar)
-  }
-  convert := func(s string) string {
-    if len(s) > 0 {
-      return strings.ToUpper(to[:1]) + to[1:]
-    } else {
-      return s
-    }
-  }
-
   if isUpperChar(from[0]) {
-    return convert(to)
+    return toSentenceCase(to)
   } else {
     return to
   }
