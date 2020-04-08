@@ -25,10 +25,13 @@ func parseTableRow(row string) ([]string, error) {
     return nil, &parseError{"Unexpected table row format", row}
   }
 
-  return []string{
-    strings.TrimSpace(rowValues[1]),
-    strings.TrimSpace(rowValues[2]),
-  }, nil
+  fromValue := strings.TrimSpace(rowValues[1])
+  toValue := strings.TrimSpace(rowValues[2])
+  if fromValue == "" {
+    return nil, &parseError{"Missing value", row}
+  }
+
+  return []string{fromValue, toValue}, nil
 }
 
 // Parse the header of a MarkDown table.
