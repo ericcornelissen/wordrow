@@ -5,12 +5,12 @@ import "github.com/ericcornelissen/wordrow/internal/logger"
 
 
 // A custom integer type for Enum to keep track of the arguments context.
-type argumentContext int
+type argContext int
 
 // The Enum used to keep track of the argument context.
 const (
   // The context where arguments are interpreted as input files.
-  contextInputFile argumentContext = iota
+  contextInputFile argContext = iota
 
   // The context where arguments are interpreted as a configuration file.
   contextConfigFile
@@ -21,6 +21,18 @@ const (
   // The context when parsing finished early.
   contextDone
 )
+
+// Get the Enum value as a human readable string.
+func (context argContext) String() string {
+  names := []string{
+    "Unknown",
+    "--config/-c",
+    "--map/-m",
+    "Unkown",
+  }
+
+  return names[context]
+}
 
 
 // The Arguments type represents the configuration of the program from the
@@ -61,7 +73,7 @@ func argumentIsOption(arg string) bool {
 
 
 // Parse an argument that is not in option within a certain argument context.
-func parseArgument(arg string, context argumentContext, arguments *Arguments) {
+func parseArgument(arg string, context argContext, arguments *Arguments) {
   switch context {
     case contextInputFile:
       arguments.InputFiles = append(arguments.InputFiles, arg)
@@ -73,7 +85,7 @@ func parseArgument(arg string, context argumentContext, arguments *Arguments) {
 }
 
 // Parse an option argument and get the new argument context.
-func parseOption(option string, arguments *Arguments) (argumentContext, error) {
+func parseOption(option string, arguments *Arguments) (argContext, error) {
   newContext := contextInputFile
 
   switch option {
@@ -119,7 +131,7 @@ func parseArgs(args []string) (Arguments, error) {
   for _, arg := range args[1:] {
     if argumentIsOption(arg) {
       if context != contextInputFile {
-        return arguments, errors.Newf("Missing value for %d", context)
+        return arguments, errors.Newf("Missing value for %s option", context)
       }
 
       newContext, err := parseOption(arg, &arguments)
