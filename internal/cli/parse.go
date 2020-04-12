@@ -94,7 +94,6 @@ func parseOption(option string, arguments *Arguments) (argContext, error) {
       newContext = contextDone
     case versionOption:
       printVersion()
-      newContext = contextDone
 
     // Flags
     case dryRunOption:
@@ -150,6 +149,10 @@ func parseArgs(args []string) (Arguments, error) {
 
   if context != contextInputFile {
     return arguments, errors.New("More arguments expected")
+  }
+
+  if len(arguments.InputFiles) == 0 {
+    return arguments, errors.New("No input file(s) specified")
   }
 
   return arguments, nil
