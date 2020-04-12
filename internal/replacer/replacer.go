@@ -99,7 +99,7 @@ func replaceOne(s string, from, to string) string {
 
 // Replace substrings of `s` according to the mapping in `wordmap`.
 func ReplaceAll(s string, wordmap wordmap.WordMap) string {
-  for _, mapping := range wordmap.Iter() {
+  for mapping := range wordmap.Iter() {
     s = replaceOne(s, mapping.From, mapping.To)
   }
 

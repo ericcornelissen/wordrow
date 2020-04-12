@@ -90,14 +90,18 @@ func (m *WordMap) Invert() {
 }
 
 // Get the contents of the WordMap as an iterable slice.
-func (m *WordMap) Iter() []Mapping {
-  var mapping []Mapping
-  for i := 0; i < len(m.from); i++ {
-    oneMapping := Mapping{m.from[i], m.to[i]}
-    mapping = append(mapping, oneMapping)
-  }
+func (m *WordMap) Iter() (chan Mapping) {
+  ch := make(chan Mapping)
 
-  return mapping
+  go func() {
+    defer close(ch)
+
+    for i := 0; i < len(m.from); i++ {
+      ch <- Mapping{m.from[i], m.to[i]}
+    }
+  }()
+
+  return ch
 }
 
 // Get the size of the WordMap. I.e. the number of words mapped from some value
