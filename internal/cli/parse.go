@@ -4,33 +4,6 @@ import "github.com/ericcornelissen/wordrow/internal/errors"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 
 
-// A custom integer type for Enum to keep track of the arguments context.
-type argContext int
-
-// The Enum used to keep track of the argument context.
-const (
-  // The context where arguments are interpreted as input files.
-  contextInputFile argContext = iota
-
-  // The context where arguments are interpreted as a configuration file.
-  contextConfigFile
-
-  // The context where arguments are interpreted as mapping files.
-  contextMapFile
-)
-
-// Get the Enum value as a human readable string.
-func (context argContext) String() string {
-  names := []string{
-    "Unknown",
-    "--config/-c",
-    "--map/-m",
-  }
-
-  return names[context]
-}
-
-
 // The Arguments type represents the configuration of the program from the
 // Command-Line Interface (CLI).
 type Arguments struct {
@@ -157,11 +130,11 @@ func doParseOneArgument(
 //
 // The function sets the error if there is any issue with the provided
 // arguments.
-func doParseAllArguments(args []string) (Arguments, error) {
+func doParseProgramArguments(args []string) (Arguments, error) {
   var arguments Arguments
 
   context := contextInputFile
-  for _, arg := range args[1:] {
+  for _, arg := range args {
     newContext, err := doParseOneArgument(arg, context, &arguments)
     if err != nil {
       return arguments, err
@@ -186,7 +159,7 @@ func ParseArgs(args []string) (bool, Arguments) {
     return false, arguments
   }
 
-  arguments, err := doParseAllArguments(args)
+  arguments, err := doParseProgramArguments(args[1:])
   if err != nil {
     logger.Error(err)
     return false, arguments
