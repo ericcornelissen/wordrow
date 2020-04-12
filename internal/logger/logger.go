@@ -10,6 +10,18 @@ func toSentenceCase(s string) string {
 }
 
 
+// Print a set of messages as a debug message.
+func Debug(msgs ... interface{}) {
+  msg := fmt.Sprintln(msgs...)
+  fmt.Printf("[D] %s", toSentenceCase(msg))
+}
+
+// Print and format a message as a debug message.
+func Debugf(msg string, args ...interface{}) {
+  formattedMsg := fmt.Sprintf(msg, args...)
+  Debug(formattedMsg + "\n")
+}
+
 // Print a set of messages as an error message.
 func Error(msgs ...interface{}) {
   msg := fmt.Sprintln(msgs...)

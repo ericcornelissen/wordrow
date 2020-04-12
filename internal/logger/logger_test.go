@@ -1,6 +1,16 @@
 package logger
 
 
+func ExampleDebug() {
+  Debug("hello", "world!")
+  // Output: [D] Hello world!
+}
+
+func ExampleDebugf() {
+  Debugf("%s %s!", "hello", "world")
+  // Output: [D] Hello world!
+}
+
 func ExampleError() {
   Error("hello", "world!")
   // Output: [E] Hello world!

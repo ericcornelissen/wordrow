@@ -24,6 +24,7 @@ func run(args cli.Arguments) {
   paths := fs.ResolvePaths(inputFiles...)
   for i := 0; i < len(paths); i++ {
     filePath := paths[i]
+    logger.Debugf("Processing '%s'", filePath)
 
     binaryFileData, err := fs.ReadFile(filePath)
     if err != nil {
