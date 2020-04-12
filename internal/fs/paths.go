@@ -29,9 +29,9 @@ func getCwd() string {
 
 // Resolve any number of globs or file paths into distinct file paths.
 //
-// The error is set if at least one malformed pattern is found. Only the last
-// malformed pattern is detected. The list of paths will contain all paths for
-// valid not-malformed patterns.
+// The function sets the error if at least one malformed pattern is found. Only
+// the last malformed pattern is reported. The list of paths will contain all
+// paths for valid not-malformed patterns.
 func ResolveGlobs(patterns ...string) (paths []string, rerr error) {
   for _, pattern := range patterns {
     if !globExpr.MatchString(pattern) {

@@ -26,8 +26,8 @@ func getParserForFile(filePath string) (parseFunction, error) {
 
 // Parse a single file into a WordMap.
 //
-// The error is set if the parsing failed, e.g. when the file is improperly
-// formatted.
+// The function sets the error if the parsing failed, e.g. when the file is
+// improperly formatted.
 func parseFile(fileContent *string, parseFn parseFunction, wordmap *WordMap) error {
   fileMap, err := parseFn(fileContent)
   if err != nil {
@@ -41,7 +41,8 @@ func parseFile(fileContent *string, parseFn parseFunction, wordmap *WordMap) err
 
 // Parse a list of files (relative or absolute paths) into a single WordMap.
 //
-// The error is set if an error occurs when parsing any of the provided file.
+// The function sets the error if an error occurs when parsing any of the
+// provided file.
 func WordMapFrom(files ...string) (WordMap, error) {
   var wordmap WordMap
 
