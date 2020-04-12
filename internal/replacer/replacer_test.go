@@ -7,7 +7,10 @@ import "github.com/ericcornelissen/wordrow/internal/wordmap"
 
 
 func reportIncorrectReplacement(t *testing.T, expected, actual string) {
-  t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, actual)
+  t.Errorf(`Replacement did not work as intended
+    expected : '%s'
+    got      : '%s'
+  `, expected, actual)
 }
 
 
@@ -146,29 +149,57 @@ func TestReplaceWordAllCaps(t *testing.T) {
 }
 
 func TestReplaceWordWithPrefixes(t *testing.T) {
-  var wordmap wordmap.WordMap
-  wordmap.AddOne("-ize", "ise")
+  t.Run("maintain prefix", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("-ize", "-ise")
 
-  source := "They realize that they should not idealize"
-  result := ReplaceAll(source, wordmap)
+    source := "They Realize that they should not idealize."
+    result := ReplaceAll(source, wordmap)
 
-  expected := "They realise that they should not idealise"
-  if result != expected {
-    reportIncorrectReplacement(t, expected, result)
-  }
+    expected := "They Realise that they should not idealise."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("omit prefix", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("- people", "people")
+
+    source := "Cool people are nice and nice people are cool."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "People are nice and people are cool."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
 }
 
 func TestReplaceWordWithSuffixes(t *testing.T) {
-  var wordmap wordmap.WordMap
-  wordmap.AddOne("color-", "colour")
+  t.Run("maintain suffix", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("color-", "colour-")
 
-  source := "The colors are amazing on this colorful painting. What is your favourite color?"
-  result := ReplaceAll(source, wordmap)
+    source := "The Colors are amazing on this colorful painting. What is your favourite color?"
+    result := ReplaceAll(source, wordmap)
 
-  expected := "The colours are amazing on this colourful painting. What is your favourite colour?"
-  if result != expected {
-    reportIncorrectReplacement(t, expected, result)
-  }
+    expected := "The Colours are amazing on this colourful painting. What is your favourite colour?"
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("omit suffix", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("hack-", "hackers")
+
+    source := "Some hackz0rs are good while some hacknerds are evil."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "Some hackers are good while some hackers are evil."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
 }
 
 func TestReplaceWordWithoutPrefixes(t *testing.T) {
@@ -243,12 +274,4 @@ func TestReplaceByLongerString(t *testing.T) {
       reportIncorrectReplacement(t, expected, result)
     }
   })
-}
-
-
-func BenchmarkReplaceOne(b *testing.B) {
-  for n := 0; n < b.N; n++ {
-    m := wordmap.Mapping{"foo", "bar", false, false}
-    replaceOne("the word foo appears foo times in this foo", m)
-  }
 }

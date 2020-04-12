@@ -60,49 +60,37 @@ func smartReplace(from, to string) string {
   return to
 }
 
-
-// Check if the substring from `start` to `end` in `s` is a new word.
-func isProperMatch(s string, start, end int, prefix, suffix bool) bool {
-  if prefix == false {
-    // prefixes are disabled
-    if start > 0 && reLetter.MatchString(s[start - 1:start]) {
-      return false
-    }
+func getBaseReplacement(mapping wordmap.Mapping, prefix, suffix string) string {
+  replacement := mapping.To.Value
+  if mapping.To.PrefixAllowed == true {
+    replacement = prefix + replacement
+  }
+  if mapping.To.SuffixAllowed == true {
+    replacement = replacement + suffix
   }
 
-  if suffix == false {
-    // suffxes are disabled
-    if end < len(s) && reLetter.MatchString(s[end:end + 1]) {
-      return false
-    }
-  }
-
-  return true
+  return replacement
 }
 
 // Replace all instances of `from` by `to` in `s`.
-func replaceOne(s string, m wordmap.Mapping) string {
+func replaceOne(s string, mapping wordmap.Mapping) string {
   var sb strings.Builder
 
-  re := regexp.MustCompile("(?i)" + m.From)
-  indices := re.FindAllStringIndex(s, -1)
-
-  prevIndex := 0
-  for i := 0; i < len(indices); i++ {
-    start, end := indices[i][0], indices[i][1]
-    if !isProperMatch(s, start, end, m.Prefix, m.Suffix) {
+  lastIndex := 0
+  for match := range findMatchesWithPrefixAndSuffix(s, mapping.From.Value) {
+    if !match.IsAllowedBy(mapping) {
       continue
     }
 
-    matchedString := s[start:end]
-    replacement := smartReplace(matchedString, m.To)
+    replacement := getBaseReplacement(mapping, match.prefix, match.suffix)
+    replacement = smartReplace(match.full, replacement)
 
-    sb.WriteString(s[prevIndex:start])
+    sb.WriteString(s[lastIndex:match.start])
     sb.WriteString(replacement)
-    prevIndex = end
+    lastIndex = match.end
   }
 
-  sb.WriteString(s[prevIndex:])
+  sb.WriteString(s[lastIndex:])
   return sb.String()
 }
 

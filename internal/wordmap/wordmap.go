@@ -6,33 +6,53 @@ import "strings"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 
 
+// TODO
+type Temp struct {
+  Value string
+
+  PrefixAllowed bool
+
+  SuffixAllowed bool
+}
+
+// TODO
+func (v *Temp) String() string {
+  s := v.Value
+
+  if v.PrefixAllowed == true {
+    s = "-" + s
+  }
+
+  if v.SuffixAllowed == true {
+    s = s + "-"
+  }
+
+  return s
+}
+
+func newTemp(raw string) Temp {
+  prefix, suffix := false, false
+  if raw[0:1] == "-" {
+    prefix = true
+    raw = raw[1:]
+  }
+  if raw[len(raw) - 1:] == "-" {
+    suffix = true
+    raw = raw[:len(raw) - 1]
+  }
+
+  return Temp{raw, prefix, suffix}
+}
+
 // The Mapping type provides a guaranteed mapping from one string to another.
 type Mapping struct {
-  From string
-  To string
-
-  Prefix bool
-  Suffix bool
+  From Temp
+  To Temp
 }
 
 // Get the WordMap as a human readable string.
 func (m *Mapping) String() string {
-  from, to := m.From, m.To
-
-  if m.Prefix {
-    from = "-" + from
-  }
-
-  if m.Suffix {
-    from = from + "-"
-  }
-
-  return fmt.Sprintf("[%s -> %s](p=%t;s=%t)",
-    from,
-    to,
-    m.Prefix,
-    m.Suffix,
-  )
+  return fmt.Sprintf("[%s -> %s]", m.From.String(), m.To.String())
 }
 
 
@@ -119,23 +139,9 @@ func (m *WordMap) Iter() []Mapping {
   var mapping []Mapping
   for i := 0; i < len(m.from); i++ {
     from, to := m.from[i], m.to[i]
-
-    prefix, suffix := false, false
-    if from[0:1] == "-" {
-      prefix = true
-      from = from[1:]
-    }
-
-    if from[len(from) - 1:] == "-" {
-      suffix = true
-      from = from[:len(from) - 1]
-    }
-
     mapping = append(mapping, Mapping{
-      From: from,
-      To: to,
-      Prefix: prefix,
-      Suffix: suffix,
+      From: newTemp(from),
+      To: newTemp(to),
     })
   }
 
