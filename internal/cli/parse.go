@@ -17,9 +17,6 @@ const (
 
   // The context where arguments are interpreted as mapping files.
   contextMapFile
-
-  // The context when parsing finished early.
-  contextDone
 )
 
 // Get the Enum value as a human readable string.
@@ -28,7 +25,6 @@ func (context argContext) String() string {
     "Unknown",
     "--config/-c",
     "--map/-m",
-    "Unkown",
   }
 
   return names[context]
@@ -38,6 +34,12 @@ func (context argContext) String() string {
 // The Arguments type represents the configuration of the program from the
 // Command-Line Interface (CLI).
 type Arguments struct {
+  // Flag indicating if the program usage should be displayed.
+  help bool
+
+  // Flag indicating if the program version should be displayed.
+  version bool
+
   // Flag indicating if this is a dry run.
   DryRun bool
 
@@ -72,28 +74,17 @@ func argumentIsOption(arg string) bool {
 }
 
 
-// Parse an argument that is not in option within a certain argument context.
-func parseArgument(arg string, context argContext, arguments *Arguments) {
-  switch context {
-    case contextInputFile:
-      arguments.InputFiles = append(arguments.InputFiles, arg)
-    case contextConfigFile:
-      arguments.ConfigFile = arg
-    case contextMapFile:
-      arguments.MapFiles = append(arguments.MapFiles, arg)
-  }
-}
-
 // Parse an option argument and get the new argument context.
-func parseOption(option string, arguments *Arguments) (argContext, error) {
+func parseArgumentAsOption(
+  option string,
+  arguments *Arguments,
+) (argContext, error) {
   newContext := contextInputFile
-
   switch option {
     case helpOption:
-      printUsage()
-      newContext = contextDone
+      arguments.help = true
     case versionOption:
-      printVersion()
+      arguments.version = true
 
     // Flags
     case dryRunOption:
@@ -120,39 +111,67 @@ func parseOption(option string, arguments *Arguments) (argContext, error) {
   return newContext, nil
 }
 
+// Parse an argument that is not in option within a certain argument context.
+func parseArgumentAsValue(
+  value string,
+  context argContext,
+  arguments *Arguments,
+) {
+  switch context {
+    case contextInputFile:
+      arguments.InputFiles = append(arguments.InputFiles, value)
+    case contextConfigFile:
+      arguments.ConfigFile = value
+    case contextMapFile:
+      arguments.MapFiles = append(arguments.MapFiles, value)
+  }
+}
+
+// Parse a single argument, value or option.
+//
+// The function sets the error if the argument could not be parsed (in the
+// provided context).
+func doParseOneArgument(
+  arg string,
+  context argContext,
+  arguments *Arguments,
+) (argContext, error) {
+  if argumentIsOption(arg) {
+    if context != contextInputFile {
+      return context, errors.Newf("Missing value for %s option", context)
+    }
+
+    newContext, err := parseArgumentAsOption(arg, arguments)
+    if err != nil {
+      return context, err
+    }
+
+    return newContext, nil
+  } else {
+    parseArgumentAsValue(arg, context, arguments)
+    return contextInputFile, nil
+  }
+}
+
 // Parse a slice of arguments that contains at least one program argument.
 //
-// The error is set if there is any issue with the provided arguments.
-func parseArgs(args []string) (Arguments, error) {
+// The function sets the error if there is any issue with the provided
+// arguments.
+func doParseAllArguments(args []string) (Arguments, error) {
   var arguments Arguments
 
   context := contextInputFile
   for _, arg := range args[1:] {
-    if argumentIsOption(arg) {
-      if context != contextInputFile {
-        return arguments, errors.Newf("Missing value for %s option", context)
-      }
-
-      newContext, err := parseOption(arg, &arguments)
-      if err != nil {
-        return arguments, err
-      } else if newContext == contextDone {
-        return arguments, errors.Newf("")
-      } else {
-        context = newContext
-      }
-    } else {
-      parseArgument(arg, context, &arguments)
-      context = contextInputFile
+    newContext, err := doParseOneArgument(arg, context, &arguments)
+    if err != nil {
+      return arguments, err
     }
+
+    context = newContext
   }
 
   if context != contextInputFile {
     return arguments, errors.New("More arguments expected")
-  }
-
-  if len(arguments.InputFiles) == 0 {
-    return arguments, errors.New("No input file(s) specified")
   }
 
   return arguments, nil
@@ -167,11 +186,20 @@ func ParseArgs(args []string) (bool, Arguments) {
     return false, arguments
   }
 
-  arguments, err := parseArgs(args)
+  arguments, err := doParseAllArguments(args)
   if err != nil {
     logger.Error(err)
     return false, arguments
-  } else {
-    return true, arguments
   }
+
+  if arguments.help {
+    printUsage()
+    return false, arguments
+  }
+
+  if arguments.version {
+    printVersion()
+  }
+
+  return len(arguments.InputFiles) > 0, arguments
 }
