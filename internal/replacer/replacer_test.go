@@ -3,7 +3,7 @@ package replacer
 import "fmt"
 import "testing"
 
-import "github.com/ericcornelissen/wordrow/internal/dicts"
+import "github.com/ericcornelissen/wordrow/internal/wordmap"
 
 
 func reportIncorrectReplacement(t *testing.T, expected, actual string) {
@@ -12,7 +12,7 @@ func reportIncorrectReplacement(t *testing.T, expected, actual string) {
 
 
 func TestReplaceEmptyString(t *testing.T) {
-  var wordmap dicts.WordMap
+  var wordmap wordmap.WordMap
 
   source := ""
   result := ReplaceAll(source, wordmap)
@@ -23,7 +23,7 @@ func TestReplaceEmptyString(t *testing.T) {
 }
 
 func TestReplaceEmptyWordmap(t *testing.T) {
-  var wordmap dicts.WordMap
+  var wordmap wordmap.WordMap
 
   source := "Hello world!"
   result := ReplaceAll(source, wordmap)
@@ -36,7 +36,7 @@ func TestReplaceEmptyWordmap(t *testing.T) {
 func TestReplaceOneWordInWordMap(t *testing.T) {
   from, to := "foo", "bar"
 
-  var wordmap dicts.WordMap
+  var wordmap wordmap.WordMap
   wordmap.AddOne(from, to)
 
   t.Run("source is 'from' in the WordMap", func(t *testing.T) {
@@ -82,7 +82,7 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
 }
 
 func TestReplaceMultipleWordsInWordMap(t *testing.T) {
-  var wordmap dicts.WordMap
+  var wordmap wordmap.WordMap
   wordmap.AddOne("foo", "bar")
   wordmap.AddOne("color", "colour")
 
@@ -107,7 +107,7 @@ func TestReplaceMultipleWordsInWordMap(t *testing.T) {
 }
 
 func TestReplaceIgnoreMappingCapitalization(t *testing.T) {
-  var wordmap dicts.WordMap
+  var wordmap wordmap.WordMap
   wordmap.AddOne("Foo", "Bar")
 
   source := "There once was a foo in the world."
@@ -120,7 +120,7 @@ func TestReplaceIgnoreMappingCapitalization(t *testing.T) {
 }
 
 func TestReplaceMaintainCapitalization(t *testing.T) {
-  var wordmap dicts.WordMap
+  var wordmap wordmap.WordMap
   wordmap.AddOne("foo", "bar")
 
   source := "There once was a foo in the world. Foo did things."
@@ -133,7 +133,7 @@ func TestReplaceMaintainCapitalization(t *testing.T) {
 }
 
 func TestReplaceWordAllCaps(t *testing.T) {
-  var wordmap dicts.WordMap
+  var wordmap wordmap.WordMap
   wordmap.AddOne("foo", "bar")
 
   source := "This is the FOO."
@@ -146,7 +146,7 @@ func TestReplaceWordAllCaps(t *testing.T) {
 }
 
 func TestReplaceWordWithSuffix(t *testing.T) {
-  var wordmap dicts.WordMap
+  var wordmap wordmap.WordMap
   wordmap.AddOne("color", "colour")
 
   source := "The vase is colored beautifully"
@@ -159,7 +159,7 @@ func TestReplaceWordWithSuffix(t *testing.T) {
 }
 
 func TestReplaceWordWithPrefix(t *testing.T) {
-  var wordmap dicts.WordMap
+  var wordmap wordmap.WordMap
   wordmap.AddOne("mail", "email")
 
   source := "I send them a mail. And later another email."
@@ -172,7 +172,7 @@ func TestReplaceWordWithPrefix(t *testing.T) {
 }
 
 func TestReplaceByShorterString(t *testing.T) {
-  var wordmap dicts.WordMap
+  var wordmap wordmap.WordMap
   wordmap.AddOne("fooo", "foo")
 
   t.Run("one instance of word", func(t *testing.T) {
@@ -196,7 +196,7 @@ func TestReplaceByShorterString(t *testing.T) {
 }
 
 func TestReplaceByLongerString(t *testing.T) {
-  var wordmap dicts.WordMap
+  var wordmap wordmap.WordMap
   wordmap.AddOne("fo", "foo")
 
   t.Run("one instance of word", func(t *testing.T) {

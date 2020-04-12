@@ -3,14 +3,14 @@ package main
 import "os"
 
 import "github.com/ericcornelissen/wordrow/internal/cli"
-import "github.com/ericcornelissen/wordrow/internal/dicts"
 import "github.com/ericcornelissen/wordrow/internal/fs"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 import "github.com/ericcornelissen/wordrow/internal/replacer"
+import "github.com/ericcornelissen/wordrow/internal/wordmap"
 
 func run(args cli.Arguments) {
   mapFiles, err := fs.ResolveGlobs(args.MapFiles...)
-  wordmap, err := dicts.WordMapFrom(mapFiles...)
+  wordmap, err := wordmap.WordMapFrom(mapFiles...)
   if err != nil {
     logger.Error(err)
     return

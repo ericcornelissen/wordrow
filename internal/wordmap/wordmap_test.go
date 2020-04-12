@@ -1,4 +1,4 @@
-package dicts
+package wordmap
 
 import "testing"
 
