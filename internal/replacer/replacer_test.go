@@ -62,21 +62,21 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
 
     expected := fmt.Sprintf(template, to)
     if result != expected {
-      reportIncorrectReplacement(t, result, expected)
+      reportIncorrectReplacement(t, expected, result)
     }
   })
   t.Run("Multiple lines", func(t *testing.T) {
     template := `
       This is a %s. And this is
-      an %s as well. Aren't %ss
-      amazing!
+      an %s as well. And, ow,
+      over there, another %s one!
     `
     source := fmt.Sprintf(template, from, from, from)
     result := ReplaceAll(source, wordmap)
 
     expected := fmt.Sprintf(template, to, to, to)
     if result != expected {
-      reportIncorrectReplacement(t, result, expected)
+      reportIncorrectReplacement(t, expected, result)
     }
   })
 }
@@ -92,7 +92,7 @@ func TestReplaceMultipleWordsInWordMap(t *testing.T) {
 
     expected := "A bar is a creature in this world. It can change its colour."
     if result != expected {
-      reportIncorrectReplacement(t, result, expected)
+      reportIncorrectReplacement(t, expected, result)
     }
   })
   t.Run("Only one word", func(t *testing.T) {
@@ -101,12 +101,12 @@ func TestReplaceMultipleWordsInWordMap(t *testing.T) {
 
     expected := "A bar is a creature in this world."
     if result != expected {
-      reportIncorrectReplacement(t, result, expected)
+      reportIncorrectReplacement(t, expected, result)
     }
   })
 }
 
-func TestReplaceIgnoreMappingCapitalization(t *testing.T) {
+func TestReplaceIgnoreCapitalizationInMapping(t *testing.T) {
   var wordmap wordmap.WordMap
   wordmap.AddOne("Foo", "Bar")
 
@@ -115,7 +115,7 @@ func TestReplaceIgnoreMappingCapitalization(t *testing.T) {
 
   expected := "There once was a bar in the world."
   if result != expected {
-    reportIncorrectReplacement(t, result, expected)
+    reportIncorrectReplacement(t, expected, result)
   }
 }
 
@@ -128,7 +128,7 @@ func TestReplaceMaintainCapitalization(t *testing.T) {
 
   expected := "There once was a bar in the world. Bar did things."
   if result != expected {
-    reportIncorrectReplacement(t, result, expected)
+    reportIncorrectReplacement(t, expected, result)
   }
 }
 
@@ -141,24 +141,37 @@ func TestReplaceWordAllCaps(t *testing.T) {
 
   expected := "This is the BAR."
   if result != expected {
-    reportIncorrectReplacement(t, result, expected)
+    reportIncorrectReplacement(t, expected, result)
   }
 }
 
-func TestReplaceWordWithSuffix(t *testing.T) {
+func TestReplaceWordWithPrefixes(t *testing.T) {
   var wordmap wordmap.WordMap
-  wordmap.AddOne("color", "colour")
+  wordmap.AddOne("-ize", "ise")
 
-  source := "The vase is colored beautifully"
+  source := "They realize that they should not idealize"
   result := ReplaceAll(source, wordmap)
 
-  expected := "The vase is coloured beautifully"
+  expected := "They realise that they should not idealise"
   if result != expected {
-    reportIncorrectReplacement(t, result, expected)
+    reportIncorrectReplacement(t, expected, result)
   }
 }
 
-func TestReplaceWordWithPrefix(t *testing.T) {
+func TestReplaceWordWithSuffixes(t *testing.T) {
+  var wordmap wordmap.WordMap
+  wordmap.AddOne("color-", "colour")
+
+  source := "The colors are amazing on this colorful painting. What is your favourite color?"
+  result := ReplaceAll(source, wordmap)
+
+  expected := "The colours are amazing on this colourful painting. What is your favourite colour?"
+  if result != expected {
+    reportIncorrectReplacement(t, expected, result)
+  }
+}
+
+func TestReplaceWordWithoutPrefixes(t *testing.T) {
   var wordmap wordmap.WordMap
   wordmap.AddOne("mail", "email")
 
@@ -167,7 +180,20 @@ func TestReplaceWordWithPrefix(t *testing.T) {
 
   expected := "I send them a email. And later another email."
   if result != expected {
-    reportIncorrectReplacement(t, result, expected)
+    reportIncorrectReplacement(t, expected, result)
+  }
+}
+
+func TestReplaceWordWithoutSuffixes(t *testing.T) {
+  var wordmap wordmap.WordMap
+  wordmap.AddOne("commen", "common")
+
+  source := "He game a comment that that is quite commen"
+  result := ReplaceAll(source, wordmap)
+
+  expected := "He game a comment that that is quite common"
+  if result != expected {
+    reportIncorrectReplacement(t, expected, result)
   }
 }
 
@@ -181,7 +207,7 @@ func TestReplaceByShorterString(t *testing.T) {
 
     expected := "This is a foo."
     if result != expected {
-      reportIncorrectReplacement(t, result, expected)
+      reportIncorrectReplacement(t, expected, result)
     }
   })
   t.Run("multiple instances of word", func(t *testing.T) {
@@ -190,7 +216,7 @@ func TestReplaceByShorterString(t *testing.T) {
 
     expected := "This is a FOO and this is a foo as well."
     if result != expected {
-      reportIncorrectReplacement(t, result, expected)
+      reportIncorrectReplacement(t, expected, result)
     }
   })
 }
@@ -205,7 +231,7 @@ func TestReplaceByLongerString(t *testing.T) {
 
     expected := "This is a foo."
     if result != expected {
-      reportIncorrectReplacement(t, result, expected)
+      reportIncorrectReplacement(t, expected, result)
     }
   })
   t.Run("multiple instances of word", func(t *testing.T) {
@@ -214,13 +240,15 @@ func TestReplaceByLongerString(t *testing.T) {
 
     expected := "This is a FOO and this is a foo as well."
     if result != expected {
-      reportIncorrectReplacement(t, result, expected)
+      reportIncorrectReplacement(t, expected, result)
     }
   })
 }
 
+
 func BenchmarkReplaceOne(b *testing.B) {
   for n := 0; n < b.N; n++ {
-    replaceOne("the word foo appears foo times in this foo", "foo", "bar")
+    m := wordmap.Mapping{"foo", "bar", false, false}
+    replaceOne("the word foo appears foo times in this foo", m)
   }
 }

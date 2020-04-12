@@ -62,30 +62,40 @@ func smartReplace(from, to string) string {
 
 
 // Check if the substring from `start` to `end` in `s` is a new word.
-func isNewWordMatch(s string, start, end int) bool {
-  if start > 0 && reLetter.MatchString(s[start - 1:start]) {
-    return false
-  } else {
-    return true
+func isProperMatch(s string, start, end int, prefix, suffix bool) bool {
+  if prefix == false {
+    // prefixes are disabled
+    if start > 0 && reLetter.MatchString(s[start - 1:start]) {
+      return false
+    }
   }
+
+  if suffix == false {
+    // suffxes are disabled
+    if end < len(s) && reLetter.MatchString(s[end:end + 1]) {
+      return false
+    }
+  }
+
+  return true
 }
 
 // Replace all instances of `from` by `to` in `s`.
-func replaceOne(s string, from, to string) string {
+func replaceOne(s string, m wordmap.Mapping) string {
   var sb strings.Builder
 
-  re := regexp.MustCompile("(?i)" + from)
+  re := regexp.MustCompile("(?i)" + m.From)
   indices := re.FindAllStringIndex(s, -1)
 
   prevIndex := 0
   for i := 0; i < len(indices); i++ {
     start, end := indices[i][0], indices[i][1]
-    if !isNewWordMatch(s, start, end) {
+    if !isProperMatch(s, start, end, m.Prefix, m.Suffix) {
       continue
     }
 
     matchedString := s[start:end]
-    replacement := smartReplace(matchedString, to)
+    replacement := smartReplace(matchedString, m.To)
 
     sb.WriteString(s[prevIndex:start])
     sb.WriteString(replacement)
@@ -100,7 +110,7 @@ func replaceOne(s string, from, to string) string {
 // Replace substrings of `s` according to the mapping in `wordmap`.
 func ReplaceAll(s string, wordmap wordmap.WordMap) string {
   for _, mapping := range wordmap.Iter() {
-    s = replaceOne(s, mapping.From, mapping.To)
+    s = replaceOne(s, mapping)
   }
 
   return s
