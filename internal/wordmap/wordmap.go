@@ -1,59 +1,8 @@
 package wordmap
 
-import "fmt"
 import "strings"
 
 import "github.com/ericcornelissen/wordrow/internal/logger"
-
-
-// TODO
-type Temp struct {
-  Value string
-
-  PrefixAllowed bool
-
-  SuffixAllowed bool
-}
-
-// TODO
-func (v *Temp) String() string {
-  s := v.Value
-
-  if v.PrefixAllowed == true {
-    s = "-" + s
-  }
-
-  if v.SuffixAllowed == true {
-    s = s + "-"
-  }
-
-  return s
-}
-
-func newTemp(raw string) Temp {
-  prefix, suffix := false, false
-  if raw[0:1] == "-" {
-    prefix = true
-    raw = raw[1:]
-  }
-  if raw[len(raw) - 1:] == "-" {
-    suffix = true
-    raw = raw[:len(raw) - 1]
-  }
-
-  return Temp{raw, prefix, suffix}
-}
-
-// The Mapping type provides a guaranteed mapping from one string to another.
-type Mapping struct {
-  From Temp
-  To Temp
-}
-
-// Get the WordMap as a human readable string.
-func (m *Mapping) String() string {
-  return fmt.Sprintf("[%s -> %s]", m.From.String(), m.To.String())
-}
 
 
 // The WordMap type provides a guaranteed mapping from one set of strings to
@@ -139,10 +88,7 @@ func (m *WordMap) Iter() []Mapping {
   var mapping []Mapping
   for i := 0; i < len(m.from); i++ {
     from, to := m.from[i], m.to[i]
-    mapping = append(mapping, Mapping{
-      From: newTemp(from),
-      To: newTemp(to),
-    })
+    mapping = append(mapping, newMapping(from, to))
   }
 
   return mapping

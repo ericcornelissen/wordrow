@@ -54,22 +54,10 @@ func maintainCapitalization(from, to string) string {
 // This function does the following:
 //  - Maintain all caps.
 //  - Maintain first letter capitalization.
-func smartReplace(from, to string) string {
+func maintainFormatting(from, to string) string {
   to = maintainAllCaps(from, to)
   to = maintainCapitalization(from, to)
   return to
-}
-
-func getBaseReplacement(mapping wordmap.Mapping, prefix, suffix string) string {
-  replacement := mapping.To.Value
-  if mapping.To.PrefixAllowed == true {
-    replacement = prefix + replacement
-  }
-  if mapping.To.SuffixAllowed == true {
-    replacement = replacement + suffix
-  }
-
-  return replacement
 }
 
 // Replace all instances of `from` by `to` in `s`.
@@ -77,17 +65,13 @@ func replaceOne(s string, mapping wordmap.Mapping) string {
   var sb strings.Builder
 
   lastIndex := 0
-  for match := range findMatchesWithPrefixAndSuffix(s, mapping.From.Value) {
-    if !match.IsAllowedBy(mapping) {
-      continue
-    }
+  for match := range mapping.Match(s) {
+    rawReplacement := mapping.GetReplacement(match.Prefix, match.Suffix)
+    replacement := maintainFormatting(match.Full, rawReplacement)
 
-    replacement := getBaseReplacement(mapping, match.prefix, match.suffix)
-    replacement = smartReplace(match.full, replacement)
-
-    sb.WriteString(s[lastIndex:match.start])
+    sb.WriteString(s[lastIndex:match.Start])
     sb.WriteString(replacement)
-    lastIndex = match.end
+    lastIndex = match.End
   }
 
   sb.WriteString(s[lastIndex:])
