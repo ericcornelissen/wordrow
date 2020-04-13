@@ -4,96 +4,34 @@ import "fmt"
 import "regexp"
 
 
-// Convert a string to a string indicating that a prefix and/or suffix is
-// included.
-func toPrefixSuffixString(s string, prefix, suffix bool) string {
-  if prefix == true {
-    s = "-" + s
+// Check if a string ends with the suffix symbol. The first return value is
+// a boolean indicating this; the second return value is the input string minus
+// the last character iff it is the suffix symbol.
+func endsWithSuffixSymbol(s string) bool {
+  return s[len(s) - 1:] == "-"
+}
+
+// Remove the prefix and suffix symbols from a string. If the symbols are not
+// there, the original string is returned.
+func removePrefixAndSuffixSymbols(s string) string {
+  value := s
+
+  if startsWithPrefixSymbol(s) {
+    value = value[1:]
   }
 
-  if suffix == true {
-    s = s + "-"
+  if endsWithSuffixSymbol(s) {
+    value = value[:len(value) - 1]
   }
 
-  return s
+  return value
 }
 
 // Check if a string starts with the prefix symbol. The first return value is
 // a boolean indicating this; the second return value is the input string minus
 // the first character iff it is the prefix symbol.
-func startsWithPrefix(s string) (bool, string) {
-  prefix, value := false, s
-  if s[0:1] == "-" {
-    prefix = true
-    value = s[1:]
-  }
-
-  return prefix, value
-}
-
-// Check if a string ends with the suffix symbol. The first return value is
-// a boolean indicating this; the second return value is the input string minus
-// the last character iff it is the suffix symbol.
-func endsWithSuffix(s string) (bool, string) {
-  suffix, value := false, s
-  if s[len(s) - 1:] == "-" {
-    suffix = true
-    value = s[:len(s) - 1]
-  }
-
-  return suffix, value
-}
-
-
-// The toValue type is used for the "from" key in Mapping.
-type fromValue struct {
-  // The value of interest. This should not include the prefix and/or suffix
-  // symbols.
-  Value string
-
-  // Should the Value be considered if it appears with a prefix.
-  IncludePrefix bool
-
-  // Should the Value be considered if it appears with a suffix.
-  IncludeSuffix bool
-}
-
-// Create a new fromValue from any string.
-func newFromValue(rawValue string) fromValue {
-  includePrefix, value := startsWithPrefix(rawValue)
-  includeSuffix, value := endsWithSuffix(value)
-  return fromValue{value, includePrefix, includeSuffix}
-}
-
-// Get the fromValue as human-readable string.
-func (from *fromValue) String() string {
-  return toPrefixSuffixString(from.Value, from.IncludePrefix, from.IncludeSuffix)
-}
-
-
-// The toValue type is used for the "to" key in Mapping.
-type toValue struct {
-  // The value of interest. This should not include the prefix and/or suffix
-  // symbols.
-  Value string
-
-  // Should the Value keep the prefix of the fromValue.
-  KeepPrefix bool
-
-  // Should the Value keep the suffix of the fromValue.
-  KeepSuffix bool
-}
-
-// Create a new ToValue from any string.
-func newToValue(rawValue string) toValue {
-  keepPrefix, value := startsWithPrefix(rawValue)
-  keepSuffix, value := endsWithSuffix(value)
-  return toValue{value, keepPrefix, keepSuffix}
-}
-
-// Get the ToValue as human-readable string.
-func (to *toValue) String() string {
-  return toPrefixSuffixString(to.Value, to.KeepPrefix, to.KeepSuffix)
+func startsWithPrefixSymbol(s string) bool {
+  return s[0:1] == "-"
 }
 
 
@@ -105,6 +43,9 @@ type Match struct {
 
   // The matched word as it appears in the original string.
   Word string
+
+  // TODO
+  Replacement string
 
   // The prefix of the matched word.
   Prefix string
@@ -120,30 +61,53 @@ type Match struct {
 }
 
 
-// The Mapping type provides a guaranteed mapping from one string to another.
+// The Mapping type provides a guaranteed mapping from one string to another. As
+// well as functionality to find matches in a string.
 type Mapping struct {
   // TODO
-  from fromValue
+  from string
 
   // TODO
-  to toValue
+  to string
 }
 
-// Create a new Mapping Value
-func newMapping(from, to string) Mapping {
-  return Mapping{
-    newFromValue(from),
-    newToValue(to),
-  }
+// Check if the mapping includes matches if they have a prefix.
+func (mapping *Mapping) includePrefix() bool {
+  return startsWithPrefixSymbol(mapping.from)
+}
+
+// Check if the mapping includes matches if they have a suffix.
+func (mapping *Mapping) includeSuffix() bool {
+  return endsWithSuffixSymbol(mapping.from)
+}
+
+// Check if the mapping wants to keep the suffix in the replacement value.
+func (mapping *Mapping) keepPrefix() bool {
+  return startsWithPrefixSymbol(mapping.to)
+}
+
+// Check if the mapping wants to keep the suffix in the replacement value.
+func (mapping *Mapping) keepSuffix() bool {
+  return endsWithSuffixSymbol(mapping.to)
+}
+
+// Get the Mapping's "from" value.
+func (mapping *Mapping) GetFrom() string {
+  return removePrefixAndSuffixSymbols(mapping.from)
+}
+
+// Get the Mapping's "to" value.
+func (mapping *Mapping) GetTo() string {
+  return removePrefixAndSuffixSymbols(mapping.to)
 }
 
 // TODO
 func (mapping *Mapping) isAllowedWith(prefix, suffix string) bool {
-  if !mapping.from.IncludePrefix && prefix != "" {
+  if !mapping.includePrefix() && prefix != "" {
     return false
   }
 
-  if !mapping.from.IncludeSuffix && suffix != "" {
+  if !mapping.includeSuffix() && suffix != "" {
     return false
   }
 
@@ -153,13 +117,13 @@ func (mapping *Mapping) isAllowedWith(prefix, suffix string) bool {
 // Get the replacement given a prefix and suffix. The return value will be the
 // "to" value including, if necessary, the prefix and suffix.
 func (mapping *Mapping) GetReplacement(prefix, suffix string) string {
-  replacement := mapping.to.Value
+  replacement := mapping.GetTo()
 
-  if mapping.to.KeepPrefix {
+  if mapping.keepPrefix() {
     replacement = prefix + replacement
   }
 
-  if mapping.to.KeepSuffix {
+  if mapping.keepSuffix() {
     replacement = replacement + suffix
   }
 
@@ -171,7 +135,7 @@ func (mapping *Mapping) Match(s string) (chan Match) {
   ch := make(chan Match)
 
   go func() {
-    rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, mapping.from.Value)
+    rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, mapping.GetFrom())
     expr := regexp.MustCompile(rawExpr)
     for _, indices := range expr.FindAllStringSubmatchIndex(s, -1) {
       fullStart, fullEnd := indices[0], indices[1]
@@ -179,19 +143,20 @@ func (mapping *Mapping) Match(s string) (chan Match) {
       wordStart, wordEnd := indices[4], indices[5]
       suffixStart, suffixEnd := indices[6], indices[7]
 
+      prefix := s[prefixStart:prefixEnd]
+      suffix := s[suffixStart:suffixEnd]
+
       match := Match{
         Full: s[fullStart:fullEnd],
         Word: s[wordStart:wordEnd],
-
-        Prefix: s[prefixStart:prefixEnd],
-        Suffix: s[suffixStart:suffixEnd],
+        Replacement: mapping.GetReplacement(prefix, suffix),
 
         Start: fullStart,
         End: fullEnd,
       }
 
-      if mapping.isAllowedWith(match.Prefix, match.Suffix) {
-          ch <- match
+      if mapping.isAllowedWith(prefix, suffix) {
+        ch <- match
       }
     }
 
@@ -204,7 +169,7 @@ func (mapping *Mapping) Match(s string) (chan Match) {
 // Get the WordMap as a human readable string.
 func (mapping *Mapping) String() string {
   return fmt.Sprintf("[%s -> %s]",
-    mapping.from.String(),
-    mapping.to.String(),
+    mapping.from,
+    mapping.to,
   )
 }

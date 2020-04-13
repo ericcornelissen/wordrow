@@ -66,8 +66,7 @@ func replaceOne(s string, mapping wordmap.Mapping) string {
 
   lastIndex := 0
   for match := range mapping.Match(s) {
-    rawReplacement := mapping.GetReplacement(match.Prefix, match.Suffix)
-    replacement := maintainFormatting(match.Full, rawReplacement)
+    replacement := maintainFormatting(match.Full, match.Replacement)
 
     sb.WriteString(s[lastIndex:match.Start])
     sb.WriteString(replacement)

@@ -6,10 +6,7 @@ import "testing"
 
 func ExampleMappingMatch() {
   s := "Hello world!"
-  m := Mapping{
-    newFromValue("hello"),
-    newToValue("hey"),
-  }
+  m := Mapping{"hello", "hey"}
 
   for match := range m.Match(s) {
     fmt.Println(match.Word)
@@ -18,180 +15,9 @@ func ExampleMappingMatch() {
 }
 
 
-func TestFromValue(t *testing.T)  {
-  baseValue := "foo"
-  t.Run("without prefix or suffix", func(t *testing.T) {
-    rawValue := baseValue
-    from := newFromValue(rawValue)
-
-    if from.Value != baseValue {
-      t.Errorf("Unexpected value (got '%s')", from.Value)
-    }
-
-    if from.String() != rawValue {
-      t.Errorf("Unexpected String value (got '%s')", from.String())
-    }
-
-    if from.IncludePrefix != false {
-      t.Error("Prefix should not be included")
-    }
-
-    if from.IncludeSuffix != false {
-      t.Error("Suffix should not be included")
-    }
-  })
-  t.Run("with prefix and without suffix", func(t *testing.T) {
-    rawValue := fmt.Sprintf("-%s", baseValue)
-    from := newFromValue(rawValue)
-
-    if from.Value != baseValue {
-      t.Errorf("Unexpected value (got '%s')", from.Value)
-    }
-
-    if from.String() != rawValue {
-      t.Errorf("Unexpected String value (got '%s')", from.String())
-    }
-
-    if from.IncludePrefix != true {
-      t.Error("Prefix should be included")
-    }
-
-    if from.IncludeSuffix != false {
-      t.Error("Suffix should not be included")
-    }
-  })
-  t.Run("without prefix and with suffix", func(t *testing.T) {
-    rawValue := fmt.Sprintf("%s-", baseValue)
-    from := newFromValue(rawValue)
-
-    if from.Value != baseValue {
-      t.Errorf("Unexpected value (got '%s')", from.Value)
-    }
-
-    if from.String() != rawValue {
-      t.Errorf("Unexpected String value (got '%s')", from.String())
-    }
-
-    if from.IncludePrefix != false {
-      t.Error("Prefix should not be included")
-    }
-
-    if from.IncludeSuffix != true {
-      t.Error("Suffix should be included")
-    }
-  })
-  t.Run("with prefix and suffix", func(t *testing.T) {
-    rawValue := fmt.Sprintf("-%s-", baseValue)
-    from := newFromValue(rawValue)
-
-    if from.Value != baseValue {
-      t.Errorf("Unexpected value (got '%s')", from.Value)
-    }
-
-    if from.String() != rawValue {
-      t.Errorf("Unexpected String value (got '%s')", from.String())
-    }
-
-    if from.IncludePrefix != true {
-      t.Error("Prefix should be included")
-    }
-
-    if from.IncludeSuffix != true {
-      t.Error("Suffix should be included")
-    }
-  })
-}
-
-func TestToValue(t *testing.T)  {
-  baseValue := "bar"
-  t.Run("without prefix or suffix", func(t *testing.T) {
-    rawValue := baseValue
-    from := newToValue(rawValue)
-
-    if from.Value != baseValue {
-      t.Errorf("Unexpected value (got '%s')", from.Value)
-    }
-
-    if from.String() != rawValue {
-      t.Errorf("Unexpected String value (got '%s')", from.String())
-    }
-
-    if from.KeepPrefix != false {
-      t.Error("Prefix should not be kept")
-    }
-
-    if from.KeepSuffix != false {
-      t.Error("Suffix should not be kept")
-    }
-  })
-  t.Run("with prefix and without suffix", func(t *testing.T) {
-    rawValue := fmt.Sprintf("-%s", baseValue)
-    from := newToValue(rawValue)
-
-    if from.Value != baseValue {
-      t.Errorf("Unexpected value (got '%s')", from.Value)
-    }
-
-    if from.String() != rawValue {
-      t.Errorf("Unexpected String value (got '%s')", from.String())
-    }
-
-    if from.KeepPrefix != true {
-      t.Error("Prefix should be kept")
-    }
-
-    if from.KeepSuffix != false {
-      t.Error("Suffix should not be kept")
-    }
-  })
-  t.Run("without prefix and with suffix", func(t *testing.T) {
-    rawValue := fmt.Sprintf("%s-", baseValue)
-    from := newToValue(rawValue)
-
-    if from.Value != baseValue {
-      t.Errorf("Unexpected value (got '%s')", from.Value)
-    }
-
-    if from.String() != rawValue {
-      t.Errorf("Unexpected String value (got '%s')", from.String())
-    }
-
-    if from.KeepPrefix != false {
-      t.Error("Prefix should not be kept")
-    }
-
-    if from.KeepSuffix != true {
-      t.Error("Suffix should be kept")
-    }
-  })
-  t.Run("with prefix and suffix", func(t *testing.T) {
-    rawValue := fmt.Sprintf("-%s-", baseValue)
-    from := newToValue(rawValue)
-
-    if from.Value != baseValue {
-      t.Errorf("Unexpected value (got '%s')", from.Value)
-    }
-
-    if from.String() != rawValue {
-      t.Errorf("Unexpected String value (got '%s')", from.String())
-    }
-
-    if from.KeepPrefix != true {
-      t.Error("Prefix should be kept")
-    }
-
-    if from.KeepSuffix != true {
-      t.Error("Suffix should be kept")
-    }
-  })
-}
-
 func TestMappingNoPrefixNoSuffix(t *testing.T) {
   from, to := "hello", "hey"
-  m := Mapping{
-    newFromValue(from),
-    newToValue(to),
-  }
+  m := Mapping{from, to}
 
   t.Run("GetReplacement", func(t *testing.T) {
     t.Run("Empty prefix, empty suffix", func(t *testing.T) {
@@ -243,16 +69,14 @@ func TestMappingNoPrefixNoSuffix(t *testing.T) {
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: 0,
           End: len(from),
         },
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: len(from) + 8,
           End: len(from) + 8 + len(from),
         },
@@ -283,8 +107,7 @@ func TestMappingNoPrefixNoSuffix(t *testing.T) {
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: 0,
           End: len(from),
         },
@@ -315,8 +138,7 @@ func TestMappingNoPrefixNoSuffix(t *testing.T) {
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: len(from) + 11,
           End: len(from) + 11 + len(from),
         },
@@ -359,10 +181,7 @@ func TestMappingNoPrefixNoSuffix(t *testing.T) {
 
 func TestMappingWithPrefixNoSuffix(t *testing.T) {
   from, to := "bar", "foo"
-  m := Mapping{
-    newFromValue("-" + from),
-    newToValue("-" + to),
-  }
+  m := Mapping{"-" + from, "-" + to}
 
   t.Run("GetReplacement", func(t *testing.T) {
     t.Run("Empty prefix, empty suffix", func(t *testing.T) {
@@ -414,16 +233,14 @@ func TestMappingWithPrefixNoSuffix(t *testing.T) {
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: 10,
           End: 10 + len(from),
         },
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: len(from) + 32,
           End: len(from) + 32 + len(from),
         },
@@ -454,16 +271,14 @@ func TestMappingWithPrefixNoSuffix(t *testing.T) {
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: 10,
           End: 10 + len(from),
         },
         Match{
           Full: "pre" + from,
           Word: from,
-          Prefix: "pre",
-          Suffix: "",
+          Replacement: "pre" + to,
           Start: len(from) + 32,
           End: len(from) + 35 + len(from),
         },
@@ -494,8 +309,7 @@ func TestMappingWithPrefixNoSuffix(t *testing.T) {
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: len(from) + 35,
           End: len(from) + 35 + len(from),
         },
@@ -526,8 +340,7 @@ func TestMappingWithPrefixNoSuffix(t *testing.T) {
         Match{
           Full: "pre" + from,
           Word: from,
-          Prefix: "pre",
-          Suffix: "",
+          Replacement: "pre" + to,
           Start: 10,
           End: 13 + len(from),
         },
@@ -562,10 +375,7 @@ func TestMappingWithPrefixNoSuffix(t *testing.T) {
 
 func TestMappingNoPrefixWithSuffix(t *testing.T) {
   from, to := "foo", "bar"
-  m := Mapping{
-    newFromValue(from + "-"),
-    newToValue(to + "-"),
-  }
+  m := Mapping{from + "-", to + "-"}
 
   t.Run("GetReplacement", func(t *testing.T) {
     t.Run("Empty prefix, empty suffix", func(t *testing.T) {
@@ -617,16 +427,14 @@ func TestMappingNoPrefixWithSuffix(t *testing.T) {
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: 10,
           End: 10 + len(from),
         },
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: len(from) + 32,
           End: len(from) + 32 + len(from),
         },
@@ -657,8 +465,7 @@ func TestMappingNoPrefixWithSuffix(t *testing.T) {
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: 10,
           End: 10 + len(from),
         },
@@ -689,16 +496,14 @@ func TestMappingNoPrefixWithSuffix(t *testing.T) {
         Match{
           Full: from + "suf",
           Word: from,
-          Prefix: "",
-          Suffix: "suf",
+          Replacement: to + "suf",
           Start: 10,
           End: 13 + len(from),
         },
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: len(from) + 35,
           End: len(from) + 35 + len(from),
         },
@@ -729,8 +534,7 @@ func TestMappingNoPrefixWithSuffix(t *testing.T) {
         Match{
           Full: from + "suf",
           Word: from,
-          Prefix: "",
-          Suffix: "suf",
+          Replacement: to + "suf",
           Start: 35 + len(from),
           End: 38 + len(from) + len(from),
         },
@@ -765,10 +569,7 @@ func TestMappingNoPrefixWithSuffix(t *testing.T) {
 
 func TestMappingWithPrefixAndSuffix(t *testing.T) {
   from, to := "foobar", "lorem"
-  m := Mapping{
-    newFromValue("-" + from + "-"),
-    newToValue("-" + to + "-"),
-  }
+  m := Mapping{"-" + from + "-", "-" + to + "-"}
 
   t.Run("GetReplacement", func(t *testing.T) {
     t.Run("Empty prefix, empty suffix", func(t *testing.T) {
@@ -820,16 +621,14 @@ func TestMappingWithPrefixAndSuffix(t *testing.T) {
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: 10,
           End: 10 + len(from),
         },
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: len(from) + 32,
           End: len(from) + 32 + len(from),
         },
@@ -860,16 +659,14 @@ func TestMappingWithPrefixAndSuffix(t *testing.T) {
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: 10,
           End: 10 + len(from),
         },
         Match{
           Full: "pre" + from,
           Word: from,
-          Prefix: "pre",
-          Suffix: "",
+          Replacement: "pre" + to,
           Start: len(from) + 32,
           End: len(from) + 35 + len(from),
         },
@@ -900,16 +697,14 @@ func TestMappingWithPrefixAndSuffix(t *testing.T) {
         Match{
           Full: from + "suf",
           Word: from,
-          Prefix: "",
-          Suffix: "suf",
+          Replacement: to + "suf",
           Start: 10,
           End: 13 + len(from),
         },
         Match{
           Full: from,
           Word: from,
-          Prefix: "",
-          Suffix: "",
+          Replacement: to,
           Start: len(from) + 35,
           End: len(from) + 35 + len(from),
         },
@@ -940,16 +735,14 @@ func TestMappingWithPrefixAndSuffix(t *testing.T) {
         Match{
           Full: "pre" + from,
           Word: from,
-          Prefix: "pre",
-          Suffix: "",
+          Replacement: "pre" + to,
           Start: 10,
           End: 13 + len(from),
         },
         Match{
           Full: from + "suf",
           Word: from,
-          Prefix: "",
-          Suffix: "suf",
+          Replacement: to + "suf",
           Start: 35 + len(from),
           End: 38 + len(from) + len(from),
         },

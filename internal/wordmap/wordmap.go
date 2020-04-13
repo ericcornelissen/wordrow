@@ -88,7 +88,7 @@ func (m *WordMap) Iter() []Mapping {
   var mapping []Mapping
   for i := 0; i < len(m.from); i++ {
     from, to := m.from[i], m.to[i]
-    mapping = append(mapping, newMapping(from, to))
+    mapping = append(mapping, Mapping{from, to})
   }
 
   return mapping
