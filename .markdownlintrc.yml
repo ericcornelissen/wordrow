@@ -1,0 +1,38 @@
+default: true
+no-hard-tabs: false
+whitespace: false
+
+# Rules
+MD003:
+  style: atx
+MD004:
+  style: dash
+MD009:
+  br_spaces: 0
+  strict: true
+MD012:
+  maximum: 1
+MD013:
+  ster: true
+MD014: false  # Allow using `$` in code blocks
+MD024:
+  allow_different_nesting: true
+MD029:
+  style: one
+MD035:
+  style: ---
+MD036: false  # Allow using `**Example X**`
+MD044:
+  code_blocks: false
+  names:
+    - wordrow
+    - Command Line Interface
+    - CLI
+    - Comma Separated Values
+    - CSV
+    - MarkDown
+    - MD
+MD046:
+  style: fenced
+MD048:
+  style: backtick
