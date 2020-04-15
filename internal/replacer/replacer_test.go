@@ -125,14 +125,26 @@ func TestReplaceIgnoreMappingCapitalization(t *testing.T) {
 func TestReplaceMaintainCapitalization(t *testing.T) {
   var wordmap wordmap.WordMap
   wordmap.AddOne("foo", "bar")
+  wordmap.AddOne("hello world", "hey planet")
 
-  source := "There once was a foo in the world. Foo did things."
-  result := ReplaceAll(source, wordmap)
+  t.Run("single word mapping", func(t *testing.T) {
+    source := "There once was a foo in the world. Foo did things."
+    result := ReplaceAll(source, wordmap)
 
-  expected := "There once was a bar in the world. Bar did things."
-  if result != expected {
-    reportIncorrectReplacement(t, expected, result)
-  }
+    expected := "There once was a bar in the world. Bar did things."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("two word mapping", func(t *testing.T) {
+    source := "Hello World!"
+    result := ReplaceAll(source, wordmap)
+
+    expected := "Hey Planet!"
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
 }
 
 func TestReplaceWordAllCaps(t *testing.T) {
@@ -221,3 +233,38 @@ func TestReplaceByLongerString(t *testing.T) {
     }
   })
 }
+
+
+// func TestTestA(t *testing.T) {
+//   var wordmap wordmap.WordMap
+//   wordmap.AddOne("post compromise", "post-compromise")
+//
+//   source := "Post Compromise"
+//   result := ReplaceAll(source, wordmap)
+//
+//   expected := "Post-Compromise"
+//   if result != expected {
+//     reportIncorrectReplacement(t, expected, result)
+//   }
+// }
+//
+// func TestTest2(t *testing.T) {
+//   var wordmap wordmap.WordMap
+//   wordmap.AddOne("hello awesome world", "hello world")
+//
+//   source := "Hello Awesome World!"
+//   result := ReplaceAll(source, wordmap)
+//
+//   expected := "Hello World!"
+//   if result != expected {
+//     reportIncorrectReplacement(t, expected, result)
+//   }
+//
+//   source = "Hello awesome World!"
+//   result = ReplaceAll(source, wordmap)
+//
+//   expected = "Hello World!"
+//   if result != expected {
+//     reportIncorrectReplacement(t, expected, result)
+//   }
+// }

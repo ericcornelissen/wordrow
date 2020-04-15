@@ -11,6 +11,15 @@ import "github.com/ericcornelissen/wordrow/internal/wordmap"
 var reLetter = regexp.MustCompile("[A-Za-z]")
 
 
+// Get the minimum length of two (string) slices.
+func minLen(a, b []string) int {
+  if len(a) <= len(b) {
+    return len(a)
+  } else {
+    return len(b)
+  }
+}
+
 // Check if a character (as byte) is an uppercase letter.
 func isUpperChar(s byte) bool {
   firstChar := rune(s)
@@ -41,12 +50,27 @@ func maintainAllCaps(from, to string) string {
 // If the `from` string starts with a capital letter, it will return the `to`
 // starting with a capital letter as well. Otherwise, the `to` string is
 // returned unchanged.
-func maintainCapitalization(from, to string) string {
-  if isUpperChar(from[0]) {
-    return toSentenceCase(to)
-  } else {
-    return to
+//
+// If the `from` string consists of multiple words, the capitalization will be
+// maintained for every word in the string.
+func maintainCapitalization(fromPhrase, toPhrase string) string {
+  var sb strings.Builder
+
+  re := regexp.MustCompile(`\s+`)
+  fromWords, toWords := re.Split(fromPhrase, -1), re.Split(toPhrase, -1)
+  for i := 0; i < minLen(fromWords, toWords); i++ {
+    fromWord, toWord := fromWords[i], toWords[i]
+
+    sb.WriteString(" ")
+    if isUpperChar(fromWord[0]) {
+      x := toSentenceCase(toWord)
+      sb.WriteString(x)
+    } else {
+      sb.WriteString(toWord)
+    }
   }
+
+  return sb.String()[1:] // Omit the chracter, which is whitespace
 }
 
 // Format the `to` string based on the format of the `from` string.
