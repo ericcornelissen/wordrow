@@ -16,6 +16,9 @@ coverage:
 benchmark:
 	go test $(test_root) -bench=. -run=XXX
 
+lint:
+	npx markdownlint-cli -c .markdownlintrc.yml ./*.md ./**/*.md
+
 clean:
 	rm -rf $(coverage_file)
 	rm -rf $(executable_file)
