@@ -12,7 +12,7 @@ var reLetter = regexp.MustCompile("[A-Za-z]")
 
 
 // Get the minimum length of two (string) slices.
-func minLen(a, b []string) int {
+func minLen(a, b [][]string) int {
   if len(a) <= len(b) {
     return len(a)
   } else {
@@ -56,21 +56,24 @@ func maintainAllCaps(from, to string) string {
 func maintainCapitalization(fromPhrase, toPhrase string) string {
   var sb strings.Builder
 
-  re := regexp.MustCompile(`\s+`)
-  fromWords, toWords := re.Split(fromPhrase, -1), re.Split(toPhrase, -1)
-  for i := 0; i < minLen(fromWords, toWords); i++ {
-    fromWord, toWord := fromWords[i], toWords[i]
+  re := regexp.MustCompile(`([A-z]+)([^A-z]*)`)
+  fromWords := re.FindAllStringSubmatch(fromPhrase, -1)
+  toWords := re.FindAllStringSubmatch(toPhrase, -1)
 
-    sb.WriteString(" ")
+  for i := 0; i < minLen(fromWords, toWords); i++ {
+    fromWord, toWord := fromWords[i][1], toWords[i][1]
+    toDivider := toWords[i][2]
+
     if isUpperChar(fromWord[0]) {
       x := toSentenceCase(toWord)
       sb.WriteString(x)
     } else {
       sb.WriteString(toWord)
     }
+    sb.WriteString(toDivider)
   }
 
-  return sb.String()[1:] // Omit the chracter, which is whitespace
+  return sb.String()
 }
 
 // Format the `to` string based on the format of the `from` string.

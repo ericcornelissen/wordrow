@@ -126,6 +126,7 @@ func TestReplaceMaintainCapitalization(t *testing.T) {
   var wordmap wordmap.WordMap
   wordmap.AddOne("foo", "bar")
   wordmap.AddOne("hello world", "hey planet")
+  wordmap.AddOne("so called", "so-called")
 
   t.Run("single word mapping", func(t *testing.T) {
     source := "There once was a foo in the world. Foo did things."
@@ -141,6 +142,23 @@ func TestReplaceMaintainCapitalization(t *testing.T) {
     result := ReplaceAll(source, wordmap)
 
     expected := "Hey Planet!"
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("two word to hyphenated word mapping", func(t *testing.T) {
+    source := "A So called 'hypnotoad'"
+    result := ReplaceAll(source, wordmap)
+
+    expected := "A So-called 'hypnotoad'"
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+
+    source = "A So Called 'hypnotoad'"
+    result = ReplaceAll(source, wordmap)
+
+    expected = "A So-Called 'hypnotoad'"
     if result != expected {
       reportIncorrectReplacement(t, expected, result)
     }
