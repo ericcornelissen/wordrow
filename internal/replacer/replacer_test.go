@@ -109,6 +109,45 @@ func TestReplaceMultipleWordsInWordMap(t *testing.T) {
   })
 }
 
+func TestReplaceWhiteSpaceInPhrase(t *testing.T) {
+  t.Run("single space", func(t *testing.T) {
+    from, to := "foo bar", "foobar"
+
+    var wordmap wordmap.WordMap
+    wordmap.AddOne(from, to)
+
+    source := from
+    result := ReplaceAll(source, wordmap)
+    if result != to {
+      reportIncorrectReplacement(t, to, result)
+    }
+
+    source = "foo  bar"
+    result = ReplaceAll(source, wordmap)
+    if result != source {
+      reportIncorrectReplacement(t, source, result)
+    }
+  })
+  t.Run("mutliple spaces", func(t *testing.T) {
+    from, to := "foo  bar", "foobar"
+
+    var wordmap wordmap.WordMap
+    wordmap.AddOne(from, to)
+
+    source := from
+    result := ReplaceAll(source, wordmap)
+    if result != to {
+      reportIncorrectReplacement(t, to, result)
+    }
+
+    source = "foo bar"
+    result = ReplaceAll(source, wordmap)
+    if result != source {
+      reportIncorrectReplacement(t, source, result)
+    }
+  })
+}
+
 func TestReplaceIgnoreMappingCapitalization(t *testing.T) {
   var wordmap wordmap.WordMap
   wordmap.AddOne("Foo", "Bar")

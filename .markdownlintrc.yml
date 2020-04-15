@@ -21,7 +21,6 @@ MD029:
   style: one
 MD035:
   style: ---
-MD036: false  # Allow using `**Example X**`
 MD044:
   code_blocks: false
   names:
