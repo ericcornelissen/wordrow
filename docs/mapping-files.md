@@ -211,5 +211,5 @@ Then, a text containing the phrase _"a duck"_ will be transformed as follows.
 + I see an owl, is it your owl?
 ```
 
-[mapping formats]: /mapping-formats.md
-[*wordrow* CLI]: /cli.md
+[mapping formats]: ./mapping-formats.md
+[*wordrow* CLI]: ./cli.md

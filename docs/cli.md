@@ -106,4 +106,4 @@ Then, `input-alt.txt` will be updated as follows:
 ```
 
 [glob]: https://mincong.io/2019/04/16/glob-expression-understanding/
-[mapping file]: /mapping-files.md
+[mapping file]: ./mapping-files.md
