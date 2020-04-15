@@ -221,3 +221,74 @@ func TestReplaceByLongerString(t *testing.T) {
     }
   })
 }
+
+func TestReplacePhraseNewlineInSource(t *testing.T) {
+  var wordmap wordmap.WordMap
+  wordmap.AddOne("foo bar", "foobar")
+  wordmap.AddOne("hello world", "hey planet")
+  wordmap.AddOne("hello beautiful world", "hey planet")
+  wordmap.AddOne("a dog", "an amazing dog")
+
+  t.Run("newline without indentation", func(t *testing.T) {
+    source := "lorem ipsum hello\nworld dolor sit amet."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "lorem ipsum hey\nplanet dolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("newline with indentation", func(t *testing.T) {
+    source := "lorem ipsum hello\n  world dolor sit amet."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "lorem ipsum hey\n  planet dolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("space in from but not in to", func(t *testing.T) {
+    source := "lorem ipsum foo\nbar dolor sit amet."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "lorem ipsum foobar\ndolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("space in from but not in to, with indentation", func(t *testing.T) {
+    source := "lorem ipsum foo\n  bar dolor sit amet."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "lorem ipsum foobar\n  dolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("less spaces in from than in to", func(t *testing.T) {
+    source := "lorem ipsum a\ndog world dolor sit amet."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "lorem ipsum an\namazing dog dolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("more spaces in from than in to", func(t *testing.T) {
+    source := "lorem ipsum hello\nbeautiful world dolor sit amet."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "lorem ipsum hey\nplanet dolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+
+    source = "lorem ipsum hello beautiful\nworld dolor sit amet."
+    result = ReplaceAll(source, wordmap)
+
+    expected = "lorem ipsum hey planet\ndolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+}
