@@ -19,7 +19,7 @@ const (
   // Log error messages and higher.
   ERROR
 
-  // Only log fatal crashes.
+  // Log only fatal crashes.
   FATAL
 )
 

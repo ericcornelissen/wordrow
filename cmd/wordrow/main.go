@@ -43,9 +43,18 @@ func run(args cli.Arguments) {
   }
 }
 
+func setLogLevel(args cli.Arguments) {
+  if args.Silent {
+    logger.SetLogLevel(logger.ERROR)
+  } else if args.Verbose {
+    logger.SetLogLevel(logger.DEBUG)
+  }
+}
+
 func main() {
   shouldRun, args := cli.ParseArgs(os.Args)
   if shouldRun {
+    setLogLevel(args)
     run(args)
   }
 }
