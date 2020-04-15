@@ -1,4 +1,4 @@
-package dicts
+package wordmap
 
 import "strings"
 
@@ -32,9 +32,18 @@ func (m *WordMap) AddFrom(other WordMap) {
 }
 
 // Add a single mapping from one word to another to the WordMap.
+//
+// This function panics if an empty string is provided as first or second
+// argument.
 func (m *WordMap) AddOne(from, to string) {
-  m.from = append(m.from, strings.TrimSpace(strings.ToLower(from)))
-  m.to = append(m.to, strings.TrimSpace(strings.ToLower(to)))
+  fromValue := strings.TrimSpace(strings.ToLower(from))
+  toValue := strings.TrimSpace(strings.ToLower(to))
+  if fromValue == "" || toValue == "" {
+    panic(1)
+  }
+
+  m.from = append(m.from, fromValue)
+  m.to = append(m.to, toValue)
 }
 
 // Check whether the WordMap contains a mapping from a certain string. Note that
@@ -81,14 +90,18 @@ func (m *WordMap) Invert() {
 }
 
 // Get the contents of the WordMap as an iterable slice.
-func (m *WordMap) Iter() []Mapping {
-  var mapping []Mapping
-  for i := 0; i < len(m.from); i++ {
-    oneMapping := Mapping{m.from[i], m.to[i]}
-    mapping = append(mapping, oneMapping)
-  }
+func (m *WordMap) Iter() (chan Mapping) {
+  ch := make(chan Mapping)
 
-  return mapping
+  go func() {
+    defer close(ch)
+
+    for i := 0; i < len(m.from); i++ {
+      ch <- Mapping{m.from[i], m.to[i]}
+    }
+  }()
+
+  return ch
 }
 
 // Get the size of the WordMap. I.e. the number of words mapped from some value

@@ -1,12 +1,21 @@
 package replacer
 
+import "fmt"
 import "testing"
 
-import "github.com/ericcornelissen/wordrow/internal/dicts"
+import "github.com/ericcornelissen/wordrow/internal/wordmap"
 
 
-func TestEmptyString(t *testing.T) {
-  var wordmap dicts.WordMap
+func reportIncorrectReplacement(t *testing.T, expected, actual string) {
+  t.Errorf(`Replacement did not work as intended
+    expected : '%s'
+    got      : '%s'
+  `, expected, actual)
+}
+
+
+func TestReplaceEmptyString(t *testing.T) {
+  var wordmap wordmap.WordMap
 
   source := ""
   result := ReplaceAll(source, wordmap)
@@ -16,75 +25,67 @@ func TestEmptyString(t *testing.T) {
   }
 }
 
-func TestEmptyWordmap(t *testing.T) {
-  var wordmap dicts.WordMap
+func TestReplaceEmptyWordmap(t *testing.T) {
+  var wordmap wordmap.WordMap
 
   source := "Hello world!"
   result := ReplaceAll(source, wordmap)
 
   if result != source {
-    t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", source, result)
+    reportIncorrectReplacement(t, source, result)
   }
 }
 
-func TestJustOneWord(t *testing.T) {
+func TestReplaceOneWordInWordMap(t *testing.T) {
   from, to := "foo", "bar"
 
-  var wordmap dicts.WordMap
+  var wordmap wordmap.WordMap
   wordmap.AddOne(from, to)
 
-  t.Run("word is in the WordMap", func(t *testing.T) {
+  t.Run("source is 'from' in the WordMap", func(t *testing.T) {
     source := from
     result := ReplaceAll(source, wordmap)
 
     if result != to {
-      t.Errorf("Result was not as expected, got: '%s'", result)
+      reportIncorrectReplacement(t, to, result)
     }
   })
-  t.Run("word is not in the WordMap", func(t *testing.T) {
+  t.Run("source is 'to' in the WordMap", func(t *testing.T) {
     source := to
     result := ReplaceAll(source, wordmap)
 
-    if result != to {
-      t.Errorf("Result was not as expected, got: '%s'", result)
+    if result != source {
+      reportIncorrectReplacement(t, to, result)
     }
   })
-}
-
-func TestOneWordOnceInText(t *testing.T) {
-  var wordmap dicts.WordMap
-  wordmap.AddOne("email", "e-mail")
-
   t.Run("One line", func(t *testing.T) {
-    source := "This is an email."
+    template := "This is a %s."
+    source := fmt.Sprintf(template, from)
     result := ReplaceAll(source, wordmap)
 
-    expected := "This is an e-mail."
+    expected := fmt.Sprintf(template, to)
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, expected, result)
     }
   })
   t.Run("Multiple lines", func(t *testing.T) {
-    source := `
-      This is an email. And this
-      is an email as well. Emails
-      are amazing, right?
+    template := `
+      This is a %s. And this is
+      an %s as well. Aren't %ss
+      amazing!
     `
+    source := fmt.Sprintf(template, from, from, from)
     result := ReplaceAll(source, wordmap)
 
-    expected := `
-      This is an e-mail. And this
-      is an e-mail as well. E-mails
-      are amazing, right?
-    `
+    expected := fmt.Sprintf(template, to, to, to)
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, expected, result)
     }
   })
 }
 
-func TestMultipleWords(t *testing.T) {
-  var wordmap dicts.WordMap
+func TestReplaceMultipleWordsInWordMap(t *testing.T) {
+  var wordmap wordmap.WordMap
   wordmap.AddOne("foo", "bar")
   wordmap.AddOne("color", "colour")
 
@@ -94,7 +95,7 @@ func TestMultipleWords(t *testing.T) {
 
     expected := "A bar is a creature in this world. It can change its colour."
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, expected, result)
     }
   })
   t.Run("Only one word", func(t *testing.T) {
@@ -103,13 +104,52 @@ func TestMultipleWords(t *testing.T) {
 
     expected := "A bar is a creature in this world."
     if result != expected {
-      t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+      reportIncorrectReplacement(t, expected, result)
     }
   })
 }
 
-func TestIgnoreInputCapitalization(t *testing.T) {
-  var wordmap dicts.WordMap
+func TestReplaceWhiteSpaceInPhrase(t *testing.T) {
+  t.Run("single space", func(t *testing.T) {
+    from, to := "foo bar", "foobar"
+
+    var wordmap wordmap.WordMap
+    wordmap.AddOne(from, to)
+
+    source := from
+    result := ReplaceAll(source, wordmap)
+    if result != to {
+      reportIncorrectReplacement(t, to, result)
+    }
+
+    source = "foo  bar"
+    result = ReplaceAll(source, wordmap)
+    if result != source {
+      reportIncorrectReplacement(t, source, result)
+    }
+  })
+  t.Run("mutliple spaces", func(t *testing.T) {
+    from, to := "foo  bar", "foobar"
+
+    var wordmap wordmap.WordMap
+    wordmap.AddOne(from, to)
+
+    source := from
+    result := ReplaceAll(source, wordmap)
+    if result != to {
+      reportIncorrectReplacement(t, to, result)
+    }
+
+    source = "foo bar"
+    result = ReplaceAll(source, wordmap)
+    if result != source {
+      reportIncorrectReplacement(t, source, result)
+    }
+  })
+}
+
+func TestReplaceIgnoreMappingCapitalization(t *testing.T) {
+  var wordmap wordmap.WordMap
   wordmap.AddOne("Foo", "Bar")
 
   source := "There once was a foo in the world."
@@ -117,12 +157,12 @@ func TestIgnoreInputCapitalization(t *testing.T) {
 
   expected := "There once was a bar in the world."
   if result != expected {
-    t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    reportIncorrectReplacement(t, expected, result)
   }
 }
 
-func TestMaintainCapitalization(t *testing.T) {
-  var wordmap dicts.WordMap
+func TestReplaceMaintainCapitalization(t *testing.T) {
+  var wordmap wordmap.WordMap
   wordmap.AddOne("foo", "bar")
 
   source := "There once was a foo in the world. Foo did things."
@@ -130,38 +170,12 @@ func TestMaintainCapitalization(t *testing.T) {
 
   expected := "There once was a bar in the world. Bar did things."
   if result != expected {
-    t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    reportIncorrectReplacement(t, expected, result)
   }
 }
 
-func TestWordWithSuffix(t *testing.T) {
-  var wordmap dicts.WordMap
-  wordmap.AddOne("color", "colour")
-
-  source := "The vase is colored beautifully"
-  result := ReplaceAll(source, wordmap)
-
-  expected := "The vase is coloured beautifully"
-  if result != expected {
-    t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
-  }
-}
-
-func TestWordWithPrefix(t *testing.T) {
-  var wordmap dicts.WordMap
-  wordmap.AddOne("mail", "email")
-
-  source := "I send them a mail. And later another email."
-  result := ReplaceAll(source, wordmap)
-
-  expected := "I send them a email. And later another email."
-  if result != expected {
-    t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
-  }
-}
-
-func TestWordAllCaps(t *testing.T) {
-  var wordmap dicts.WordMap
+func TestReplaceWordAllCaps(t *testing.T) {
+  var wordmap wordmap.WordMap
   wordmap.AddOne("foo", "bar")
 
   source := "This is the FOO."
@@ -169,13 +183,80 @@ func TestWordAllCaps(t *testing.T) {
 
   expected := "This is the BAR."
   if result != expected {
-    t.Errorf("Replacement did not work as intended\n expected : '%s'\n got      : '%s'", expected, result)
+    reportIncorrectReplacement(t, expected, result)
   }
 }
 
+func TestReplaceWordWithSuffix(t *testing.T) {
+  var wordmap wordmap.WordMap
+  wordmap.AddOne("color", "colour")
 
-func BenchmarkReplaceOne(b *testing.B) {
-  for n := 0; n < b.N; n++ {
-    replaceOne("the word foo appears foo times in this foo", "foo", "bar")
+  source := "The vase is colored beautifully"
+  result := ReplaceAll(source, wordmap)
+
+  expected := "The vase is coloured beautifully"
+  if result != expected {
+    reportIncorrectReplacement(t, expected, result)
   }
+}
+
+func TestReplaceWordWithPrefix(t *testing.T) {
+  var wordmap wordmap.WordMap
+  wordmap.AddOne("mail", "email")
+
+  source := "I send them a mail. And later another email."
+  result := ReplaceAll(source, wordmap)
+
+  expected := "I send them a email. And later another email."
+  if result != expected {
+    reportIncorrectReplacement(t, expected, result)
+  }
+}
+
+func TestReplaceByShorterString(t *testing.T) {
+  var wordmap wordmap.WordMap
+  wordmap.AddOne("fooo", "foo")
+
+  t.Run("one instance of word", func(t *testing.T) {
+    source := "This is a fooo."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "This is a foo."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("multiple instances of word", func(t *testing.T) {
+    source := "This is a FOOO and this is a fooo as well."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "This is a FOO and this is a foo as well."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+}
+
+func TestReplaceByLongerString(t *testing.T) {
+  var wordmap wordmap.WordMap
+  wordmap.AddOne("fo", "foo")
+
+  t.Run("one instance of word", func(t *testing.T) {
+    source := "This is a fo."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "This is a foo."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("multiple instances of word", func(t *testing.T) {
+    source := "This is a FO and this is a fo as well."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "This is a FOO and this is a foo as well."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
 }

@@ -4,11 +4,28 @@ import "regexp"
 import "strings"
 import "unicode"
 
-import "github.com/ericcornelissen/wordrow/internal/dicts"
+import "github.com/ericcornelissen/wordrow/internal/wordmap"
 
 
 // The regular expression for a single letter.
 var reLetter = regexp.MustCompile("[A-Za-z]")
+
+
+// Check if a character (as byte) is an uppercase letter.
+func isUpperChar(s byte) bool {
+  firstChar := rune(s)
+  return unicode.IsUpper(firstChar)
+}
+
+// Convert a string to sentence case. I.e. make the first letter in the string
+// upper case.
+func toSentenceCase(s string) string {
+  if len(s) > 0 {
+    return strings.ToUpper(s[:1]) + s[1:]
+  } else {
+    return s
+  }
+}
 
 
 // If the `from` string is all caps, it will return `to` as all caps as well.
@@ -25,9 +42,8 @@ func maintainAllCaps(from, to string) string {
 // starting with a capital letter as well. Otherwise, the `to` string is
 // returned unchanged.
 func maintainCapitalization(from, to string) string {
-  firstChar := []rune(from)[0]
-  if unicode.IsUpper(firstChar) {
-    return strings.ToUpper(to[:1]) + to[1:]
+  if isUpperChar(from[0]) {
+    return toSentenceCase(to)
   } else {
     return to
   }
@@ -82,8 +98,8 @@ func replaceOne(s string, from, to string) string {
 
 
 // Replace substrings of `s` according to the mapping in `wordmap`.
-func ReplaceAll(s string, wordmap dicts.WordMap) string {
-  for _, mapping := range wordmap.Iter() {
+func ReplaceAll(s string, wordmap wordmap.WordMap) string {
+  for mapping := range wordmap.Iter() {
     s = replaceOne(s, mapping.From, mapping.To)
   }
 

@@ -1,4 +1,4 @@
-package dicts
+package wordmap
 
 import "strings"
 
@@ -13,7 +13,13 @@ func parseRow(row string, wordmap *WordMap) error {
     return &parseError{"Unexpected row format", row}
   }
 
-  wordmap.AddOne(rowValues[0], rowValues[1])
+  fromValue := strings.TrimSpace(rowValues[0])
+  toValue := strings.TrimSpace(rowValues[1])
+  if fromValue == "" || toValue == "" {
+    return &parseError{"Missing value", row}
+  }
+
+  wordmap.AddOne(fromValue, toValue)
   return nil
 }
 

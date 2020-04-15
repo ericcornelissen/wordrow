@@ -1,4 +1,4 @@
-package dicts
+package wordmap
 
 import "strings"
 import "testing"
@@ -63,27 +63,25 @@ func TestCsvMultipleRows(t *testing.T) {
   }
 }
 
-func TestCsvEmptyToValue(t *testing.T) {
-  csv := `cat,`
-  wordmap, err := parseCsvFile(&csv)
+func TestCsvEmptyColumnValues(t *testing.T) {
+  t.Run("Empty from value", func(t *testing.T) {
+    csv := `,bar`
 
-  if err != nil {
-    t.Fatalf("Error should be nil for this test (Error: %s)", err)
-  }
+    _, err := parseCsvFile(&csv)
 
-  if wordmap.Size() != 1 {
-    t.Fatalf("The WordMap size should be 1 (was %d)", wordmap.Size())
-  }
+    if err == nil {
+      t.Errorf("Error should be set if the from value is empty")
+    }
+  })
+  t.Run("Empty to value", func(t *testing.T) {
+    csv := `foo,`
 
-  actual, expected := wordmap.GetFrom(0), "cat"
-  if actual != expected {
-    t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-  }
+    _, err := parseCsvFile(&csv)
 
-  actual, expected = wordmap.GetTo(0), ""
-  if actual != expected {
-    t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
-  }
+    if err == nil {
+      t.Errorf("Error should be set if the to value is empty")
+    }
+  })
 }
 
 func TestCsvIgnoreEmptyLines(t *testing.T) {

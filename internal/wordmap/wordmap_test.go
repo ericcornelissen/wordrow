@@ -1,4 +1,4 @@
-package dicts
+package wordmap
 
 import "testing"
 
@@ -28,6 +28,31 @@ func TestWordMapAddOne(t *testing.T)  {
   if actual != expected {
     t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
   }
+}
+
+func TestWordMapEmptyValues(t *testing.T) {
+  var wordmap WordMap
+
+  t.Run("Empty from value", func(t *testing.T) {
+    defer func() {
+      if r := recover(); r == nil {
+        t.Error("AddOne did not need recovery, but should have")
+      }
+    }()
+
+    wordmap.AddOne("", "bar")
+    t.Error("AddOne should have panicked but did not")
+  })
+  t.Run("Empty to value", func(t *testing.T) {
+    defer func() {
+      if r := recover(); r == nil {
+        t.Error("AddOne did not need recovery, but should have")
+      }
+    }()
+
+    wordmap.AddOne("foo", "")
+    t.Error("AddOne should have panicked but did not")
+  })
 }
 
 func TestWordMapAddFrom(t *testing.T)  {
@@ -148,13 +173,18 @@ func TestWordMapIter(t *testing.T) {
 
   expectedFrom := []string{"cat", "horse"}
   expectedTo := []string{"dog", "zebra"}
-  for i, mapping := range wordmap.Iter() {
+
+  i := 0
+  for mapping := range wordmap.Iter() {
     if mapping.From != expectedFrom[i] {
       t.Errorf("Incorrect from-value at index %d (%s != %s)", i, mapping.From, expectedFrom[i])
     }
+
     if mapping.To != expectedTo[i] {
       t.Errorf("Incorrect to-value at index %d (%s != %s)", i, mapping.To, expectedTo[i])
     }
+
+    i++
   }
 }
 
