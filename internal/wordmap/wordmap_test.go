@@ -173,13 +173,17 @@ func TestWordMapIter(t *testing.T) {
 
   expectedFrom := []string{"cat", "horse"}
   expectedTo := []string{"dog", "zebra"}
-  for i, mapping := range wordmap.Iter() {
+
+  i := 0
+  for mapping := range wordmap.Iter() {
     if mapping.from != expectedFrom[i] {
-      t.Errorf("Incorrect from-value at index %d (%s != %s)", i, mapping.from, expectedFrom[i])
+      t.Errorf("Incorrect from-value at index %d (got %s)", i, mapping.from)
     }
     if mapping.to != expectedTo[i] {
-      t.Errorf("Incorrect to-value at index %d (%s != %s)", i, mapping.to, expectedTo[i])
+      t.Errorf("Incorrect to-value at index %d (got %s)", i, mapping.to)
     }
+
+    i++
   }
 }
 

@@ -5,9 +5,21 @@ is based on [Keep a Changelog].
 
 ## [Unreleased]
 
+### Features
+
 - Add support for globs in arguments. ([#9])
 - Add support for prefix and suffix matching. ([#22])
 
+### Bug Fixes
+
+- Fix issues due to empty values in mapping files. ([#14])
+
+### Performance
+
+- Improve performance of word replacement. ([#23])
+
 [keep a changelog]: https://keepachangelog.com/en/1.0.0/
 [#9]: https://github.com/ericcornelissen/wordrow/pull/9
+[#14]: https://github.com/ericcornelissen/wordrow/pull/14
 [#22]: https://github.com/ericcornelissen/wordrow/pull/22
+[#23]: https://github.com/ericcornelissen/wordrow/pull/23

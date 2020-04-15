@@ -32,7 +32,7 @@ func TestReplaceEmptyWordmap(t *testing.T) {
   result := ReplaceAll(source, wordmap)
 
   if result != source {
-    reportIncorrectReplacement(t, result, source)
+    reportIncorrectReplacement(t, source, result)
   }
 }
 
@@ -47,7 +47,7 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
     result := ReplaceAll(source, wordmap)
 
     if result != to {
-      reportIncorrectReplacement(t, result, to)
+      reportIncorrectReplacement(t, to, result)
     }
   })
   t.Run("source is 'to' in the WordMap", func(t *testing.T) {
@@ -55,7 +55,7 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
     result := ReplaceAll(source, wordmap)
 
     if result != source {
-      reportIncorrectReplacement(t, result, to)
+      reportIncorrectReplacement(t, to, result)
     }
   })
   t.Run("One line", func(t *testing.T) {
@@ -105,6 +105,45 @@ func TestReplaceMultipleWordsInWordMap(t *testing.T) {
     expected := "A bar is a creature in this world."
     if result != expected {
       reportIncorrectReplacement(t, expected, result)
+    }
+  })
+}
+
+func TestReplaceWhiteSpaceInPhrase(t *testing.T) {
+  t.Run("single space", func(t *testing.T) {
+    from, to := "foo bar", "foobar"
+
+    var wordmap wordmap.WordMap
+    wordmap.AddOne(from, to)
+
+    source := from
+    result := ReplaceAll(source, wordmap)
+    if result != to {
+      reportIncorrectReplacement(t, to, result)
+    }
+
+    source = "foo  bar"
+    result = ReplaceAll(source, wordmap)
+    if result != source {
+      reportIncorrectReplacement(t, source, result)
+    }
+  })
+  t.Run("mutliple spaces", func(t *testing.T) {
+    from, to := "foo  bar", "foobar"
+
+    var wordmap wordmap.WordMap
+    wordmap.AddOne(from, to)
+
+    source := from
+    result := ReplaceAll(source, wordmap)
+    if result != to {
+      reportIncorrectReplacement(t, to, result)
+    }
+
+    source = "foo bar"
+    result = ReplaceAll(source, wordmap)
+    if result != source {
+      reportIncorrectReplacement(t, source, result)
     }
   })
 }
