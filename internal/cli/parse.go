@@ -66,10 +66,8 @@ func parseArgumentAsOption(
       arguments.Invert = true
     case silentOption, silentOptionAlias:
       arguments.Silent = true
-      logger.Warningf("The %s argument is not yet supported", option)
     case verboseOption, verboseOptionAlias:
       arguments.Verbose = true
-      logger.Warningf("The %s argument is not yet supported", option)
 
     // Options
     case configOption, configOptionAlias:
