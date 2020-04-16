@@ -95,22 +95,22 @@ func TestGetReplacement(t *testing.T) {
   t.Run("no prefix, no suffix", func(t *testing.T) {
     mapping := Mapping{from, to}
 
-    result := mapping.GetReplacement("", "")
+    result := mapping.getReplacement("", "")
     if result != to {
       t.Errorf("Unexpected replacement given no prefix or suffix (got '%s')", result)
     }
 
-    result = mapping.GetReplacement("foo", "")
+    result = mapping.getReplacement("foo", "")
     if result != to {
       t.Errorf("Unexpected replacement given a prefix but no suffix (got '%s')", result)
     }
 
-    result = mapping.GetReplacement("", "bar")
+    result = mapping.getReplacement("", "bar")
     if result != to {
       t.Errorf("Unexpected replacement given no prefix but a suffix (got '%s')", result)
     }
 
-    result = mapping.GetReplacement("foo", "bar")
+    result = mapping.getReplacement("foo", "bar")
     if result != to {
       t.Errorf("Unexpected replacement given a prefix and suffix (got '%s')", result)
     }
@@ -118,22 +118,22 @@ func TestGetReplacement(t *testing.T) {
   t.Run("with prefix, no suffix", func(t *testing.T) {
     mapping := Mapping{from, "-" + to}
 
-    result := mapping.GetReplacement("", "")
+    result := mapping.getReplacement("", "")
     if result != to {
       t.Errorf("Unexpected replacement given no prefix or suffix (got '%s')", result)
     }
 
-    result = mapping.GetReplacement("foo", "")
+    result = mapping.getReplacement("foo", "")
     if result != "foo" + to {
       t.Errorf("Unexpected replacement given a prefix but no suffix (got '%s')", result)
     }
 
-    result = mapping.GetReplacement("", "bar")
+    result = mapping.getReplacement("", "bar")
     if result != to {
       t.Errorf("Unexpected replacement given no prefix but a suffix (got '%s')", result)
     }
 
-    result = mapping.GetReplacement("foo", "bar")
+    result = mapping.getReplacement("foo", "bar")
     if result != "foo" + to {
       t.Errorf("Unexpected replacement given a prefix and suffix (got '%s')", result)
     }
@@ -141,22 +141,22 @@ func TestGetReplacement(t *testing.T) {
   t.Run("no prefix, with suffix", func(t *testing.T) {
     mapping := Mapping{from, to + "-"}
 
-    result := mapping.GetReplacement("", "")
+    result := mapping.getReplacement("", "")
     if result != to {
       t.Errorf("Unexpected replacement given no prefix or suffix (got '%s')", result)
     }
 
-    result = mapping.GetReplacement("foo", "")
+    result = mapping.getReplacement("foo", "")
     if result != to {
       t.Errorf("Unexpected replacement given a prefix but no suffix (got '%s')", result)
     }
 
-    result = mapping.GetReplacement("", "bar")
+    result = mapping.getReplacement("", "bar")
     if result != to + "bar" {
       t.Errorf("Unexpected replacement given no prefix but a suffix (got '%s')", result)
     }
 
-    result = mapping.GetReplacement("foo", "bar")
+    result = mapping.getReplacement("foo", "bar")
     if result != to + "bar" {
       t.Errorf("Unexpected replacement given a prefix and suffix (got '%s')", result)
     }
@@ -164,22 +164,22 @@ func TestGetReplacement(t *testing.T) {
   t.Run("with prefix, with suffix", func(t *testing.T) {
     mapping := Mapping{from, "-" + to + "-"}
 
-    result := mapping.GetReplacement("", "")
+    result := mapping.getReplacement("", "")
     if result != to {
       t.Errorf("Unexpected replacement given no prefix or suffix (got '%s')", result)
     }
 
-    result = mapping.GetReplacement("foo", "")
+    result = mapping.getReplacement("foo", "")
     if result != "foo" + to {
       t.Errorf("Unexpected replacement given a prefix but no suffix (got '%s')", result)
     }
 
-    result = mapping.GetReplacement("", "bar")
+    result = mapping.getReplacement("", "bar")
     if result != to + "bar" {
       t.Errorf("Unexpected replacement given no prefix but a suffix (got '%s')", result)
     }
 
-    result = mapping.GetReplacement("foo", "bar")
+    result = mapping.getReplacement("foo", "bar")
     if result != "foo" + to + "bar" {
       t.Errorf("Unexpected replacement given a prefix and suffix (got '%s')", result)
     }
@@ -211,6 +211,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: 0,
           End: len(from),
         },
@@ -218,6 +220,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: len(from) + 8,
           End: len(from) + 8 + len(from),
         },
@@ -249,6 +253,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: 0,
           End: len(from),
         },
@@ -280,6 +286,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: len(from) + 11,
           End: len(from) + 11 + len(from),
         },
@@ -335,6 +343,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: 10,
           End: 10 + len(from),
         },
@@ -342,6 +352,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: len(from) + 32,
           End: len(from) + 32 + len(from),
         },
@@ -373,6 +385,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: 10,
           End: 10 + len(from),
         },
@@ -380,6 +394,8 @@ func TestMatch(t *testing.T) {
           Full: "pre" + from,
           Word: from,
           Replacement: "pre" + to,
+          Prefix: "pre",
+          Suffix: "",
           Start: len(from) + 32,
           End: len(from) + 35 + len(from),
         },
@@ -411,6 +427,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: len(from) + 35,
           End: len(from) + 35 + len(from),
         },
@@ -442,6 +460,8 @@ func TestMatch(t *testing.T) {
           Full: "pre" + from,
           Word: from,
           Replacement: "pre" + to,
+          Prefix: "pre",
+          Suffix: "",
           Start: 10,
           End: 13 + len(from),
         },
@@ -489,6 +509,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: 10,
           End: 10 + len(from),
         },
@@ -496,6 +518,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: len(from) + 32,
           End: len(from) + 32 + len(from),
         },
@@ -527,6 +551,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: 10,
           End: 10 + len(from),
         },
@@ -558,6 +584,8 @@ func TestMatch(t *testing.T) {
           Full: from + "suf",
           Word: from,
           Replacement: to + "suf",
+          Prefix: "",
+          Suffix: "suf",
           Start: 10,
           End: 13 + len(from),
         },
@@ -565,6 +593,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: len(from) + 35,
           End: len(from) + 35 + len(from),
         },
@@ -596,6 +626,8 @@ func TestMatch(t *testing.T) {
           Full: from + "suf",
           Word: from,
           Replacement: to + "suf",
+          Prefix: "",
+          Suffix: "suf",
           Start: 35 + len(from),
           End: 38 + len(from) + len(from),
         },
@@ -643,6 +675,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: 10,
           End: 10 + len(from),
         },
@@ -650,6 +684,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: len(from) + 32,
           End: len(from) + 32 + len(from),
         },
@@ -681,6 +717,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: 10,
           End: 10 + len(from),
         },
@@ -688,6 +726,8 @@ func TestMatch(t *testing.T) {
           Full: "pre" + from,
           Word: from,
           Replacement: "pre" + to,
+          Prefix: "pre",
+          Suffix: "",
           Start: len(from) + 32,
           End: len(from) + 35 + len(from),
         },
@@ -719,6 +759,8 @@ func TestMatch(t *testing.T) {
           Full: from + "suf",
           Word: from,
           Replacement: to + "suf",
+          Prefix: "",
+          Suffix: "suf",
           Start: 10,
           End: 13 + len(from),
         },
@@ -726,6 +768,8 @@ func TestMatch(t *testing.T) {
           Full: from,
           Word: from,
           Replacement: to,
+          Prefix: "",
+          Suffix: "",
           Start: len(from) + 35,
           End: len(from) + 35 + len(from),
         },
@@ -757,6 +801,8 @@ func TestMatch(t *testing.T) {
             Full: "pre" + from,
             Word: from,
             Replacement: "pre" + to,
+            Prefix: "pre",
+            Suffix: "",
             Start: 10,
             End: 13 + len(from),
           },
@@ -764,6 +810,8 @@ func TestMatch(t *testing.T) {
             Full: from + "suf",
             Word: from,
             Replacement: to + "suf",
+            Prefix: "",
+            Suffix: "suf",
             Start: 35 + len(from),
             End: 38 + len(from) + len(from),
           },
