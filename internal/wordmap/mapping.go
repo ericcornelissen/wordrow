@@ -4,9 +4,7 @@ import "fmt"
 import "regexp"
 
 
-// Check if a string ends with the suffix symbol. The first return value is
-// a boolean indicating this; the second return value is the input string minus
-// the last character iff it is the suffix symbol.
+// Check if a string ends with the suffix symbol.
 func endsWithSuffixSymbol(s string) bool {
   return s[len(s) - 1:] == "-"
 }
@@ -27,9 +25,7 @@ func removePrefixAndSuffixSymbols(s string) string {
   return value
 }
 
-// Check if a string starts with the prefix symbol. The first return value is
-// a boolean indicating this; the second return value is the input string minus
-// the first character iff it is the prefix symbol.
+// Check if a string starts with the prefix symbol.
 func startsWithPrefixSymbol(s string) bool {
   return s[0:1] == "-"
 }
@@ -101,21 +97,10 @@ func (mapping *Mapping) GetTo() string {
   return removePrefixAndSuffixSymbols(mapping.to)
 }
 
-// TODO
-func (mapping *Mapping) isAllowedWith(prefix, suffix string) bool {
-  if !mapping.includePrefix() && prefix != "" {
-    return false
-  }
-
-  if !mapping.includeSuffix() && suffix != "" {
-    return false
-  }
-
-  return true
-}
-
-// Get the replacement given a prefix and suffix. The return value will be the
-// "to" value including, if necessary, the prefix and suffix.
+// Get the replacement value, given a prefix and suffix. The return value will
+// be the "to" value including, if necessary, the prefix and suffix.
+//
+// The prefix and suffix can always be an empty string.
 func (mapping *Mapping) GetReplacement(prefix, suffix string) string {
   replacement := mapping.GetTo()
 
@@ -135,6 +120,8 @@ func (mapping *Mapping) Match(s string) (chan Match) {
   ch := make(chan Match)
 
   go func() {
+    defer close(ch)
+
     rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, mapping.GetFrom())
     expr := regexp.MustCompile(rawExpr)
     for _, indices := range expr.FindAllStringSubmatchIndex(s, -1) {
@@ -155,12 +142,16 @@ func (mapping *Mapping) Match(s string) (chan Match) {
         End: fullEnd,
       }
 
-      if mapping.isAllowedWith(prefix, suffix) {
-        ch <- match
+      if !mapping.includePrefix() && prefix != "" {
+        continue
       }
-    }
 
-    close(ch)
+      if !mapping.includeSuffix() && suffix != "" {
+        continue
+      }
+
+      ch <- match
+    }
   }()
 
   return ch

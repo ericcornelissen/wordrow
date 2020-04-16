@@ -200,7 +200,31 @@ func TestReplaceWordWithPrefixes(t *testing.T) {
       reportIncorrectReplacement(t, expected, result)
     }
   })
+  t.Run("replace only if preceeded by another word", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("- dogs", "- cats")
+
+    source := "Dogs are nice and dogs are cool."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "Dogs are nice and cats are cool."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
   t.Run("omit prefix", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("-phone", "phone")
+
+    source := "That cat has a telephone."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "That cat has a phone."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("omit the preceding word", func(t *testing.T) {
     var wordmap wordmap.WordMap
     wordmap.AddOne("- people", "people")
 
@@ -219,22 +243,109 @@ func TestReplaceWordWithSuffixes(t *testing.T) {
     var wordmap wordmap.WordMap
     wordmap.AddOne("color-", "colour-")
 
-    source := "The Colors are amazing on this colorful painting. What is your favourite color?"
+    source := "The colors on this colorful painting are amazing."
     result := ReplaceAll(source, wordmap)
 
-    expected := "The Colours are amazing on this colourful painting. What is your favourite colour?"
+    expected := "The colours on this colourful painting are amazing."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("replace only if succeeded by another word", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("dog -", "cat -")
+
+    source := "I have a dog and you have a dog."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "I have a cat and you have a dog."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("maintain the succeeding word", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("very -", "super -")
+
+    source := "This is a very special day."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "This is a super special day."
     if result != expected {
       reportIncorrectReplacement(t, expected, result)
     }
   })
   t.Run("omit suffix", func(t *testing.T) {
     var wordmap wordmap.WordMap
-    wordmap.AddOne("hack-", "hackers")
+    wordmap.AddOne("dog-", "dog")
 
-    source := "Some hackz0rs are good while some hacknerds are evil."
+    source := "I have a dog, but you have a small doggy."
     result := ReplaceAll(source, wordmap)
 
-    expected := "Some hackers are good while some hackers are evil."
+    expected := "I have a dog, but you have a small dog."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("omit the succeeding word", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("a -", "a")
+
+    source := "I have a particularly cool dog."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "I have a cool dog."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+}
+
+func TestReplaceWordWithPrefixesAndSuffixes(t *testing.T) {
+  t.Run("maintain both", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("-bloody-", "-freaking-")
+
+    source := "It is a fanbloodytastic movie."
+    result := ReplaceAll(source, wordmap)
+
+    expected := "It is a fanfreakingtastic movie."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("omit prefix, maintain suffix", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("-b-", "b-")
+
+    source := "abc"
+    result := ReplaceAll(source, wordmap)
+
+    expected := "bc"
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("maintain prefix, omit suffix", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("-b-", "-b")
+
+    source := "abc"
+    result := ReplaceAll(source, wordmap)
+
+    expected := "ab"
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("omit both", func(t *testing.T) {
+    var wordmap wordmap.WordMap
+    wordmap.AddOne("-b-", "b")
+
+    source := "abc"
+    result := ReplaceAll(source, wordmap)
+
+    expected := "b"
     if result != expected {
       reportIncorrectReplacement(t, expected, result)
     }

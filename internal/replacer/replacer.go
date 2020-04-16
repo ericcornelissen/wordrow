@@ -20,11 +20,7 @@ func isUpperChar(s byte) bool {
 // Convert a string to sentence case. I.e. make the first letter in the string
 // upper case.
 func toSentenceCase(s string) string {
-  if len(s) > 0 {
-    return strings.ToUpper(s[:1]) + s[1:]
-  } else {
-    return s
-  }
+  return strings.ToUpper(s[:1]) + s[1:]
 }
 
 

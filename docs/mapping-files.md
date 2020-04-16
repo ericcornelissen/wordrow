@@ -17,6 +17,7 @@ In this document you can read about:
   - [Whitespace](#whitespace)
   - [Multiple Words](#multiple-words)
 - [Prefixes and Suffixes](#prefixes-and-suffixes)
+  - [The Preceding and Succeeding Word](#the-preceding-and-succeeding-word)
   - [Omitting Prefixes or Suffixes](#omitting-prefixes-or-suffixes)
 - [Order Matters](#order-matters)
   - [Using Ordering to Your Advantage](#using-ordering-to-your-advantage)
@@ -182,9 +183,9 @@ example:
 ```
 
 Note that it is not required for a word specified with a prefix or suffix to
-appear in the text with a suffix or prefix. For example, you can use the
-`color-` to `colour-` mapping to replace the word _"color"_ as well, for
-example:
+appear with a prefix or suffix in the text. For example, you can use the
+`color-` to `colour-` mapping to replace the word _"color"_ by itself as well,
+for example:
 
 ```diff
 - What color is the dog?
@@ -243,6 +244,28 @@ _"dog"_ instead.
 - I have a dog, but you have a small doggy.
 + I have a dog, but you have a small dog.
 ```
+
+### The Preceding and Succeeding Word
+
+One possible way to use the prefix and suffix dash is to match instances of the
+word only if there is another word before or after it. You can do this by
+putting a space between the word and the dash (remember that [whitespace
+matters]).
+
+```csv
+- dogs, - cats
+```
+
+In this example, the word _"dog"_ is only replaced by _"cat"_ if there is a word
+before _"dog"_, as illustrated by this text:
+
+```diff
+- Dogs are nice and dogs are cool.
++ Dogs are nice and cats are cool.
+```
+
+Again, it is necessary to specify the dash in both words. Otherwise the word
+before or after the matched word is omitted from the result.
 
 ## Order matters
 
@@ -316,4 +339,5 @@ Then, a text containing the phrase _"a duck"_ will be transformed as follows.
 
 [expletive infixation]: https://www.youtube.com/watch?v=dt22yWYX64w
 [mapping formats]: ./mapping-formats.md
+[whitespace matters]: #whitespace
 [*wordrow* CLI]: ./cli.md
