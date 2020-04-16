@@ -17,6 +17,7 @@ In this document you can read about:
 - [The Basics](#the-basics)
 - [Converting Multiple Files](#converting-multiple-files)
 - [Inverting a Mapping File](#inverting-a-mapping-file)
+- [Controlling the Output](#controlling-the-output)
 
 ## The Basics
 
@@ -103,6 +104,28 @@ Then, `input-alt.txt` will be updated as follows:
 ```diff
 - I have a cat, a donkey, and a parrot.
 + I have a dog, a horse, and a canary.
+```
+
+## Controlling the Output
+
+You may control the output behaviour of the CLI through some flag. First, you
+can prevent *wordrow* from making any changes to the input files by using the
+dry run flag:
+
+```shell
+$ wordrow input.txt --mapping animals.csv --dry-run
+```
+
+Second, if you want to control how much is printed to the console when you run
+*wordrow*, you can use the following flags to reduce or increase the amount of
+logging:
+
+```shell
+# Less printing
+$ wordrow input.txt --mapping animals.csv --silent
+
+# More printing
+$ wordrow input.txt --mapping animals.csv --verbose
 ```
 
 [glob]: https://mincong.io/2019/04/16/glob-expression-understanding/
