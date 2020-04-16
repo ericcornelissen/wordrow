@@ -4,7 +4,7 @@ import "github.com/ericcornelissen/wordrow/internal/logger"
 
 
 // The version of the program as a string.
-const VERSION_STR = "v0.1"
+const VERSION_STR = "v0.1-beta"
 
 
 // Print the version of the program.
