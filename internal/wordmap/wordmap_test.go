@@ -164,9 +164,9 @@ func TestWordMapInvert(t *testing.T) {
 
 func TestWordMapIter(t *testing.T) {
   var wordmap WordMap
-
   wordmap.AddOne("cat", "dog")
   wordmap.AddOne("horse", "zebra")
+
   if wordmap.Size() != 2 {
     t.Fatalf("The size of the WordMap must be 2 (was: %d)", wordmap.Size())
   }
@@ -176,12 +176,11 @@ func TestWordMapIter(t *testing.T) {
 
   i := 0
   for mapping := range wordmap.Iter() {
-    if mapping.From != expectedFrom[i] {
-      t.Errorf("Incorrect from-value at index %d (%s != %s)", i, mapping.From, expectedFrom[i])
+    if mapping.from != expectedFrom[i] {
+      t.Errorf("Incorrect from-value at index %d (got %s)", i, mapping.from)
     }
-
-    if mapping.To != expectedTo[i] {
-      t.Errorf("Incorrect to-value at index %d (%s != %s)", i, mapping.To, expectedTo[i])
+    if mapping.to != expectedTo[i] {
+      t.Errorf("Incorrect to-value at index %d (got %s)", i, mapping.to)
     }
 
     i++

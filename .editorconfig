@@ -9,6 +9,10 @@ insert_final_newline = true
 max_line_length = 80
 trim_trailing_whitespace = true
 
+# Extended line length in test files for failure messages
+[*_test.go]
+max_line_length = 120
+
 # Custom tab indentation for Makefiles
 [Makefile]
 indent_style = tab

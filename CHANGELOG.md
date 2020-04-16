@@ -10,6 +10,7 @@ is based on [Keep a Changelog].
 - Add support for globs in arguments. ([#9])
 - Implement the `--silent` flag, which reduced program output. ([#21])
 - Implement the `--verbose` flag, which increases program output. ([#21])
+- Add support for prefix and suffix matching. ([#22])
 
 ### Bug Fixes
 
@@ -22,5 +23,6 @@ is based on [Keep a Changelog].
 [keep a changelog]: https://keepachangelog.com/en/1.0.0/
 [#9]: https://github.com/ericcornelissen/wordrow/pull/9
 [#14]: https://github.com/ericcornelissen/wordrow/pull/14
+[#22]: https://github.com/ericcornelissen/wordrow/pull/22
 [#21]: https://github.com/ericcornelissen/wordrow/pull/21
 [#23]: https://github.com/ericcornelissen/wordrow/pull/23

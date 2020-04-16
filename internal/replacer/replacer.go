@@ -20,11 +20,7 @@ func isUpperChar(s byte) bool {
 // Convert a string to sentence case. I.e. make the first letter in the string
 // upper case.
 func toSentenceCase(s string) string {
-  if len(s) > 0 {
-    return strings.ToUpper(s[:1]) + s[1:]
-  } else {
-    return s
-  }
+  return strings.ToUpper(s[:1]) + s[1:]
 }
 
 
@@ -54,45 +50,26 @@ func maintainCapitalization(from, to string) string {
 // This function does the following:
 //  - Maintain all caps.
 //  - Maintain first letter capitalization.
-func smartReplace(from, to string) string {
+func maintainFormatting(from, to string) string {
   to = maintainAllCaps(from, to)
   to = maintainCapitalization(from, to)
   return to
 }
 
-
-// Check if the substring from `start` to `end` in `s` is a new word.
-func isNewWordMatch(s string, start, end int) bool {
-  if start > 0 && reLetter.MatchString(s[start - 1:start]) {
-    return false
-  } else {
-    return true
-  }
-}
-
 // Replace all instances of `from` by `to` in `s`.
-func replaceOne(s string, from, to string) string {
+func replaceOne(s string, mapping wordmap.Mapping) string {
   var sb strings.Builder
 
-  re := regexp.MustCompile("(?i)" + from)
-  indices := re.FindAllStringIndex(s, -1)
+  lastIndex := 0
+  for match := range mapping.Match(s) {
+    replacement := maintainFormatting(match.Full, match.Replacement)
 
-  prevIndex := 0
-  for i := 0; i < len(indices); i++ {
-    start, end := indices[i][0], indices[i][1]
-    if !isNewWordMatch(s, start, end) {
-      continue
-    }
-
-    matchedString := s[start:end]
-    replacement := smartReplace(matchedString, to)
-
-    sb.WriteString(s[prevIndex:start])
+    sb.WriteString(s[lastIndex:match.Start])
     sb.WriteString(replacement)
-    prevIndex = end
+    lastIndex = match.End
   }
 
-  sb.WriteString(s[prevIndex:])
+  sb.WriteString(s[lastIndex:])
   return sb.String()
 }
 
@@ -100,7 +77,7 @@ func replaceOne(s string, from, to string) string {
 // Replace substrings of `s` according to the mapping in `wordmap`.
 func ReplaceAll(s string, wordmap wordmap.WordMap) string {
   for mapping := range wordmap.Iter() {
-    s = replaceOne(s, mapping.From, mapping.To)
+    s = replaceOne(s, mapping)
   }
 
   return s

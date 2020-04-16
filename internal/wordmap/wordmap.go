@@ -5,12 +5,6 @@ import "strings"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 
 
-// The Mapping type provides a guaranteed mapping from one string to another.
-type Mapping struct {
-  From string
-  To string
-}
-
 // The WordMap type provides a guaranteed mapping from one set of strings to
 // another set of strings.
 type WordMap struct {
@@ -97,7 +91,8 @@ func (m *WordMap) Iter() (chan Mapping) {
     defer close(ch)
 
     for i := 0; i < len(m.from); i++ {
-      ch <- Mapping{m.from[i], m.to[i]}
+      from, to := m.from[i], m.to[i]
+      ch <- Mapping{from, to}
     }
   }()
 

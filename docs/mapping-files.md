@@ -16,6 +16,9 @@ In this document you can read about:
   - [Direction](#direction)
   - [Whitespace](#whitespace)
   - [Multiple Words](#multiple-words)
+- [Prefixes and Suffixes](#prefixes-and-suffixes)
+  - [The Preceding and Succeeding Word](#the-preceding-and-succeeding-word)
+  - [Omitting Prefixes or Suffixes](#omitting-prefixes-or-suffixes)
 - [Order Matters](#order-matters)
   - [Using Ordering to Your Advantage](#using-ordering-to-your-advantage)
 
@@ -141,6 +144,129 @@ Then, the example text won't be changed, as it does not contain _"a..dog"_.
 + I have a dog, but you have a small doggy.
 ```
 
+## Prefixes and Suffixes
+
+You can define more advanced mappings by replacing words including a prefix, a
+suffix or both. To do this, you can add a dash (`-`) before (prefix) or after
+(suffix) the words in your mappings. If you do this, the word will be replaced
+if it appears as is, or with a prefix/suffix in the text.
+
+For example, if you want to replace all words ending in _"ize"_ with the same
+word ending in _"ise"_ you can define the following mapping.
+
+```csv
+-ize, -ise
+```
+
+Then, if you use this mapping on a text containing words ending in _"ize"_, all
+of them will be replaced by the same word, but ending in _"ise"_. For example:
+
+```diff
+- They realize that they should not idealize.
++ They realise that they should not idealise.
+```
+
+Similarly, if you want to replace the word _"color"_, and all its variants, with
+the word _"colour"_, and all its variants, you can define the following mapping.
+
+```csv
+color-, colour-
+```
+
+Then, if you use this mapping on a text containing the word _"color"_ and also
+words starting with _"color"_, all of them will be replaced by _"colour-"_. For
+example:
+
+```diff
+- The colors on this colorful painting are amazing.
++ The colours on this colourful painting are amazing.
+```
+
+Note that it is not required for a word specified with a prefix or suffix to
+appear with a prefix or suffix in the text. For example, you can use the
+`color-` to `colour-` mapping to replace the word _"color"_ by itself as well,
+for example:
+
+```diff
+- What color is the dog?
++ What colour is the dog?
+```
+
+It is also possible to match both prefixes and suffixes in the same mapping. To
+do this, simply add both the prefix and suffix dash to the words in the
+mapping.
+
+```csv
+-bloody-, -freaking-
+```
+
+In this example, if _"bloody"_ is used as an [expletive infixation] it will be
+replaced by _"freaking"_.
+
+```diff
+- It is a fanbloodytastic movie.
++ It is a fanfreakingtastic movie.
+````
+
+It is important to remember that dashes only have a special meaning at the start
+and end of mapping values. You can always use dashes in the middle of words. For
+example, you can define the following mapping.
+
+```csv
+dog-like, cat-like
+```
+
+That will replace all instances of _"dog-like"_ in a text by _"cat-like"_. But
+it won't affect any instances of _"dog"_ and _"like"_ with something in between
+them, as in:
+
+```diff
+- I have a dog-like cat, and you have a dog I like.
++ I have a cat-like cat, and you have a dog I like.
+```
+
+### Omitting Prefixes or Suffixes
+
+It is necessary to write the dash in the both words of the mapping. Otherwise
+the prefix or suffix will be omitted when the word is replaced. This can,
+however, be used if you want to restyle your text. Consider the following
+mapping.
+
+```csv
+dog-, dog
+```
+
+In this example, any suffix the word _"dog"_ has will be removed and replaced by
+just the word _"dog"_. So, a text that uses _"doggy"_ will be updated to use
+_"dog"_ instead.
+
+```diff
+- I have a dog, but you have a small doggy.
++ I have a dog, but you have a small dog.
+```
+
+### The Preceding and Succeeding Word
+
+One possible way to use the prefix and suffix dash is to match instances of the
+word only if there is another word before or after it. You can do this by
+putting a space between the word and the dash (remember that [whitespace
+matters]).
+
+```csv
+- dogs, - cats
+```
+
+In this example, the word _"dog"_ is only replaced by _"cat"_ if there is a word
+before _"dog"_, as illustrated by this text:
+
+```diff
+- Dogs are nice and dogs are cool.
++ Dogs are nice and cats are cool.
+```
+
+Again, it is necessary to specify the dash in both words. Otherwise the word
+before or after the matched word is omitted from the result.
+
 ## Order matters
 
 It is important to note that the ordering in a mapping file matters. The
@@ -211,5 +337,7 @@ Then, a text containing the phrase _"a duck"_ will be transformed as follows.
 + I see an owl, is it your owl?
 ```
 
+[expletive infixation]: https://www.youtube.com/watch?v=dt22yWYX64w
 [mapping formats]: ./mapping-formats.md
+[whitespace matters]: #whitespace
 [*wordrow* CLI]: ./cli.md
