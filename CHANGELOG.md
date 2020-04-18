@@ -7,7 +7,7 @@ is based on [Keep a Changelog].
 
 ### Features
 
-- Add support for globs in arguments. ([#9])
+- Add support for globs in arguments. ([#9], [#29])
 - Implement the `--silent` flag, which reduced program output. ([#21])
 - Implement the `--verbose` flag, which increases program output. ([#21])
 - Add support for prefix and suffix matching. ([#22])
@@ -26,3 +26,4 @@ is based on [Keep a Changelog].
 [#22]: https://github.com/ericcornelissen/wordrow/pull/22
 [#21]: https://github.com/ericcornelissen/wordrow/pull/21
 [#23]: https://github.com/ericcornelissen/wordrow/pull/23
+[#29]: https://github.com/ericcornelissen/wordrow/pull/29
