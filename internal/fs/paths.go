@@ -8,6 +8,8 @@ import "regexp"
 import "github.com/ericcornelissen/wordrow/internal/errors"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 
+import "github.com/yargevad/filepathx"
+
 
 // Regular expression for glob strings.
 var globExpr = regexp.MustCompile("[\\*\\?\\[\\]]")
@@ -39,7 +41,7 @@ func ResolveGlobs(patterns ...string) (paths []string, rerr error) {
       continue
     }
 
-    matches, err := filepath.Glob(pattern)
+    matches, err := filepathx.Glob(pattern)
     if err != nil {
       rerr = errors.Newf("Malformed pattern (%s)", pattern)
     } else {
