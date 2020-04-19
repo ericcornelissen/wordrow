@@ -1,6 +1,7 @@
 package main
 
 import "os"
+import "strings"
 
 import "github.com/ericcornelissen/wordrow/internal/cli"
 import "github.com/ericcornelissen/wordrow/internal/fs"
@@ -14,6 +15,15 @@ func run(args cli.Arguments) {
   if err != nil {
     logger.Error(err)
     return
+  }
+
+  for _, mapping := range args.Mappings {
+    values := strings.Split(mapping, ",")
+    if len(values) != 2 {
+      logger.Errorf("Incorrect mapping from CLI (%s)", mapping)
+    } else {
+      wordmap.AddOne(values[0], values[1])
+    }
   }
 
   if args.Invert {

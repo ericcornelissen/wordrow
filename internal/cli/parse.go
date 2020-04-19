@@ -33,6 +33,9 @@ type Arguments struct {
 
   // List of files that specify a mapping.
   MapFiles []string
+
+  // List of mappings defined in the CLI.
+  Mappings []string
 }
 
 
@@ -75,6 +78,8 @@ func parseArgumentAsOption(
       logger.Warningf("The %s argument is not yet supported", option)
     case mapfileOption, mapfileOptionAlias:
       newContext = contextMapFile
+    case mappingOption, mappingOptionAlias:
+      newContext = contextMapping
     default:
       return newContext, errors.Newf("Unknown option '%s'. Use %s for help", option, helpOption)
   }
@@ -95,6 +100,8 @@ func parseArgumentAsValue(
       arguments.ConfigFile = value
     case contextMapFile:
       arguments.MapFiles = append(arguments.MapFiles, value)
+    case contextMapping:
+      arguments.Mappings = append(arguments.Mappings, value)
   }
 }
 

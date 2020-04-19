@@ -14,6 +14,9 @@ const (
 
   // The context where arguments are interpreted as mapping files.
   contextMapFile
+
+  // The context where arguments are interpreted as a mapping.
+  contextMapping
 )
 
 // Get an argContext as a human readable string.
@@ -22,6 +25,7 @@ func (context argContext) String() string {
     "Unknown",
     "--config/-c",
     "--map/-m",
+    "--tmp/-t",
   }
 
   return names[context]

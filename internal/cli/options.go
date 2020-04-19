@@ -41,4 +41,10 @@ const (
 
   // The alias for the --map option.
   mapfileOptionAlias = "-m"
+
+  // TODO
+  mappingOption = "--tmp"
+
+  // TODO
+  mappingOptionAlias = "-t"
 )

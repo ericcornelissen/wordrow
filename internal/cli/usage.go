@@ -51,6 +51,7 @@ func printOptions() {
   printOption(silentOptionAlias, silentOption, "Don't output informative logging.")
   printOption(configOptionAlias, configOption, "Specify a configuration file.")
   printOption(mapfileOptionAlias, mapfileOption, "Specify a dictionary file. To use multiple dictionary files you can use this option multiple times.")
+  printOption(mappingOptionAlias, mappingOption, "Specify a single mapping. Use a comma to separate the words of the mapping. If spaces are required use quotation marks. This option can be used multiple times.")
 }
 
 // Print the usage message of the program.
@@ -58,6 +59,7 @@ func printUsage() {
   logger.Printf("Usage: wordrow [%s] [%s]\n", helpOption, versionOption)
   logger.Printf("               [%s | %s <file>]\n", configOptionAlias, configOption)
   logger.Printf("               [%s | %s <file>]\n", mapfileOptionAlias, mapfileOption)
+  logger.Printf("               [%s | %s <file>]\n", mappingOptionAlias, mappingOption)
   logger.Printf("               [%s] [%s | %s]\n", dryRunOption, silentOptionAlias, silentOption)
   logger.Println("               <files>")
   logger.Println()
