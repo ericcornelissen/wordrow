@@ -1,34 +1,35 @@
 package cli
 
+
 const (
   // The flag to output the usage of the program.
-  helpOption = "--help"
+  helpFlag = "--help"
 
   // The flag to output the program version.
-  versionOption = "--version"
+  versionFlag = "--version"
 
   // The flag to enable dry run. If enabled the program won't make any changes to
   // the input files.
-  dryRunOption = "--dry-run"
+  dryRunFlag = "--dry-run"
 
   // The flag to invert the mapping. If enabled the mapping will be used right-
   // to-left instead of left-to-right.
-  invertOption = "--invert"
+  invertFlag = "--invert"
 
   // The alias for the --invert option.
-  invertOptionAlias = "-i"
+  invertFlagAlias = "-i"
 
   // The flag to make the program silent.
-  silentOption = "--silent"
+  silentFlag = "--silent"
 
   // The alias for the --silent option.
-  silentOptionAlias = "-s"
+  silentFlagAlias = "-s"
 
   // The flag to make the program verbose.
-  verboseOption = "--verbose"
+  verboseFlag = "--verbose"
 
   // The alias for the --verbose option.
-  verboseOptionAlias = "-v"
+  verboseFlagAlias = "-v"
 
   // The option to specify the configuration file to use.
   configOption = "--config"

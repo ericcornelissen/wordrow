@@ -45,20 +45,20 @@ func printOption(option, optionAlias, msg string) {
 // Print the usage of the options for the program.
 func printOptions() {
   logger.Println("Options:")
-  printOption(helpOption, "", "Output this help message.")
-  printOption(versionOption, "", "Output the version number of wordrow.")
-  printOption(dryRunOption, "", "Run wordrow without writing changes back to the input files.")
-  printOption(silentOptionAlias, silentOption, "Don't output informative logging.")
+  printOption(helpFlag, "", "Output this help message.")
+  printOption(versionFlag, "", "Output the version number of wordrow.")
+  printOption(dryRunFlag, "", "Run wordrow without writing changes back to the input files.")
+  printOption(silentFlagAlias, silentFlag, "Don't output informative logging.")
   printOption(configOptionAlias, configOption, "Specify a configuration file.")
   printOption(mapfileOptionAlias, mapfileOption, "Specify a dictionary file. To use multiple dictionary files you can use this option multiple times.")
 }
 
 // Print the usage message of the program.
 func printUsage() {
-  logger.Printf("Usage: wordrow [%s] [%s]\n", helpOption, versionOption)
+  logger.Printf("Usage: wordrow [%s] [%s]\n", helpFlag, versionFlag)
   logger.Printf("               [%s | %s <file>]\n", configOptionAlias, configOption)
   logger.Printf("               [%s | %s <file>]\n", mapfileOptionAlias, mapfileOption)
-  logger.Printf("               [%s] [%s | %s]\n", dryRunOption, silentOptionAlias, silentOption)
+  logger.Printf("               [%s] [%s | %s]\n", dryRunFlag, silentFlagAlias, silentFlag)
   logger.Println("               <files>")
   logger.Println()
   printOptions()
