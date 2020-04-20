@@ -38,8 +38,8 @@ const (
   configOptionAlias = "-c"
 
   // The option to specify a mapping file.
-  mapfileOption = "--map"
+  mapfileOption = "--map-file"
 
-  // The alias for the --map option.
-  mapfileOptionAlias = "-m"
+  // The alias for the --map-file option.
+  mapfileOptionAlias = "-M"
 )

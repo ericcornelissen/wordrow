@@ -7,9 +7,13 @@ Versioning].
 
 ## [Unreleased]
 
+### Breaking Changes
+
+- Rename `--map` and `-m` to `--map-file` and `-M` respectively. ([#30])
+
 ### Bug Fixes
 
-- Add missing options `--invert` and `--verbose` to the usage message. (TBD)
+- Add missing options `--invert` and `--verbose` to the usage message. ([#30])
 
 ## [0.2.0-beta] - 2020-04-18
 
@@ -44,3 +48,4 @@ Versioning].
 [#21]: https://github.com/ericcornelissen/wordrow/pull/21
 [#23]: https://github.com/ericcornelissen/wordrow/pull/23
 [#29]: https://github.com/ericcornelissen/wordrow/pull/29
+[#30]: https://github.com/ericcornelissen/wordrow/pull/30
