@@ -7,7 +7,9 @@ Versioning].
 
 ## [Unreleased]
 
-- _No changes yet_
+### Bug Fixes
+
+- Add missing options `--invert` and `--verbose` to the usage message. (TBD)
 
 ## [0.2.0-beta] - 2020-04-18
 
