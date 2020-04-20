@@ -39,30 +39,23 @@ func parseFile(fileContent *string, parseFn parseFunction, wordmap *WordMap) err
 }
 
 
-// Parse a list of files (relative or absolute paths) into a single WordMap.
+// Parse a list of Files into a single WordMap.
 //
 // The function sets the error if an error occurs when parsing any of the
 // provided file.
-func WordMapFrom(files ...string) (WordMap, error) {
+func WordMapFrom(files ...fs.File) (WordMap, error) {
   var wordmap WordMap
 
-  paths := fs.ResolvePaths(files...)
-  for _, filePath := range paths {
-    fileContent, err := fs.ReadFile(filePath)
+  for _, file := range files {
+    parserFn, err := getParserForFile(file.Path)
     if err != nil {
-      logger.Errorf("could not find '%s'\n", filePath)
+      logger.Errorf("The file '%s' is of an unknown type\n", file.Path)
       continue
     }
 
-    parserFn, err := getParserForFile(filePath)
+    err = parseFile(&file.Content, parserFn, &wordmap)
     if err != nil {
-      logger.Errorf("The file '%s' is of an unknown type\n", filePath)
-      continue
-    }
-
-    err = parseFile(&fileContent, parserFn, &wordmap)
-    if err != nil {
-      return wordmap, errors.Newf("Error when parsing %s: %s", filePath, err)
+      return wordmap, errors.Newf("Error when parsing %s: %s", file.Path, err)
     }
   }
 
