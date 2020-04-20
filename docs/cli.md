@@ -44,10 +44,10 @@ horse, donkey
 
 Now you can run *wordrow* on `input.txt` with `mapping.csv` as shown below. This
 tells *wordrow* that you want to replace words in `input.txt` using the
-`--mapping` file `animals.csv`
+`--map-file` file `animals.csv`
 
 ```shell
-$ wordow input.txt --mapping animals.csv
+$ wordow input.txt --map-file animals.csv
 ```
 
 Then, `input.txt` will be updated as follows:
@@ -67,7 +67,7 @@ In a typically scenario, you may want to run *wordrow* on multiple files. To run
 our mapping file from before, we can run *wordrow* on two input files using:
 
 ```shell
-$ wordrow input-1.txt input-2.txt --mapping animals.csv
+$ wordrow input-1.txt input-2.txt --map-file animals.csv
 ```
 
 If, instead, you want to run *wordrow* on all `.txt` files in the current
@@ -75,7 +75,7 @@ folder, you can use a [glob]. A glob is a special expression that allows you
 to refer to a bunch of files in a single argument. For example:
 
 ```shell
-$ wordrow ./*.txt --mapping animals.csv
+$ wordrow ./*.txt --map-file animals.csv
 ```
 
 ## Inverting a Mapping File
@@ -96,7 +96,7 @@ I have a cat, a donkey, and a parrot.
 And you run *wordrow* using the `--invert` argument as:
 
 ```shell
-$ wordow input-alt.txt --mapping animals.csv --invert
+$ wordow input-alt.txt --map-file animals.csv --invert
 ```
 
 Then, `input-alt.txt` will be updated as follows:
@@ -113,7 +113,7 @@ can prevent *wordrow* from making any changes to the input files by using the
 dry run flag:
 
 ```shell
-$ wordrow input.txt --mapping animals.csv --dry-run
+$ wordrow input.txt --map-file animals.csv --dry-run
 ```
 
 Second, if you want to control how much is printed to the console when you run
@@ -122,10 +122,10 @@ logging:
 
 ```shell
 # Less printing
-$ wordrow input.txt --mapping animals.csv --silent
+$ wordrow input.txt --map-file animals.csv --silent
 
 # More printing
-$ wordrow input.txt --mapping animals.csv --verbose
+$ wordrow input.txt --map-file animals.csv --verbose
 ```
 
 [glob]: https://mincong.io/2019/04/16/glob-expression-understanding/
