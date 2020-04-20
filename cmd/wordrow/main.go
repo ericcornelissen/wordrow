@@ -10,20 +10,24 @@ import "github.com/ericcornelissen/wordrow/internal/wordmap"
 
 
 func run(args cli.Arguments) {
+  var wm wordmap.WordMap
+
   mapFiles, err := fs.ReadFiles(args.MapFiles)
   if err != nil {
     logger.Error(err)
     return
   }
 
-  wordmap, err := wordmap.WordMapFrom(mapFiles...)
-  if err != nil {
-    logger.Error(err)
-    return
+  for _, mapFile := range mapFiles {
+    wm.AddFile(mapFile)
+    if err != nil {
+      logger.Error(err)
+      return
+    }
   }
 
   if args.Invert {
-    wordmap.Invert()
+    wm.Invert()
   }
 
   inputFiles, err := fs.ReadFiles(args.InputFiles)
@@ -34,7 +38,7 @@ func run(args cli.Arguments) {
 
   for _, file := range inputFiles {
     logger.Debugf("Processing '%s'", file.Path)
-    fixedFileData := replacer.ReplaceAll(file.Content, wordmap)
+    fixedFileData := replacer.ReplaceAll(file.Content, wm)
 
     if !args.DryRun {
       fs.WriteFile(file.Path, fixedFileData)

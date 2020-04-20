@@ -2,6 +2,8 @@ package wordmap
 
 import "strings"
 
+import "github.com/ericcornelissen/wordrow/internal/errors"
+import "github.com/ericcornelissen/wordrow/internal/fs"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 
 
@@ -18,6 +20,23 @@ func (m *WordMap) inRange(i int) bool {
   return i < 0 || i >= m.Size()
 }
 
+
+// Parse a File and add its mapping to the WordMap.
+//
+// The function sets the error if an error occurs when parsing the File.
+func (m *WordMap) AddFile(file fs.File) error {
+  parserFn, err := getParserForFile(file.Path)
+  if err != nil {
+    return errors.Newf("Unknown file type of %s", file.Path)
+  }
+
+  err = parseFile(&file.Content, parserFn, m)
+  if err != nil {
+    return errors.Newf("Error when parsing %s: %s", file.Path, err)
+  }
+
+  return nil
+}
 
 // Add all mappings from another WordMap to the WordMap.
 func (m *WordMap) AddFrom(other WordMap) {

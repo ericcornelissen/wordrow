@@ -107,15 +107,3 @@ func TestParseFileParseFunctionError(t *testing.T) {
     t.Error("The wrong error was returned")
   }
 }
-
-func TestWordMapFromNoInput(t *testing.T) {
-  wordmap, err := WordMapFrom()
-
-  if err != nil {
-    t.Error("The error should be set if there are no inputs")
-  }
-
-  if wordmap.Size() != 0 {
-    t.Error("The WordMap should have size 0 if there are no inputs")
-  }
-}
