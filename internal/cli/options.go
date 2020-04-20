@@ -16,19 +16,19 @@ const (
   // to-left instead of left-to-right.
   invertFlag = "--invert"
 
-  // The alias for the --invert option.
+  // The alias for the --invert flag.
   invertFlagAlias = "-i"
 
   // The flag to make the program silent.
   silentFlag = "--silent"
 
-  // The alias for the --silent option.
+  // The alias for the --silent flag.
   silentFlagAlias = "-s"
 
   // The flag to make the program verbose.
   verboseFlag = "--verbose"
 
-  // The alias for the --verbose option.
+  // The alias for the --verbose flag.
   verboseFlagAlias = "-v"
 
   // The option to specify the configuration file to use.
