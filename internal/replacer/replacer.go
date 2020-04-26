@@ -75,8 +75,8 @@ func replaceOne(s string, mapping wordmap.Mapping) string {
 
 
 // Replace substrings of `s` according to the mapping in `wordmap`.
-func ReplaceAll(s string, wordmap wordmap.WordMap) string {
-  for mapping := range wordmap.Iter() {
+func ReplaceAll(s string, wp wordmap.WordMap) string {
+  for mapping := range wp.Iter() {
     s = replaceOne(s, mapping)
   }
 

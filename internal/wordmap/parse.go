@@ -2,6 +2,7 @@ package wordmap
 
 import "strings"
 
+import "github.com/ericcornelissen/wordrow/internal/fs"
 import "github.com/ericcornelissen/wordrow/internal/errors"
 
 
@@ -26,12 +27,17 @@ func getParserForFile(filePath string) (parseFunction, error) {
 //
 // The function sets the error if the parsing failed, e.g. when the file is
 // improperly formatted.
-func parseFile(fileContent *string, parseFn parseFunction, wordmap *WordMap) error {
-  fileMap, err := parseFn(fileContent)
+func parseFile(file *fs.File, wm *WordMap) error {
+  parseFn, err := getParserForFile(file.Path)
+  if err != nil {
+    return errors.Newf("Unknown file type of %s", file.Path)
+  }
+
+  fileMap, err := parseFn(&file.Content)
   if err != nil {
     return err
   }
 
-  wordmap.AddFrom(fileMap)
+  wm.AddFrom(fileMap)
   return nil
 }

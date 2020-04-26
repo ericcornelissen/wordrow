@@ -19,7 +19,7 @@ func run(args cli.Arguments) {
   }
 
   for _, mapFile := range mapFiles {
-    wm.AddFile(mapFile)
+    err := wm.AddFile(mapFile)
     if err != nil {
       logger.Error(err)
       return

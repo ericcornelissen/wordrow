@@ -1,8 +1,9 @@
 package wordmap
 
-import "errors"
 import "reflect"
 import "testing"
+
+import "github.com/ericcornelissen/wordrow/internal/fs"
 
 
 func TestGetParserForMarkDownFile(t *testing.T)  {
@@ -39,71 +40,74 @@ func TestGetParserForUnknownFileType(t *testing.T)  {
   }
 }
 
-func TestParseFileCallsParseFunction(t *testing.T) {
-  var fileContent string
-  var wordmap WordMap
-
-  calledFlag := false
-  parseFn := func(fc *string) (wm WordMap, err error) {
-    if fc != &fileContent {
-      t.Error("The argument given to the parse function should be fileContent")
-    }
-
-    calledFlag = true
-    return
+func TestParseFileNoParser(t *testing.T) {
+  var wm WordMap
+  file := fs.File{
+    Content: "",
+    Ext: "bar",
+    Path: "foo.bar",
   }
 
-  err := parseFile(&fileContent, parseFn, &wordmap)
+  err := parseFile(&file, &wm)
 
-  if err != nil {
-    t.Fatalf("The error should be nil for this test (Error: %s)", err)
-  }
-
-  if calledFlag == false {
-    t.Error("The parse function should have been called")
+  if err == nil {
+    t.Error("The error should set for this test")
   }
 }
 
 func TestParseFileUpdatesWordMap(t *testing.T) {
-  var fileContent string
-  var wordmap WordMap
-
-  parseFn := func(_ *string) (wm WordMap, err error) {
-    wm.AddOne("a", "b")
-    return
+  var wm WordMap
+  file := fs.File{
+    Content: "this is definitely not a real CSV file",
+    Ext: "csv",
+    Path: "foo.csv",
   }
 
-  if wordmap.Size() != 0 {
-    t.Fatalf("The WordMap should have size 0 before parsing (was %d)", wordmap.Size())
-  }
+  err := parseFile(&file, &wm)
 
-  err := parseFile(&fileContent, parseFn, &wordmap)
-
-  if err != nil {
-    t.Fatalf("The error should be nil for this test (Error: %s)", err)
-  }
-
-  if wordmap.Size() != 1 {
-    t.Error("The WordMap should have size 1 after parsing")
+  if err == nil {
+    t.Error("The error should set for this test")
   }
 }
 
-func TestParseFileParseFunctionError(t *testing.T) {
-  var fileContent string
-  var wordmap WordMap
-
-  expectedError := errors.New("dummy error")
-  parseFn := func(_ *string) (WordMap, error) {
-    return wordmap, expectedError
+func TestParseFileParseCSV(t *testing.T) {
+  var wm WordMap
+  file := fs.File{
+    Content: "foo,bar",
+    Ext: "csv",
+    Path: "foo.csv",
   }
 
-  err := parseFile(&fileContent, parseFn, &wordmap)
+  err := parseFile(&file, &wm)
 
-  if err == nil {
-    t.Fatal("The error should be set for this test")
+  if err != nil {
+    t.Fatalf("The error should not be set for this test")
   }
 
-  if err != expectedError {
-    t.Error("The wrong error was returned")
+  if wm.Size() == 0 {
+    t.Error("The size of the wm should be greater than 0")
+  }
+}
+
+func TestParseFileParseMarkDown(t *testing.T) {
+  var wm WordMap
+  file := fs.File{
+    Content: `
+      | From | To  |
+      | ---- | --- |
+      | foo  | bar |
+    `,
+    Ext: "md",
+    Path: "foo.md",
+  }
+
+  err := parseFile(&file, &wm)
+
+  if err != nil {
+    t.Fatalf("The error should not be set for this test")
+  }
+
+  if wm.Size() == 0 {
+    t.Error("The size of the wm should be greater than 0")
   }
 }
