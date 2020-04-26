@@ -9,21 +9,28 @@ import "github.com/ericcornelissen/wordrow/internal/replacer"
 import "github.com/ericcornelissen/wordrow/internal/wordmap"
 
 
-func run(args cli.Arguments) {
-  var wm wordmap.WordMap
-
-  mapFiles, err := fs.ReadFiles(args.MapFiles)
+func getWordMap(mapFilesPaths []string) (wm wordmap.WordMap, err error) {
+  logger.Debug("Reading specified mapping files")
+  mapFiles, err := fs.ReadFiles(mapFilesPaths)
   if err != nil {
-    logger.Error(err)
-    return
+    return wm, err
   }
 
   for _, mapFile := range mapFiles {
+    logger.Debugf("Processing '%s' as mapping file", mapFile.Path)
     err := wm.AddFile(mapFile)
     if err != nil {
-      logger.Error(err)
-      return
+      return wm, err
     }
+  }
+
+  return wm, err
+}
+
+func run(args cli.Arguments) error {
+  wm, err := getWordMap(args.MapFiles)
+  if err != nil {
+    return err
   }
 
   if args.Invert {
@@ -32,12 +39,11 @@ func run(args cli.Arguments) {
 
   inputFiles, err := fs.ReadFiles(args.InputFiles)
   if err != nil {
-    logger.Error(err)
-    return
+    return err
   }
 
   for _, file := range inputFiles {
-    logger.Debugf("Processing '%s'", file.Path)
+    logger.Debugf("Processing '%s' as input file", file.Path)
     fixedFileData := replacer.ReplaceAll(file.Content, wm)
 
     if !args.DryRun {
@@ -47,6 +53,8 @@ func run(args cli.Arguments) {
       logger.Printf("After:\n------\n%s", fixedFileData)
     }
   }
+
+  return nil
 }
 
 func setLogLevel(args cli.Arguments) {
@@ -61,6 +69,10 @@ func main() {
   shouldRun, args := cli.ParseArgs(os.Args)
   if shouldRun {
     setLogLevel(args)
-    run(args)
+
+    err := run(args)
+    if err != nil {
+      logger.Error(err)
+    }
   }
 }
