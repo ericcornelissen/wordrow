@@ -1,4 +1,4 @@
-package wordmap
+package wordmaps
 
 import "strings"
 
@@ -7,7 +7,7 @@ import "strings"
 //
 // The error will be set if the row has an unexpected format, for example an
 // incorrect number of columns.
-func parseRow(row string, wordmap *WordMap) error {
+func parseRow(row string, wm *WordMap) error {
   rowValues := strings.Split(row, ",")
   if len(rowValues) != 2 {
     return &parseError{"Unexpected row format", row}
@@ -19,7 +19,7 @@ func parseRow(row string, wordmap *WordMap) error {
     return &parseError{"Missing value", row}
   }
 
-  wordmap.AddOne(fromValue, toValue)
+  wm.AddOne(fromValue, toValue)
   return nil
 }
 
@@ -27,7 +27,7 @@ func parseRow(row string, wordmap *WordMap) error {
 //
 // The error will be set if any error occured while parsing the CSV file.
 func parseCsvFile(rawFileData *string) (WordMap, error) {
-  var wordmap WordMap
+  var wm WordMap
 
   lines := strings.Split(*rawFileData, "\n")
   for i := 0; i < len(lines); i++ {
@@ -36,11 +36,11 @@ func parseCsvFile(rawFileData *string) (WordMap, error) {
       continue
     }
 
-    err := parseRow(line, &wordmap)
+    err := parseRow(line, &wm)
     if err != nil {
-      return wordmap, err
+      return wm, err
     }
   }
 
-  return wordmap, nil
+  return wm, nil
 }

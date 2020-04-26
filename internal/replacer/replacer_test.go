@@ -3,7 +3,7 @@ package replacer
 import "fmt"
 import "testing"
 
-import "github.com/ericcornelissen/wordrow/internal/wordmap"
+import "github.com/ericcornelissen/wordrow/internal/wordmaps"
 
 
 func reportIncorrectReplacement(t *testing.T, expected, actual string) {
@@ -15,7 +15,7 @@ func reportIncorrectReplacement(t *testing.T, expected, actual string) {
 
 
 func TestReplaceEmptyString(t *testing.T) {
-  var wm wordmap.WordMap
+  var wm wordmaps.WordMap
 
   source := ""
   result := ReplaceAll(source, wm)
@@ -26,7 +26,7 @@ func TestReplaceEmptyString(t *testing.T) {
 }
 
 func TestReplaceEmptyWordmap(t *testing.T) {
-  var wm wordmap.WordMap
+  var wm wordmaps.WordMap
 
   source := "Hello world!"
   result := ReplaceAll(source, wm)
@@ -39,7 +39,7 @@ func TestReplaceEmptyWordmap(t *testing.T) {
 func TestReplaceOneWordInWordMap(t *testing.T) {
   from, to := "foo", "bar"
 
-  var wm wordmap.WordMap
+  var wm wordmaps.WordMap
   wm.AddOne(from, to)
 
   t.Run("source is 'from' in the WordMap", func(t *testing.T) {
@@ -85,7 +85,7 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
 }
 
 func TestReplaceMultipleWordsInWordMap(t *testing.T) {
-  var wm wordmap.WordMap
+  var wm wordmaps.WordMap
   wm.AddOne("foo", "bar")
   wm.AddOne("color", "colour")
 
@@ -113,7 +113,7 @@ func TestReplaceWhiteSpaceInPhrase(t *testing.T) {
   t.Run("single space", func(t *testing.T) {
     from, to := "foo bar", "foobar"
 
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne(from, to)
 
     source := from
@@ -131,7 +131,7 @@ func TestReplaceWhiteSpaceInPhrase(t *testing.T) {
   t.Run("mutliple spaces", func(t *testing.T) {
     from, to := "foo  bar", "foobar"
 
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne(from, to)
 
     source := from
@@ -149,7 +149,7 @@ func TestReplaceWhiteSpaceInPhrase(t *testing.T) {
 }
 
 func TestReplaceIgnoreCapitalizationInMapping(t *testing.T) {
-  var wm wordmap.WordMap
+  var wm wordmaps.WordMap
   wm.AddOne("Foo", "Bar")
 
   source := "There once was a foo in the world."
@@ -162,7 +162,7 @@ func TestReplaceIgnoreCapitalizationInMapping(t *testing.T) {
 }
 
 func TestReplaceMaintainCapitalization(t *testing.T) {
-  var wm wordmap.WordMap
+  var wm wordmaps.WordMap
   wm.AddOne("foo", "bar")
 
   source := "There once was a foo in the world. Foo did things."
@@ -175,7 +175,7 @@ func TestReplaceMaintainCapitalization(t *testing.T) {
 }
 
 func TestReplaceWordAllCaps(t *testing.T) {
-  var wm wordmap.WordMap
+  var wm wordmaps.WordMap
   wm.AddOne("foo", "bar")
 
   source := "This is the FOO."
@@ -189,7 +189,7 @@ func TestReplaceWordAllCaps(t *testing.T) {
 
 func TestReplaceWordWithPrefixes(t *testing.T) {
   t.Run("maintain prefix", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("-ize", "-ise")
 
     source := "They Realize that they should not idealize."
@@ -201,7 +201,7 @@ func TestReplaceWordWithPrefixes(t *testing.T) {
     }
   })
   t.Run("replace only if preceeded by another word", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("- dogs", "- cats")
 
     source := "Dogs are nice and dogs are cool."
@@ -213,7 +213,7 @@ func TestReplaceWordWithPrefixes(t *testing.T) {
     }
   })
   t.Run("omit prefix", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("-phone", "phone")
 
     source := "That cat has a telephone."
@@ -225,7 +225,7 @@ func TestReplaceWordWithPrefixes(t *testing.T) {
     }
   })
   t.Run("omit the preceding word", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("- people", "people")
 
     source := "Cool people are nice and nice people are cool."
@@ -240,7 +240,7 @@ func TestReplaceWordWithPrefixes(t *testing.T) {
 
 func TestReplaceWordWithSuffixes(t *testing.T) {
   t.Run("maintain suffix", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("color-", "colour-")
 
     source := "The colors on this colorful painting are amazing."
@@ -252,7 +252,7 @@ func TestReplaceWordWithSuffixes(t *testing.T) {
     }
   })
   t.Run("replace only if succeeded by another word", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("dog -", "cat -")
 
     source := "I have a dog and you have a dog."
@@ -264,7 +264,7 @@ func TestReplaceWordWithSuffixes(t *testing.T) {
     }
   })
   t.Run("maintain the succeeding word", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("very -", "super -")
 
     source := "This is a very special day."
@@ -276,7 +276,7 @@ func TestReplaceWordWithSuffixes(t *testing.T) {
     }
   })
   t.Run("omit suffix", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("dog-", "dog")
 
     source := "I have a dog, but you have a small doggy."
@@ -288,7 +288,7 @@ func TestReplaceWordWithSuffixes(t *testing.T) {
     }
   })
   t.Run("omit the succeeding word", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("a -", "a")
 
     source := "I have a particularly cool dog."
@@ -303,7 +303,7 @@ func TestReplaceWordWithSuffixes(t *testing.T) {
 
 func TestReplaceWordWithPrefixesAndSuffixes(t *testing.T) {
   t.Run("maintain both", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("-bloody-", "-freaking-")
 
     source := "It is a fanbloodytastic movie."
@@ -315,7 +315,7 @@ func TestReplaceWordWithPrefixesAndSuffixes(t *testing.T) {
     }
   })
   t.Run("omit prefix, maintain suffix", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("-b-", "b-")
 
     source := "abc"
@@ -327,7 +327,7 @@ func TestReplaceWordWithPrefixesAndSuffixes(t *testing.T) {
     }
   })
   t.Run("maintain prefix, omit suffix", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("-b-", "-b")
 
     source := "abc"
@@ -339,7 +339,7 @@ func TestReplaceWordWithPrefixesAndSuffixes(t *testing.T) {
     }
   })
   t.Run("omit both", func(t *testing.T) {
-    var wm wordmap.WordMap
+    var wm wordmaps.WordMap
     wm.AddOne("-b-", "b")
 
     source := "abc"
@@ -353,7 +353,7 @@ func TestReplaceWordWithPrefixesAndSuffixes(t *testing.T) {
 }
 
 func TestReplaceWordWithoutPrefixes(t *testing.T) {
-  var wm wordmap.WordMap
+  var wm wordmaps.WordMap
   wm.AddOne("mail", "email")
 
   source := "I send them a mail. And later another email."
@@ -366,7 +366,7 @@ func TestReplaceWordWithoutPrefixes(t *testing.T) {
 }
 
 func TestReplaceWordWithoutSuffixes(t *testing.T) {
-  var wm wordmap.WordMap
+  var wm wordmaps.WordMap
   wm.AddOne("commen", "common")
 
   source := "He game a comment that that is quite commen"
@@ -379,7 +379,7 @@ func TestReplaceWordWithoutSuffixes(t *testing.T) {
 }
 
 func TestReplaceByShorterString(t *testing.T) {
-  var wm wordmap.WordMap
+  var wm wordmaps.WordMap
   wm.AddOne("fooo", "foo")
 
   t.Run("one instance of word", func(t *testing.T) {
@@ -403,7 +403,7 @@ func TestReplaceByShorterString(t *testing.T) {
 }
 
 func TestReplaceByLongerString(t *testing.T) {
-  var wm wordmap.WordMap
+  var wm wordmaps.WordMap
   wm.AddOne("fo", "foo")
 
   t.Run("one instance of word", func(t *testing.T) {

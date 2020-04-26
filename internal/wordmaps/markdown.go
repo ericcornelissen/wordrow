@@ -1,4 +1,4 @@
-package wordmap
+package wordmaps
 
 import "regexp"
 import "strings"

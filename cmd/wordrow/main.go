@@ -6,10 +6,10 @@ import "github.com/ericcornelissen/wordrow/internal/cli"
 import "github.com/ericcornelissen/wordrow/internal/fs"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 import "github.com/ericcornelissen/wordrow/internal/replacer"
-import "github.com/ericcornelissen/wordrow/internal/wordmap"
+import "github.com/ericcornelissen/wordrow/internal/wordmaps"
 
 
-func getWordMap(mapFilesPaths []string) (wm wordmap.WordMap, err error) {
+func getWordMap(mapFilesPaths []string) (wm wordmaps.WordMap, err error) {
   logger.Debug("Reading specified mapping files")
   mapFiles, err := fs.ReadFiles(mapFilesPaths)
   if err != nil {
