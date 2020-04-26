@@ -1,4 +1,4 @@
-package wordmap
+package wordmaps
 
 import "strings"
 import "testing"
@@ -11,22 +11,22 @@ func TestMarkDownTableOnly(t *testing.T) {
     | cat | dog |
   `
 
-  wordmap, err := parseMarkDownFile(&markdown)
+  wm, err := parseMarkDownFile(&markdown)
 
   if err != nil {
     t.Fatalf("Error should be nil for this test (Error: %s)", err)
   }
 
-  if wordmap.Size() != 1 {
-    t.Fatalf("The WordMap size should be 1 (was %d)", wordmap.Size())
+  if wm.Size() != 1 {
+    t.Fatalf("The WordMap size should be 1 (was %d)", wm.Size())
   }
 
-  actual, expected := wordmap.GetFrom(0), "cat"
+  actual, expected := wm.GetFrom(0), "cat"
   if actual != expected {
     t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
   }
 
-  actual, expected = wordmap.GetTo(0), "dog"
+  actual, expected = wm.GetTo(0), "dog"
   if actual != expected {
     t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
   }
@@ -48,32 +48,32 @@ func TestMarkDownTextAndTable(t *testing.T) {
     Suspendisse ante ante, interdum id felis vel, posuere.
   `
 
-  wordmap, err := parseMarkDownFile(&markdown)
+  wm, err := parseMarkDownFile(&markdown)
 
   if err != nil {
     t.Fatalf("Error should be nil for this test (Error: %s)", err)
   }
 
-  if wordmap.Size() != 2 {
-    t.Fatalf("The WordMap size should be 2 (was %d)", wordmap.Size())
+  if wm.Size() != 2 {
+    t.Fatalf("The WordMap size should be 2 (was %d)", wm.Size())
   }
 
-  actual, expected := wordmap.GetFrom(0), "cat"
+  actual, expected := wm.GetFrom(0), "cat"
   if actual != expected {
     t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
   }
 
-  actual, expected = wordmap.GetTo(0), "dog"
+  actual, expected = wm.GetTo(0), "dog"
   if actual != expected {
     t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
   }
 
-  actual, expected = wordmap.GetFrom(1), "horse"
+  actual, expected = wm.GetFrom(1), "horse"
   if actual != expected {
     t.Errorf("Incorrect from-value at index 1 (actual %s)", actual)
   }
 
-  actual, expected = wordmap.GetTo(1), "zebra"
+  actual, expected = wm.GetTo(1), "zebra"
   if actual != expected {
     t.Errorf("Incorrect to-value at index 1 (actual %s)", actual)
   }
@@ -90,32 +90,32 @@ func TestMarkDownTwoTables(t *testing.T) {
     | dog | cat |
   `
 
-  wordmap, err := parseMarkDownFile(&markdown)
+  wm, err := parseMarkDownFile(&markdown)
 
   if err != nil {
     t.Fatalf("Error should be nil for this test (Error: %s)", err)
   }
 
-  if wordmap.Size() != 2 {
-    t.Fatalf("The WordMap size should be 2 (was %d)", wordmap.Size())
+  if wm.Size() != 2 {
+    t.Fatalf("The WordMap size should be 2 (was %d)", wm.Size())
   }
 
-  actual, expected := wordmap.GetFrom(0), "zebra"
+  actual, expected := wm.GetFrom(0), "zebra"
   if actual != expected {
     t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
   }
 
-  actual, expected = wordmap.GetTo(0), "horse"
+  actual, expected = wm.GetTo(0), "horse"
   if actual != expected {
     t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
   }
 
-  actual, expected = wordmap.GetFrom(1), "dog"
+  actual, expected = wm.GetFrom(1), "dog"
   if actual != expected {
     t.Errorf("Incorrect from-value at index 1 (actual %s)", actual)
   }
 
-  actual, expected = wordmap.GetTo(1), "cat"
+  actual, expected = wm.GetTo(1), "cat"
   if actual != expected {
     t.Errorf("Incorrect to-value at index 1 (actual %s)", actual)
   }

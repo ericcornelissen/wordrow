@@ -6,41 +6,55 @@ import "github.com/ericcornelissen/wordrow/internal/cli"
 import "github.com/ericcornelissen/wordrow/internal/fs"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 import "github.com/ericcornelissen/wordrow/internal/replacer"
-import "github.com/ericcornelissen/wordrow/internal/wordmap"
+import "github.com/ericcornelissen/wordrow/internal/wordmaps"
 
-func run(args cli.Arguments) {
-  mapFiles, err := fs.ResolveGlobs(args.MapFiles...)
-  wordmap, err := wordmap.WordMapFrom(mapFiles...)
+
+func getWordMap(mapFilesPaths []string) (wm wordmaps.WordMap, err error) {
+  logger.Debug("Reading specified mapping files")
+  mapFiles, err := fs.ReadFiles(mapFilesPaths)
   if err != nil {
-    logger.Error(err)
-    return
+    return wm, err
+  }
+
+  for _, mapFile := range mapFiles {
+    logger.Debugf("Processing '%s' as mapping file", mapFile.Path)
+    err := wm.AddFile(mapFile)
+    if err != nil {
+      return wm, err
+    }
+  }
+
+  return wm, err
+}
+
+func run(args cli.Arguments) error {
+  wm, err := getWordMap(args.MapFiles)
+  if err != nil {
+    return err
   }
 
   if args.Invert {
-    wordmap.Invert()
+    wm.Invert()
   }
 
-  inputFiles, err := fs.ResolveGlobs(args.InputFiles...)
-  paths := fs.ResolvePaths(inputFiles...)
-  for i := 0; i < len(paths); i++ {
-    filePath := paths[i]
-    logger.Debugf("Processing '%s'", filePath)
+  inputFiles, err := fs.ReadFiles(args.InputFiles)
+  if err != nil {
+    return err
+  }
 
-    binaryFileData, err := fs.ReadFile(filePath)
-    if err != nil {
-      continue
-    }
-
-    originalFileData := string(binaryFileData)
-    fixedFileData := replacer.ReplaceAll(originalFileData, wordmap)
+  for _, file := range inputFiles {
+    logger.Debugf("Processing '%s' as input file", file.Path)
+    fixedFileData := replacer.ReplaceAll(file.Content, wm)
 
     if !args.DryRun {
-      fs.WriteFile(filePath, fixedFileData)
+      fs.WriteFile(file.Path, fixedFileData)
     } else {
-      logger.Printf("Before:\n-------\n%s\n", originalFileData)
+      logger.Printf("Before:\n-------\n%s\n", file.Content)
       logger.Printf("After:\n------\n%s", fixedFileData)
     }
   }
+
+  return nil
 }
 
 func setLogLevel(args cli.Arguments) {
@@ -55,6 +69,10 @@ func main() {
   shouldRun, args := cli.ParseArgs(os.Args)
   if shouldRun {
     setLogLevel(args)
-    run(args)
+
+    err := run(args)
+    if err != nil {
+      logger.Error(err)
+    }
   }
 }
