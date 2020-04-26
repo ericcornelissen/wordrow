@@ -1,7 +1,5 @@
 package wordmaps
 
-import "strings"
-
 import "github.com/ericcornelissen/wordrow/internal/fs"
 import "github.com/ericcornelissen/wordrow/internal/errors"
 
@@ -12,11 +10,11 @@ import "github.com/ericcornelissen/wordrow/internal/errors"
 type parseFunction func(fileContent *string) (WordMap, error)
 
 
-// Get the parseFunction for a given file(name).
-func getParserForFile(filePath string) (parseFunction, error) {
-  if strings.HasSuffix(filePath, ".md") {
+// Get the parseFunction for a given File.
+func getParserForFile(file *fs.File) (parseFunction, error) {
+  if file.Ext == ".md" {
     return parseMarkDownFile, nil
-  } else if strings.HasSuffix(filePath, ".csv") {
+  } else if file.Ext == ".csv" {
     return parseCsvFile, nil
   }
 
@@ -28,7 +26,7 @@ func getParserForFile(filePath string) (parseFunction, error) {
 // The function sets the error if the parsing failed, e.g. when the file is
 // improperly formatted.
 func parseFile(file *fs.File, wm *WordMap) error {
-  parseFn, err := getParserForFile(file.Path)
+  parseFn, err := getParserForFile(file)
   if err != nil {
     return errors.Newf("Unknown file type of %s", file.Path)
   }

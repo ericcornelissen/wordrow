@@ -16,8 +16,7 @@ func TestWordMapEmpty(t *testing.T)  {
 func TestWordMapAddFileUnknownType(t *testing.T)  {
   var wm WordMap
   file := fs.File{
-    Content: "",
-    Ext: "bar",
+    Ext: ".bar",
     Path: "foo.bar",
   }
 
@@ -31,7 +30,7 @@ func TestWordMapAddFileKnownType(t *testing.T)  {
   var wm WordMap
   file := fs.File{
     Content: "foo,bar",
-    Ext: "csv",
+    Ext: ".csv",
     Path: "foo.csv",
   }
 

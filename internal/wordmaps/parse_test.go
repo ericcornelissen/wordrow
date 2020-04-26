@@ -6,8 +6,26 @@ import "testing"
 import "github.com/ericcornelissen/wordrow/internal/fs"
 
 
+func TestGetParserForUnknownFileType(t *testing.T)  {
+  file := fs.File{
+    Ext: ".bar",
+    Path: "foo.bar",
+  }
+
+  _, err := getParserForFile(&file)
+
+  if err == nil {
+    t.Error("The error should be set for unknown file types")
+  }
+}
+
 func TestGetParserForMarkDownFile(t *testing.T)  {
-  parserFn, err := getParserForFile("foobar.md")
+  file := fs.File{
+    Ext: ".md",
+    Path: "foo.md",
+  }
+
+  parserFn, err := getParserForFile(&file)
 
   if err != nil {
     t.Fatalf("The error should be nil for this test (Error: %s)", err)
@@ -20,7 +38,12 @@ func TestGetParserForMarkDownFile(t *testing.T)  {
 }
 
 func TestGetParserForCSVFile(t *testing.T)  {
-  parserFn, err := getParserForFile("foobar.csv")
+  file := fs.File{
+    Ext: ".csv",
+    Path: "foo.csv",
+  }
+
+  parserFn, err := getParserForFile(&file)
 
   if err != nil {
     t.Fatalf("The error should be nil for this test (Error: %s)", err)
@@ -32,19 +55,11 @@ func TestGetParserForCSVFile(t *testing.T)  {
   }
 }
 
-func TestGetParserForUnknownFileType(t *testing.T)  {
-  _, err := getParserForFile("foobar")
-
-  if err == nil {
-    t.Error("The error should be set for unknown file types")
-  }
-}
-
 func TestParseFileNoParser(t *testing.T) {
   var wm WordMap
   file := fs.File{
     Content: "",
-    Ext: "bar",
+    Ext: ".bar",
     Path: "foo.bar",
   }
 
@@ -59,7 +74,7 @@ func TestParseFileUpdatesWordMap(t *testing.T) {
   var wm WordMap
   file := fs.File{
     Content: "this is definitely not a real CSV file",
-    Ext: "csv",
+    Ext: ".csv",
     Path: "foo.csv",
   }
 
@@ -74,7 +89,7 @@ func TestParseFileParseCSV(t *testing.T) {
   var wm WordMap
   file := fs.File{
     Content: "foo,bar",
-    Ext: "csv",
+    Ext: ".csv",
     Path: "foo.csv",
   }
 
@@ -97,7 +112,7 @@ func TestParseFileParseMarkDown(t *testing.T) {
       | ---- | --- |
       | foo  | bar |
     `,
-    Ext: "md",
+    Ext: ".md",
     Path: "foo.md",
   }
 
