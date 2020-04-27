@@ -11,6 +11,10 @@ Versioning].
 
 - Rename `--map` and `-m` to `--map-file` and `-M` respectively. ([#30])
 
+### Features
+
+- Add option to specify a mapping from the CLI. ([#31])
+
 ### Bug Fixes
 
 - Add missing options `--invert` and `--verbose` to the usage message. ([#30])
@@ -49,3 +53,4 @@ Versioning].
 [#23]: https://github.com/ericcornelissen/wordrow/pull/23
 [#29]: https://github.com/ericcornelissen/wordrow/pull/29
 [#30]: https://github.com/ericcornelissen/wordrow/pull/30
+[#31]: https://github.com/ericcornelissen/wordrow/pull/31

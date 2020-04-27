@@ -43,9 +43,9 @@ const (
   // The alias for the --map-file option.
   mapfileOptionAlias = "-M"
 
-  // TODO
-  mappingOption = "--tmp"
+  // The option to specify a single mapping from the CLI.
+  mappingOption = "--map"
 
-  // TODO
-  mappingOptionAlias = "-t"
+  // The alias for the --map option.
+  mappingOptionAlias = "-m"
 )
