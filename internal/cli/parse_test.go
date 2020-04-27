@@ -316,7 +316,7 @@ func TestConfigFileOptionIncorrect(t *testing.T) {
   })
 }
 
-func TestMappingFileOption(t *testing.T) {
+func TestMapFileOption(t *testing.T) {
   mapFile := "foo.map"
 
   t.Run(mapfileOption, func(t *testing.T) {
@@ -381,7 +381,7 @@ func TestMappingFileOption(t *testing.T) {
   })
 }
 
-func TestMappingFileOptionIncorrect(t *testing.T) {
+func TestMapFileOptionIncorrect(t *testing.T) {
   t.Run("value missing", func(t *testing.T) {
     args := createArgs(mapfileOption)
     run, _ := ParseArgs(args)
@@ -461,6 +461,25 @@ func TestMappingOption(t *testing.T) {
 
     if arguments.Mappings[1] != otherMapping {
       t.Errorf("First mapping was incorrect (was '%s')", arguments.Mappings[0])
+    }
+  })
+}
+
+func TestMappingOptionIncorrect(t *testing.T) {
+  t.Run("value missing", func(t *testing.T) {
+    args := createArgs(mappingOption)
+    run, _ := ParseArgs(args)
+
+    if run != false {
+      t.Error("The first return value should be false if there is an error in the args")
+    }
+  })
+  t.Run("other flag", func(t *testing.T) {
+    args := createArgs(mappingOption, silentFlag)
+    run, _ := ParseArgs(args)
+
+    if run != false {
+      t.Error("The first return value should be false if there is an error in the args")
     }
   })
 }
