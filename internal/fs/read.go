@@ -13,7 +13,11 @@ func ReadFile(filePath string) (File, error) {
   if err != nil {
     return File{}, err
   } else {
-    return File{filePath, getExt(filePath), string(binaryFileData)}, nil
+    return File{
+      Content: string(binaryFileData),
+      Ext: getExt(filePath),
+      Path: filePath,
+    }, nil
   }
 }
 
