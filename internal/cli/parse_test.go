@@ -43,15 +43,39 @@ func testDefaultConfigFile(t *testing.T, arguments Arguments) {
   }
 }
 
+func testDefaultMapFiles(t *testing.T, arguments Arguments) {
+  if len(arguments.MapFiles) != 0 {
+    t.Error("The default list of MapFiles should be empty")
+  }
+}
+
 func testDefaultMappings(t *testing.T, arguments Arguments) {
   if len(arguments.Mappings) != 0 {
     t.Error("The default list of Mappings should be empty")
   }
 }
 
-func testDefaultMapFiles(t *testing.T, arguments Arguments) {
-  if len(arguments.MapFiles) != 0 {
-    t.Error("The default list of MapFiles should be empty")
+func testDefaultsExcept(t *testing.T, arguments Arguments, exclude string) {
+  if exclude != "dryrun" {
+    testDefaultDryRun(t, arguments)
+  }
+  if exclude != "invert" {
+    testDefaultInvert(t, arguments)
+  }
+  if exclude != "silent" {
+    testDefaultSilent(t, arguments)
+  }
+  if exclude != "verbose" {
+    testDefaultVerbose(t, arguments)
+  }
+  if exclude != "config file" {
+    testDefaultConfigFile(t, arguments)
+  }
+  if exclude != "map files" {
+    testDefaultMapFiles(t, arguments)
+  }
+  if exclude != "mappings" {
+    testDefaultMappings(t, arguments)
   }
 }
 
@@ -109,13 +133,7 @@ func TestDefaultOptions(t *testing.T) {
     t.Fatal("The first return value should be true for this test")
   }
 
-  testDefaultDryRun(t, arguments)
-  testDefaultInvert(t, arguments)
-  testDefaultSilent(t, arguments)
-  testDefaultVerbose(t, arguments)
-  testDefaultConfigFile(t, arguments)
-  testDefaultMapFiles(t, arguments)
-  testDefaultMappings(t, arguments)
+  testDefaultsExcept(t, arguments, "")
 
   if len(arguments.InputFiles) != 1 {
     t.Error("The list of InputFiles should contain a single file")
@@ -130,12 +148,7 @@ func TestDryRunFlag(t *testing.T) {
     t.Fatal("The first return value should be true for this test")
   }
 
-  testDefaultInvert(t, arguments)
-  testDefaultSilent(t, arguments)
-  testDefaultVerbose(t, arguments)
-  testDefaultConfigFile(t, arguments)
-  testDefaultMapFiles(t, arguments)
-  testDefaultMappings(t, arguments)
+  testDefaultsExcept(t, arguments, "dryrun")
 
   if arguments.DryRun != true {
     t.Errorf("The DryRun value should be true if %s is an argument", dryRunFlag)
@@ -151,11 +164,7 @@ func TestInvertFlag(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultConfigFile(t, arguments)
-    testDefaultMapFiles(t, arguments)
+    testDefaultsExcept(t, arguments, "invert")
 
     if arguments.Invert != true {
       t.Errorf("The Invert value should be true if %s is an argument", invertFlag)
@@ -169,11 +178,7 @@ func TestInvertFlag(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultConfigFile(t, arguments)
-    testDefaultMapFiles(t, arguments)
+    testDefaultsExcept(t, arguments, "invert")
 
     if arguments.Invert != true {
       t.Errorf("The Invert value should be true if %s is an argument", invertFlagAlias)
@@ -190,12 +195,7 @@ func TestSilentFlag(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultConfigFile(t, arguments)
-    testDefaultMapFiles(t, arguments)
-    testDefaultMappings(t, arguments)
+    testDefaultsExcept(t, arguments, "silent")
 
     if arguments.Silent != true {
       t.Errorf("The Silent value should be true if %s is an argument", silentFlag)
@@ -209,12 +209,7 @@ func TestSilentFlag(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultConfigFile(t, arguments)
-    testDefaultMapFiles(t, arguments)
-    testDefaultMappings(t, arguments)
+    testDefaultsExcept(t, arguments, "silent")
 
     if arguments.Silent != true {
       t.Errorf("The Silent value should be true if %s is an argument", silentFlagAlias)
@@ -231,12 +226,7 @@ func TestVerboseFlag(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultConfigFile(t, arguments)
-    testDefaultMapFiles(t, arguments)
-    testDefaultMappings(t, arguments)
+    testDefaultsExcept(t, arguments, "verbose")
 
     if arguments.Verbose != true {
       t.Errorf("The Verbose value should be true if %s is an argument", verboseFlag)
@@ -250,12 +240,7 @@ func TestVerboseFlag(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultConfigFile(t, arguments)
-    testDefaultMapFiles(t, arguments)
-    testDefaultMappings(t, arguments)
+    testDefaultsExcept(t, arguments, "verbose")
 
     if arguments.Verbose != true {
       t.Errorf("The Verbose value should be true if %s is an argument", verboseFlagAlias)
@@ -274,12 +259,7 @@ func TestConfigFileOption(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultMapFiles(t, arguments)
-    testDefaultMappings(t, arguments)
+    testDefaultsExcept(t, arguments, "config file")
 
     if arguments.ConfigFile != configFile {
       t.Errorf("The config file was incorrect (was '%s')", arguments.ConfigFile)
@@ -293,12 +273,7 @@ func TestConfigFileOption(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultMapFiles(t, arguments)
-    testDefaultMappings(t, arguments)
+    testDefaultsExcept(t, arguments, "config file")
 
     if arguments.ConfigFile != configFile {
       t.Errorf("The config file was incorrect (was '%s')", arguments.ConfigFile)
@@ -314,12 +289,7 @@ func TestConfigFileOption(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultMapFiles(t, arguments)
-    testDefaultMappings(t, arguments)
+    testDefaultsExcept(t, arguments, "config file")
 
     if arguments.ConfigFile != otherConfigFile {
       t.Errorf("The config file was incorrect (was '%s')", arguments.ConfigFile)
@@ -357,12 +327,7 @@ func TestMappingFileOption(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultConfigFile(t, arguments)
-    testDefaultMappings(t, arguments)
+    testDefaultsExcept(t, arguments, "map files")
 
     if len(arguments.MapFiles) != 1 {
       t.Fatalf("The MapFiles list have length 1 (was %d)", len(arguments.MapFiles))
@@ -380,12 +345,7 @@ func TestMappingFileOption(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultConfigFile(t, arguments)
-    testDefaultMappings(t, arguments)
+    testDefaultsExcept(t, arguments, "map files")
 
     if len(arguments.MapFiles) != 1 {
       t.Fatalf("The MapFiles list have length 1 (was %d)", len(arguments.MapFiles))
@@ -405,12 +365,7 @@ func TestMappingFileOption(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultConfigFile(t, arguments)
-    testDefaultMappings(t, arguments)
+    testDefaultsExcept(t, arguments, "map files")
 
     if len(arguments.MapFiles) != 2 {
       t.Fatalf("The MapFiles list have length 2 (was %d)", len(arguments.MapFiles))
@@ -456,12 +411,7 @@ func TestMappingOption(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultConfigFile(t, arguments)
-    testDefaultMapFiles(t, arguments)
+    testDefaultsExcept(t, arguments, "mappings")
 
     if len(arguments.Mappings) != 1 {
       t.Fatalf("The Mappings list have length 1 (was %d)", len(arguments.Mappings))
@@ -479,12 +429,7 @@ func TestMappingOption(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultConfigFile(t, arguments)
-    testDefaultMapFiles(t, arguments)
+    testDefaultsExcept(t, arguments, "mappings")
 
     if len(arguments.Mappings) != 1 {
       t.Fatalf("The Mappings list have length 1 (was %d)", len(arguments.Mappings))
@@ -504,12 +449,7 @@ func TestMappingOption(t *testing.T) {
       t.Fatal("The first return value should be true for this test")
     }
 
-    testDefaultDryRun(t, arguments)
-    testDefaultInvert(t, arguments)
-    testDefaultSilent(t, arguments)
-    testDefaultVerbose(t, arguments)
-    testDefaultConfigFile(t, arguments)
-    testDefaultMapFiles(t, arguments)
+    testDefaultsExcept(t, arguments, "mappings")
 
     if len(arguments.Mappings) != 2 {
       t.Fatalf("The Mappings list have length 1 (was %d)", len(arguments.Mappings))
