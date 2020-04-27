@@ -51,4 +51,4 @@ jobs:
         node-version: 12.x
 
     - name: Lint MarkDown
-      run: make lint
+      run: make lint-md
