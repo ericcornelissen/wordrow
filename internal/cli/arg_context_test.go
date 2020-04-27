@@ -22,4 +22,10 @@ func TestArgContextToString(t *testing.T) {
       t.Error("result should not be an empty string")
     }
   })
+  t.Run("contextMapping", func(t *testing.T) {
+    result := contextMapping.String()
+    if result == "" {
+      t.Error("result should not be an empty string")
+    }
+  })
 }
