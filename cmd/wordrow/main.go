@@ -4,6 +4,7 @@ import "os"
 import "strings"
 
 import "github.com/ericcornelissen/wordrow/internal/cli"
+import "github.com/ericcornelissen/wordrow/internal/errors"
 import "github.com/ericcornelissen/wordrow/internal/fs"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 import "github.com/ericcornelissen/wordrow/internal/replacer"
@@ -28,11 +29,12 @@ func getWordMap(
     }
   }
 
+  logger.Debug("Processing CLI specified mappings")
   for _, mapping := range cliMappings {
+    logger.Debugf("Processing CLI specified mapping: '%s'", mapping)
     values := strings.Split(mapping, ",")
     if len(values) != 2 {
-      return wm, err
-      logger.Errorf("Incorrect mapping from CLI ('%s')", mapping)
+      return wm, errors.Newf("Incorrect mapping from CLI: '%s'", mapping)
     } else {
       wm.AddOne(values[0], values[1])
     }
