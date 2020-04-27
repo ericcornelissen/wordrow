@@ -66,6 +66,11 @@ func printOptions() {
     Specify a dictionary file. To use multiple dictionary files you can use this
     option multiple times.
   `)
+  printOption(mappingOptionAlias, mappingOption, `
+    Specify a single mapping. Use a comma to separate the words of the mapping.
+    If spaces are required use quotation marks. This option can be used multiple
+    times.
+  `)
 }
 
 // Print the usage message of the program.
@@ -73,6 +78,7 @@ func printUsage() {
   logger.Printf("Usage: wordrow [%s] [%s]\n", helpFlag, versionFlag)
   logger.Printf("               [%s | %s <file>]\n", configOptionAlias, configOption)
   logger.Printf("               [%s | %s <file>]\n", mapfileOptionAlias, mapfileOption)
+  logger.Printf("               [%s | %s <file>]\n", mappingOptionAlias, mappingOption)
   logger.Printf("               [%s] [%s | %s]\n", dryRunFlag, silentFlagAlias, silentFlag)
   logger.Println("               <files>")
   logger.Println()

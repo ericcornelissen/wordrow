@@ -31,8 +31,26 @@ Proton, and a canary named Atom.
 ```
 
 Then you can use *wordrow* to automatically and quickly replace certain words in
-that text by other words. Let's define a [mapping file] in the Comma Separated
-Values (CSV) format to change the animals in the text, named `animals.csv`.
+that text by other words. The quickest way to do this is by specifying a word
+that you want to change on the CLI. To do this you can use the `--map` option as
+follows:
+
+```shell
+$ wordow input.txt --map dog,cat
+```
+
+Then, `input.txt` will be updated as follows:
+
+```diff
+- I have a dog named Quark, a horse named
+- Proton, and a canary named Atom.
++ I have a cat named Quark, a horse named
++ Proton, and a canary named Atom.
+```
+
+Another way is to define a [mapping file] in the Comma Separated Values (CSV)
+format. With a mapping file you can specify any number of mappings. For example,
+to change all the animals in the text you can create a file named `animals.csv`.
 
 ```csv
 # animals.csv

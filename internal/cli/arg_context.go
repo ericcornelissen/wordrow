@@ -16,6 +16,9 @@ const (
 
   // The context where arguments are interpreted as mapping files.
   contextMapFile
+
+  // The context where arguments are interpreted as a mapping.
+  contextMapping
 )
 
 // Get an argContext as a human readable string.
@@ -24,6 +27,7 @@ func (context argContext) String() string {
     "Unknown",
     fmt.Sprintf("%s/%s", configOption, configOptionAlias),
     fmt.Sprintf("%s/%s", mapfileOption, mapfileOptionAlias),
+    fmt.Sprintf("%s/%s", mappingOption, mappingOptionAlias),
   }
 
   return names[context]

@@ -42,4 +42,10 @@ const (
 
   // The alias for the --map-file option.
   mapfileOptionAlias = "-M"
+
+  // The option to specify a single mapping from the CLI.
+  mappingOption = "--map"
+
+  // The alias for the --map option.
+  mappingOptionAlias = "-m"
 )
