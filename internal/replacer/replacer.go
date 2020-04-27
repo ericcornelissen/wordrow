@@ -4,7 +4,7 @@ import "regexp"
 import "strings"
 import "unicode"
 
-import "github.com/ericcornelissen/wordrow/internal/wordmap"
+import "github.com/ericcornelissen/wordrow/internal/wordmaps"
 
 
 // The regular expression for a single letter.
@@ -57,7 +57,7 @@ func maintainFormatting(from, to string) string {
 }
 
 // Replace all instances of `from` by `to` in `s`.
-func replaceOne(s string, mapping wordmap.Mapping) string {
+func replaceOne(s string, mapping wordmaps.Mapping) string {
   var sb strings.Builder
 
   lastIndex := 0
@@ -75,8 +75,8 @@ func replaceOne(s string, mapping wordmap.Mapping) string {
 
 
 // Replace substrings of `s` according to the mapping in `wordmap`.
-func ReplaceAll(s string, wordmap wordmap.WordMap) string {
-  for mapping := range wordmap.Iter() {
+func ReplaceAll(s string, wp wordmaps.WordMap) string {
+  for mapping := range wp.Iter() {
     s = replaceOne(s, mapping)
   }
 

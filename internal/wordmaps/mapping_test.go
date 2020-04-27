@@ -1,4 +1,4 @@
-package wordmap
+package wordmaps
 
 import "fmt"
 import "testing"

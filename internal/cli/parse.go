@@ -57,19 +57,19 @@ func parseArgumentAsOption(
 ) (argContext, error) {
   newContext := contextInputFile
   switch option {
-    case helpOption:
+    case helpFlag:
       arguments.help = true
-    case versionOption:
+    case versionFlag:
       arguments.version = true
 
     // Flags
-    case dryRunOption:
+    case dryRunFlag:
       arguments.DryRun = true
-    case invertOption, invertOptionAlias:
+    case invertFlag, invertFlagAlias:
       arguments.Invert = true
-    case silentOption, silentOptionAlias:
+    case silentFlag, silentFlagAlias:
       arguments.Silent = true
-    case verboseOption, verboseOptionAlias:
+    case verboseFlag, verboseFlagAlias:
       arguments.Verbose = true
 
     // Options
@@ -81,7 +81,7 @@ func parseArgumentAsOption(
     case mappingOption, mappingOptionAlias:
       newContext = contextMapping
     default:
-      return newContext, errors.Newf("Unknown option '%s'. Use %s for help", option, helpOption)
+      return newContext, errors.Newf("Unknown option '%s'. Use %s for help", option, helpFlag)
   }
 
   return newContext, nil

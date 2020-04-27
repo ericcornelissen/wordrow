@@ -68,7 +68,7 @@ func TestNoArgs(t *testing.T) {
 }
 
 func TestHelpArg(t *testing.T) {
-  args := createArgs(helpOption)
+  args := createArgs(helpFlag)
   run, _ := ParseArgs(args)
 
   if run == true {
@@ -78,7 +78,7 @@ func TestHelpArg(t *testing.T) {
 
 func TestVersionArg(t *testing.T) {
   t.Run("--version only", func(t *testing.T) {
-    args := createArgs(versionOption)
+    args := createArgs(versionFlag)
     run, _ := ParseArgs(args)
 
     if run == true {
@@ -86,7 +86,7 @@ func TestVersionArg(t *testing.T) {
     }
   })
   t.Run("--version and other", func(t *testing.T) {
-    args := createArgs(versionOption, "foo.bar")
+    args := createArgs(versionFlag, "foo.bar")
     run, _ := ParseArgs(args)
 
     if run != true {
@@ -116,7 +116,7 @@ func TestDefaultOptions(t *testing.T) {
 }
 
 func TestDryRunFlag(t *testing.T) {
-  args := createArgs(dryRunOption, "foo.bar")
+  args := createArgs(dryRunFlag, "foo.bar")
   run, arguments := ParseArgs(args)
 
   if run != true {
@@ -130,13 +130,13 @@ func TestDryRunFlag(t *testing.T) {
   testDefaultMapFiles(t, arguments)
 
   if arguments.DryRun != true {
-    t.Errorf("The DryRun value should be true if %s is an argument", dryRunOption)
+    t.Errorf("The DryRun value should be true if %s is an argument", dryRunFlag)
   }
 }
 
 func TestInvertFlag(t *testing.T) {
-  t.Run(invertOption, func(t *testing.T) {
-    args := createArgs(invertOption, "foo.bar")
+  t.Run(invertFlag, func(t *testing.T) {
+    args := createArgs(invertFlag, "foo.bar")
     run, arguments := ParseArgs(args)
 
     if run != true {
@@ -150,11 +150,11 @@ func TestInvertFlag(t *testing.T) {
     testDefaultMapFiles(t, arguments)
 
     if arguments.Invert != true {
-      t.Errorf("The Invert value should be true if %s is an argument", invertOption)
+      t.Errorf("The Invert value should be true if %s is an argument", invertFlag)
     }
   })
-  t.Run(invertOptionAlias, func(t *testing.T) {
-    args := createArgs(invertOptionAlias, "foo.bar")
+  t.Run(invertFlagAlias, func(t *testing.T) {
+    args := createArgs(invertFlagAlias, "foo.bar")
     run, arguments := ParseArgs(args)
 
     if run != true {
@@ -168,14 +168,14 @@ func TestInvertFlag(t *testing.T) {
     testDefaultMapFiles(t, arguments)
 
     if arguments.Invert != true {
-      t.Errorf("The Invert value should be true if %s is an argument", invertOptionAlias)
+      t.Errorf("The Invert value should be true if %s is an argument", invertFlagAlias)
     }
   })
 }
 
 func TestSilentFlag(t *testing.T) {
-  t.Run(silentOption, func(t *testing.T) {
-    args := createArgs(silentOption, "foo.bar")
+  t.Run(silentFlag, func(t *testing.T) {
+    args := createArgs(silentFlag, "foo.bar")
     run, arguments := ParseArgs(args)
 
     if run != true {
@@ -189,11 +189,11 @@ func TestSilentFlag(t *testing.T) {
     testDefaultMapFiles(t, arguments)
 
     if arguments.Silent != true {
-      t.Errorf("The Silent value should be true if %s is an argument", silentOption)
+      t.Errorf("The Silent value should be true if %s is an argument", silentFlag)
     }
   })
-  t.Run(silentOptionAlias, func(t *testing.T) {
-    args := createArgs(silentOptionAlias, "foo.bar")
+  t.Run(silentFlagAlias, func(t *testing.T) {
+    args := createArgs(silentFlagAlias, "foo.bar")
     run, arguments := ParseArgs(args)
 
     if run != true {
@@ -207,14 +207,14 @@ func TestSilentFlag(t *testing.T) {
     testDefaultMapFiles(t, arguments)
 
     if arguments.Silent != true {
-      t.Errorf("The Silent value should be true if %s is an argument", silentOptionAlias)
+      t.Errorf("The Silent value should be true if %s is an argument", silentFlagAlias)
     }
   })
 }
 
 func TestVerboseFlag(t *testing.T) {
-  t.Run(verboseOption, func(t *testing.T) {
-    args := createArgs(verboseOption, "foo.bar")
+  t.Run(verboseFlag, func(t *testing.T) {
+    args := createArgs(verboseFlag, "foo.bar")
     run, arguments := ParseArgs(args)
 
     if run != true {
@@ -228,11 +228,11 @@ func TestVerboseFlag(t *testing.T) {
     testDefaultMapFiles(t, arguments)
 
     if arguments.Verbose != true {
-      t.Errorf("The Verbose value should be true if %s is an argument", verboseOption)
+      t.Errorf("The Verbose value should be true if %s is an argument", verboseFlag)
     }
   })
-  t.Run(verboseOptionAlias, func(t *testing.T) {
-    args := createArgs(verboseOptionAlias, "foo.bar")
+  t.Run(verboseFlagAlias, func(t *testing.T) {
+    args := createArgs(verboseFlagAlias, "foo.bar")
     run, arguments := ParseArgs(args)
 
     if run != true {
@@ -246,7 +246,7 @@ func TestVerboseFlag(t *testing.T) {
     testDefaultMapFiles(t, arguments)
 
     if arguments.Verbose != true {
-      t.Errorf("The Verbose value should be true if %s is an argument", verboseOptionAlias)
+      t.Errorf("The Verbose value should be true if %s is an argument", verboseFlagAlias)
     }
   })
 }
@@ -322,7 +322,7 @@ func TestConfigOptionIncorrect(t *testing.T) {
     }
   })
   t.Run("other flag", func(t *testing.T) {
-    args := createArgs(configOption, silentOption)
+    args := createArgs(configOption, silentFlag)
     run, _ := ParseArgs(args)
 
     if run != false {
@@ -418,7 +418,7 @@ func TestMappingOptionIncorrect(t *testing.T) {
     }
   })
   t.Run("other flag", func(t *testing.T) {
-    args := createArgs(mapfileOption, silentOption)
+    args := createArgs(mapfileOption, silentFlag)
     run, _ := ParseArgs(args)
 
     if run != false {

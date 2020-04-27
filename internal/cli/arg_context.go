@@ -1,5 +1,7 @@
 package cli
 
+import "fmt"
+
 
 // A custom integer type for an Enum to keep track of the arguments context.
 type argContext int
@@ -23,9 +25,9 @@ const (
 func (context argContext) String() string {
   names := []string{
     "Unknown",
-    "--config/-c",
-    "--map/-m",
-    "--tmp/-t",
+    fmt.Sprintf("%s/%s", configOption, configOptionAlias),
+    fmt.Sprintf("%s/%s", mapfileOption, mapfileOptionAlias),
+    fmt.Sprintf("%s/%s", mappingOption, mappingOptionAlias),
   }
 
   return names[context]
