@@ -455,38 +455,3 @@ func TestReplaceByLongerString(t *testing.T) {
     }
   })
 }
-
-
-// func TestTestA(t *testing.T) {
-//   var wordmap wordmap.WordMap
-//   wordmap.AddOne("post compromise", "post-compromise")
-//
-//   source := "Post Compromise"
-//   result := ReplaceAll(source, wordmap)
-//
-//   expected := "Post-Compromise"
-//   if result != expected {
-//     reportIncorrectReplacement(t, expected, result)
-//   }
-// }
-//
-// func TestTest2(t *testing.T) {
-//   var wordmap wordmap.WordMap
-//   wordmap.AddOne("hello awesome world", "hello world")
-//
-//   source := "Hello Awesome World!"
-//   result := ReplaceAll(source, wordmap)
-//
-//   expected := "Hello World!"
-//   if result != expected {
-//     reportIncorrectReplacement(t, expected, result)
-//   }
-//
-//   source = "Hello awesome World!"
-//   result = ReplaceAll(source, wordmap)
-//
-//   expected = "Hello World!"
-//   if result != expected {
-//     reportIncorrectReplacement(t, expected, result)
-//   }
-// }
