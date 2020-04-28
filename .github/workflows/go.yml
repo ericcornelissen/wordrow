@@ -1,5 +1,4 @@
-name: Go
-
+name: wordrow CI
 on:
   - push
   - pull_request
@@ -39,3 +38,17 @@ jobs:
         chmod +x cc-test-reporter
         ./cc-test-reporter format-coverage ./coverage.out -t gocov -o ./coverage.cc --prefix github.com/ericcornelissen/wordrow
         ./cc-test-reporter upload-coverage -i ./coverage.cc -r ${{ secrets.CODECLIMATE_REPORTER_ID }}
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Set up NodeJS
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: Lint MarkDown
+      run: make lint

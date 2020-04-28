@@ -13,7 +13,17 @@ func getAnAbsolutePathFor(file string) string {
 }
 
 
-func TestResolveNoGlobs(t *testing.T) {
+func TestGetExt(t *testing.T) {
+  path := "foo.bar"
+
+  result := getExt(path)
+
+  if result != ".bar" {
+    t.Errorf("Unexpected file extension (got '%s')", result)
+  }
+}
+
+func TestResolveGlobsNoGlobs(t *testing.T) {
   resolvedPaths, err := ResolveGlobs()
 
   if err != nil {

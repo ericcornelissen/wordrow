@@ -1,0 +1,343 @@
+# Mapping Files
+
+You can use *wordrow* to replace words in files, but to do that you need to
+define a mapping file. This document gives an introduction to defining your own
+mapping file. All examples in this document are specified in the _Comma
+Separated Values_ (CSV) format. Note that *wordrow* supports other [mapping
+formats] as well.
+
+This document does not contain any mappings that are particularly useful in a
+real-world scenario. Instead, it illustrate how you can use *wordrow* through
+made-up examples.
+
+In this document you can read about:
+
+- [The Basics](#the-basics)
+  - [Direction](#direction)
+  - [Whitespace](#whitespace)
+  - [Multiple Words](#multiple-words)
+- [Prefixes and Suffixes](#prefixes-and-suffixes)
+  - [The Preceding and Succeeding Word](#the-preceding-and-succeeding-word)
+  - [Omitting Prefixes or Suffixes](#omitting-prefixes-or-suffixes)
+- [Order Matters](#order-matters)
+  - [Using Ordering to Your Advantage](#using-ordering-to-your-advantage)
+
+## The Basics
+
+To define a mapping from one word to another word for *wordrow*, you must create
+a file containing the words you want to map. For example, to replace the word
+_"dog"_ to _"cat"_ you can write the following CSV file.
+
+```csv
+# mapping.csv
+
+dog,cat
+```
+
+This mapping will replace all instances of the word _"dog"_ in a text, provided
+it does not have a prefix or suffix, with the word _"cat"_. The following sample
+text illustrates this behaviour. Notice that _"dog"_ is replaced by _"cat"_
+because it has no prefix or suffix, whereas _"doggy"_ is not replaced by _"cat"_
+(or _"catgy"_).
+
+```diff
+- I have a dog, but you have a small doggy.
++ I have a cat, but you have a small doggy.
+```
+
+A mapping file my contain any number of mappings. For example, when using the
+following mapping file the words _"dog"_, _"canary"_, and _"horse"_ will be
+replaced by _"cat"_, _"parrot"_, and _"donkey"_ respectively.
+
+```csv
+# mapping.csv
+
+dog,cat
+canary,parrot
+horse,donkey
+```
+
+### Direction
+
+As you have seen, a mapping will be interpreted left-to-right. That is, the
+value on the left will be replaced by the value on the right in the input text.
+So, if you use the following mapping file:
+
+```csv
+# mapping.csv
+
+dog,cat
+```
+
+Then, for an input text containing both the word _"dog"_ and the word _"cat"_,
+only the word _"dog"_ is replaced by _"cat"_. For example:
+
+```diff
+- I have a dog and you have a cat.
++ I have a cat and you have a cat.
+```
+
+A mapping can be inverted using the [*wordrow* CLI] as shown here.
+
+```shell
+$ wordrow input.txt --mapping mapping.csv --invert
+```
+
+Then, in the example before, only the word _"cat"_ will be replaced by _"dog"_:
+
+```diff
+- I have a dog and you have a cat.
++ I have a dog and you have a dog.
+```
+
+### Whitespace
+
+Any whitespace before the first character and any whitespace after the last
+character is ignored. Consider a CSV file with some whitespace, as in the
+following example (dots are used to illustrate where the whitespace is).
+
+```csv
+..dog..,..cat..
+```
+
+This will still replace the word _"dog"_ by _"cat"_ in our text, even though
+_"dog"_ is not preceded or followed by two spaces in this example. Also, it does
+not add the two spaces surrounding _"cat"_ to the output.
+
+```diff
+- I have a dog, but you have a small doggy.
++ I have a cat, but you have a small doggy.
+```
+
+### Multiple Words
+
+On the other hand, whitespace within a mapping value is not ignored. So, you can
+replace a group of words, a phrase, in one mapping quite easily. For example, to
+replace the phrase _"a dog"_  you can define the following mapping.
+
+```csv
+a dog, an amazing dog
+```
+
+This will replace the phrase _"a dog"_ in the text by _"an amazing dog"_. Also
+in this scenario _"doggy"_ is not changed, as it does not match _"a dog"_.
+
+```diff
+- I have a dog, but you have a small doggy.
++ I have an amazing dog, but you have a small doggy.
+```
+
+There is no limitation on the number of words in a mapping phrase.
+
+Do be aware that the amount of whitespace between words in a phrase matters. For
+example, if you define the mapping with two spaces between _"a"_ an _"dog"_ as
+in the following example (dots are used to illustrate where the whitespace is).
+
+```csv
+a..dog,an.amazing.dog
+```
+
+Then, the example text won't be changed, as it does not contain _"a..dog"_.
+
+```diff
+- I have a dog, but you have a small doggy.
++ I have a dog, but you have a small doggy.
+```
+
+## Prefixes and Suffixes
+
+You can define more advanced mappings by replacing words including a prefix, a
+suffix or both. To do this, you can add a dash (`-`) before (prefix) or after
+(suffix) the words in your mappings. If you do this, the word will be replaced
+if it appears as is, or with a prefix/suffix in the text.
+
+For example, if you want to replace all words ending in _"ize"_ with the same
+word ending in _"ise"_ you can define the following mapping.
+
+```csv
+-ize, -ise
+```
+
+Then, if you use this mapping on a text containing words ending in _"ize"_, all
+of them will be replaced by the same word, but ending in _"ise"_. For example:
+
+```diff
+- They realize that they should not idealize.
++ They realise that they should not idealise.
+```
+
+Similarly, if you want to replace the word _"color"_, and all its variants, with
+the word _"colour"_, and all its variants, you can define the following mapping.
+
+```csv
+color-, colour-
+```
+
+Then, if you use this mapping on a text containing the word _"color"_ and also
+words starting with _"color"_, all of them will be replaced by _"colour-"_. For
+example:
+
+```diff
+- The colors on this colorful painting are amazing.
++ The colours on this colourful painting are amazing.
+```
+
+Note that it is not required for a word specified with a prefix or suffix to
+appear with a prefix or suffix in the text. For example, you can use the
+`color-` to `colour-` mapping to replace the word _"color"_ by itself as well,
+for example:
+
+```diff
+- What color is the dog?
++ What colour is the dog?
+```
+
+It is also possible to match both prefixes and suffixes in the same mapping. To
+do this, simply add both the prefix and suffix dash to the words in the
+mapping.
+
+```csv
+-bloody-, -freaking-
+```
+
+In this example, if _"bloody"_ is used as an [expletive infixation] it will be
+replaced by _"freaking"_.
+
+```diff
+- It is a fanbloodytastic movie.
++ It is a fanfreakingtastic movie.
+````
+
+It is important to remember that dashes only have a special meaning at the start
+and end of mapping values. You can always use dashes in the middle of words. For
+example, you can define the following mapping.
+
+```csv
+dog-like, cat-like
+```
+
+That will replace all instances of _"dog-like"_ in a text by _"cat-like"_. But
+it won't affect any instances of _"dog"_ and _"like"_ with something in between
+them, as in:
+
+```diff
+- I have a dog-like cat, and you have a dog I like.
++ I have a cat-like cat, and you have a dog I like.
+```
+
+### Omitting Prefixes or Suffixes
+
+It is necessary to write the dash in the both words of the mapping. Otherwise
+the prefix or suffix will be omitted when the word is replaced. This can,
+however, be used if you want to restyle your text. Consider the following
+mapping.
+
+```csv
+dog-, dog
+```
+
+In this example, any suffix the word _"dog"_ has will be removed and replaced by
+just the word _"dog"_. So, a text that uses _"doggy"_ will be updated to use
+_"dog"_ instead.
+
+```diff
+- I have a dog, but you have a small doggy.
++ I have a dog, but you have a small dog.
+```
+
+### The Preceding and Succeeding Word
+
+One possible way to use the prefix and suffix dash is to match instances of the
+word only if there is another word before or after it. You can do this by
+putting a space between the word and the dash (remember that [whitespace
+matters]).
+
+```csv
+- dogs, - cats
+```
+
+In this example, the word _"dog"_ is only replaced by _"cat"_ if there is a word
+before _"dog"_, as illustrated by this text:
+
+```diff
+- Dogs are nice and dogs are cool.
++ Dogs are nice and cats are cool.
+```
+
+Again, it is necessary to specify the dash in both words. Otherwise the word
+before or after the matched word is omitted from the result.
+
+## Order matters
+
+It is important to note that the ordering in a mapping file matters. The
+mappings defined in a file are applied to the input text top to bottom. To
+illustrate this, consider the following mapping file.
+
+```csv
+dog, cat
+cat, dog
+```
+
+Using this mapping on our example you will find that, in the end, it doesn't
+change the input text.
+
+```diff
+#  1. applying "dog, cat"
+- I have a dog, but you have a small doggy.
++ I have a cat, but you have a small doggy.
+
+#  2. applying "cat, dog"
+- I have a cat, but you have a small doggy.
++ I have a dog, but you have a small doggy.
+```
+
+This may be intuitive. However, let's now consider what happens if you swap the
+two lines in the mapping file.
+
+```csv
+cat, dog
+dog, cat
+```
+
+With this mapping, the input text is does change!
+
+```diff
+#  1. applying "cat, dog"
+- I have a dog, but you have a small doggy.
++ I have a dog, but you have a small doggy.
+
+#  2. applying "dog, cat"
+- I have a dog, but you have a small doggy.
++ I have a cat, but you have a small doggy.
+```
+
+So, keep this in mind when you define a mapping to avoid any problems.
+
+### Using Ordering to Your Advantage
+
+This effect can also be used to your advantage. Consider the following scenario:
+you define a mapping from a word that uses the article "a" to a word that uses
+the article "an". For example, let's say you want to replace _"duck"_ with
+_"owl"_ and you define the following mapping.
+
+```csv
+duck, owl
+a owl, an owl
+```
+
+Then, a text containing the phrase _"a duck"_ will be transformed as follows.
+
+```diff
+#  1. applying "duck, owl"
+- I see a duck, is it your duck?
++ I see a owl, is it your owl?
+
+#  2. applying "a owl, an owl"
+- I see a owl, is it your owl?
++ I see an owl, is it your owl?
+```
+
+[expletive infixation]: https://www.youtube.com/watch?v=dt22yWYX64w
+[mapping formats]: ./mapping-formats.md
+[whitespace matters]: #whitespace
+[*wordrow* CLI]: ./cli.md
