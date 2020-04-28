@@ -4,6 +4,7 @@ import "regexp"
 import "strings"
 import "unicode"
 
+import "github.com/ericcornelissen/wordrow/internal/utils"
 import "github.com/ericcornelissen/wordrow/internal/wordmaps"
 
 
@@ -11,14 +12,6 @@ import "github.com/ericcornelissen/wordrow/internal/wordmaps"
 var reLetter = regexp.MustCompile("[A-Za-z]")
 
 
-// Get the minimum length of two (string) slices.
-func minLen(a, b [][]string) int {
-  if len(a) <= len(b) {
-    return len(a)
-  } else {
-    return len(b)
-  }
-}
 
 // Check if a character (as byte) is an uppercase letter.
 func isUpperChar(s byte) bool {
@@ -48,7 +41,7 @@ func maintainAllCaps(from, to string) string {
 // returned unchanged.
 //
 // If the `from` string consists of multiple words, the capitalization will be
-// maintained for every word in the string.
+// maintained for all words in the string.
 func maintainCapitalization(fromPhrase, toPhrase string) string {
   var sb strings.Builder
 
@@ -56,16 +49,15 @@ func maintainCapitalization(fromPhrase, toPhrase string) string {
   fromWords := re.FindAllStringSubmatch(fromPhrase, -1)
   toWords := re.FindAllStringSubmatch(toPhrase, -1)
 
-  for i := 0; i < minLen(fromWords, toWords); i++ {
+  for i := 0; i < utils.Shortest(fromWords, toWords); i++ {
     fromWord, toWord := fromWords[i][1], toWords[i][1]
     toDivider := toWords[i][2]
 
     if isUpperChar(fromWord[0]) {
-      x := toSentenceCase(toWord)
-      sb.WriteString(x)
-    } else {
-      sb.WriteString(toWord)
+      toWord = toSentenceCase(toWord)
     }
+
+    sb.WriteString(toWord)
     sb.WriteString(toDivider)
   }
 
