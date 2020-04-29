@@ -150,17 +150,17 @@ func (mapping *Mapping) mayIncludeSuffix() bool {
   return endsWithSuffixSymbol(mapping.from)
 }
 
-// Get the Mapping's "from" value.
+// GetFrom returns the Mapping's "from" value.
 func (mapping *Mapping) GetFrom() string {
   return removePrefixAndSuffixSymbols(mapping.from)
 }
 
-// Get the Mapping's "to" value.
+// GetTo returns the Mapping's "to" value.
 func (mapping *Mapping) GetTo() string {
   return removePrefixAndSuffixSymbols(mapping.to)
 }
 
-// Find matches of the "from" value of the Mapping in a string.
+// Match finds matches of the "from" value of the Mapping in a string.
 func (mapping *Mapping) Match(s string) (chan Match) {
   ch := make(chan Match)
 

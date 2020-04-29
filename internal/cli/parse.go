@@ -125,10 +125,10 @@ func doParseOneArgument(
     }
 
     return newContext, nil
-  } else {
-    parseArgumentAsValue(arg, context, arguments)
-    return contextInputFile, nil
   }
+
+  parseArgumentAsValue(arg, context, arguments)
+  return contextInputFile, nil
 }
 
 // Parse a slice of arguments that contains at least one program argument.
@@ -156,7 +156,8 @@ func doParseProgramArguments(args []string) (Arguments, error) {
 }
 
 
-// Parse a slice of arguments (e.g. `os.Args`) into an Arguments instance.
+// ParseArgs parses a slice of arguments (e.g. `os.Args`) into an Arguments
+// instance.
 func ParseArgs(args []string) (bool, Arguments) {
   var arguments Arguments
   if noArgumentsProvided(args) {

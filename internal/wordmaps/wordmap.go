@@ -21,7 +21,7 @@ func (wm *WordMap) inRange(i int) bool {
 }
 
 
-// Parse a File and add its mapping to the WordMap.
+// AddFile parses a File and add its mapping to the WordMap.
 //
 // The function sets the error if an error occurs when parsing the File.
 func (wm *WordMap) AddFile(file fs.File) error {
@@ -33,13 +33,13 @@ func (wm *WordMap) AddFile(file fs.File) error {
   return nil
 }
 
-// Add all mappings from another WordMap to the WordMap.
+// AddFrom adds all mappings from another WordMap to the WordMap.
 func (wm *WordMap) AddFrom(other WordMap) {
   wm.from = append(wm.from, other.from...)
   wm.to = append(wm.to, other.to...)
 }
 
-// Add a single mapping from one word to another to the WordMap.
+// AddOne adds a single mapping from one word to another to the WordMap.
 //
 // This function panics if an empty string is provided as first or second
 // argument.
@@ -54,9 +54,9 @@ func (wm *WordMap) AddOne(from, to string) {
   wm.to = append(wm.to, toValue)
 }
 
-// Check whether the WordMap contains a mapping from a certain string. Note that
-// this only returns `true` if the queried string is in the "from" part of the
-// mapping.
+// Contains checks whether the WordMap contains a mapping from a certain string.
+// Note that this only returns `true` if the queried string is in the "from"
+// part of the WordMap.
 func (wm *WordMap) Contains(x string) bool {
   for _, y := range wm.from {
     if x == y {
@@ -66,7 +66,7 @@ func (wm *WordMap) Contains(x string) bool {
   return false
 }
 
-// Get the 'from' value mapped at a specific index.
+// GetFrom returns the 'from' value mapped at a specific index.
 //
 // This function panics if the index is outside the range of the WordMap.
 func (wm *WordMap) GetFrom(i int) string {
@@ -78,7 +78,7 @@ func (wm *WordMap) GetFrom(i int) string {
   return wm.from[i]
 }
 
-// Get the 'to' value mapped at a specific index.
+// GetTo returns the 'to' value mapped at a specific index.
 //
 // This function panics if the index is outside the range of the WordMap.
 func (wm *WordMap) GetTo(i int) string {
@@ -90,14 +90,15 @@ func (wm *WordMap) GetTo(i int) string {
   return wm.to[i]
 }
 
-// Change the direction of the WordMap. I.e. invert the `to` and `from` values.
+// Invert changes the direction of the WordMap. I.e. invert the `to` and `from`
+// values.
 func (wm *WordMap) Invert() {
   tmp := wm.from
   wm.from = wm.to
   wm.to = tmp
 }
 
-// Get the contents of the WordMap as an iterable slice.
+// Iter gives the contents of the WordMap as an iterable slice.
 func (wm *WordMap) Iter() (chan Mapping) {
   ch := make(chan Mapping)
 
@@ -113,8 +114,8 @@ func (wm *WordMap) Iter() (chan Mapping) {
   return ch
 }
 
-// Get the size of the WordMap. I.e. the number of words mapped from some value
-// a to some value b.
+// Size returns the size of the WordMap. I.e. the number of words mapped from
+// some value a to some value b.
 func (wm *WordMap) Size() int {
   return len(wm.from)
 }

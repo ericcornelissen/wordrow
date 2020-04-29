@@ -5,11 +5,12 @@ import "strings"
 import "unicode"
 
 
-// Regular expression to get the words and substrings between words of a phrase.
+// Regular Expression to match the words, and substrings between the words, of a
+// phrase.
 var phraseToWordsExpr = regexp.MustCompile(`([A-z]+)([^A-z]*)`)
 
 
-// Check if a character (as byte) is an uppercase letter.
+// Check if a string starts an uppercase letter.
 func startsWithCapital(s string) bool {
   firstChar := s[0]
   firstCharRune := rune(firstChar)
@@ -17,7 +18,7 @@ func startsWithCapital(s string) bool {
 }
 
 // Convert a string to sentence case. I.e. make the first letter in the string
-// upper case.
+// uppercase.
 func toSentenceCase(s string) string {
   return strings.ToUpper(s[:1]) + s[1:]
 }
@@ -28,17 +29,17 @@ func toSentenceCase(s string) string {
 func maintainAllCaps(from, to string) string {
   if strings.ToUpper(from) == from {
     return strings.ToUpper(to)
-  } else {
-    return to
   }
+
+  return to
 }
 
 // If the `from` string starts with a capital letter, it will return the `to`
-// starting with a capital letter as well. Otherwise, the `to` string is
+// string starting with a capital letter as well. Otherwise, the `to` string is
 // returned unchanged.
 //
 // If the `from` string consists of multiple words, the capitalization will be
-// maintained for all words in the string.
+// maintained for every word in the string.
 func maintainCapitalization(fromPhrase, toPhrase string) string {
   var sb strings.Builder
 

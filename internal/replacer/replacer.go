@@ -23,7 +23,7 @@ func replaceOne(s string, mapping wordmaps.Mapping) string {
 }
 
 
-// Replace substrings of `s` according to the mapping in `wm`.
+// ReplaceAll replaces substrings of `s` according to the mapping in `wm`.
 func ReplaceAll(s string, wp wordmaps.WordMap) string {
   for mapping := range wp.Iter() {
     s = replaceOne(s, mapping)

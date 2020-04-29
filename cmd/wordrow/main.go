@@ -32,12 +32,13 @@ func getWordMap(
   logger.Debug("Processing CLI specified mappings")
   for _, mapping := range cliMappings {
     logger.Debugf("Processing CLI specified mapping: '%s'", mapping)
+
     values := strings.Split(mapping, ",")
     if len(values) != 2 {
       return wm, errors.Newf("Incorrect mapping from CLI: '%s'", mapping)
-    } else {
-      wm.AddOne(values[0], values[1])
     }
+
+    wm.AddOne(values[0], values[1])
   }
 
   return wm, err
