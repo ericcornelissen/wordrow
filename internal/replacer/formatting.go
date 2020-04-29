@@ -4,13 +4,16 @@ import "regexp"
 import "strings"
 import "unicode"
 
-import "github.com/ericcornelissen/wordrow/internal/utils"
+
+// Regular expression to get the words and substrings between words of a phrase.
+var phraseToWordsExpr = regexp.MustCompile(`([A-z]+)([^A-z]*)`)
 
 
 // Check if a character (as byte) is an uppercase letter.
-func isUpperChar(s byte) bool {
-  firstChar := rune(s)
-  return unicode.IsUpper(firstChar)
+func startsWithCapital(s string) bool {
+  firstChar := s[0]
+  firstCharRune := rune(firstChar)
+  return unicode.IsUpper(firstCharRune)
 }
 
 // Convert a string to sentence case. I.e. make the first letter in the string
@@ -39,15 +42,19 @@ func maintainAllCaps(from, to string) string {
 func maintainCapitalization(fromPhrase, toPhrase string) string {
   var sb strings.Builder
 
-  re := regexp.MustCompile(`([A-z]+)([^A-z]*)`)
-  fromWords := re.FindAllStringSubmatch(fromPhrase, -1)
-  toWords := re.FindAllStringSubmatch(toPhrase, -1)
+  fromWords := phraseToWordsExpr.FindAllStringSubmatch(fromPhrase, -1)
+  toWords := phraseToWordsExpr.FindAllStringSubmatch(toPhrase, -1)
 
-  for i := 0; i < utils.Shortest(fromWords, toWords); i++ {
+  shortestLen := len(fromWords)
+  if len(toWords) < len(fromWords) {
+    shortestLen = len(toWords)
+  }
+
+  for i := 0; i < shortestLen; i++ {
     fromWord, toWord := fromWords[i][1], toWords[i][1]
     toDivider := toWords[i][2]
 
-    if isUpperChar(fromWord[0]) {
+    if startsWithCapital(fromWord) {
       toWord = toSentenceCase(toWord)
     }
 
