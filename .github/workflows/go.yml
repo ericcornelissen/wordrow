@@ -9,15 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+    # Setup
     - name: Set up Go 1.13
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v2
       with:
         go-version: 1.13
-      id: go
-
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
-
+    - uses: actions/checkout@v2
     - name: Get dependencies
       run: |
         go get -v -t -d ./...
@@ -26,29 +23,40 @@ jobs:
             dep ensure
         fi
 
+    # Building
     - name: Build
       run: make build
 
+    # Testing
     - name: Test (with coverage)
       run: make coverage
-
     - name: Publish code coverage
       run: |
         curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 --output cc-test-reporter
         chmod +x cc-test-reporter
         ./cc-test-reporter format-coverage ./coverage.out -t gocov -o ./coverage.cc --prefix github.com/ericcornelissen/wordrow
         ./cc-test-reporter upload-coverage -i ./coverage.cc -r ${{ secrets.CODECLIMATE_REPORTER_ID }}
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@v2
-
-    - name: Set up NodeJS
+    # Setup
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.13
+    - name: Set up NodeJS  # NodeJS required for MarkDown linting
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
+    - uses: actions/checkout@v2
+    - name: Get dependencies
+      run: go get -u golang.org/x/lint/golint
 
+    # Linting
+    - name: Lint Go
+      run: make lint-go
     - name: Lint MarkDown
       run: make lint-md
