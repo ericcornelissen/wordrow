@@ -124,26 +124,8 @@ func TestReplaceWhiteSpaceInPhrase(t *testing.T) {
 
     source = "foo  bar"
     result = ReplaceAll(source, wm)
-    if result != source {
-      reportIncorrectReplacement(t, source, result)
-    }
-  })
-  t.Run("mutliple spaces", func(t *testing.T) {
-    from, to := "foo  bar", "foobar"
-
-    var wm wordmaps.WordMap
-    wm.AddOne(from, to)
-
-    source := from
-    result := ReplaceAll(source, wm)
     if result != to {
       reportIncorrectReplacement(t, to, result)
-    }
-
-    source = "foo bar"
-    result = ReplaceAll(source, wm)
-    if result != source {
-      reportIncorrectReplacement(t, source, result)
     }
   })
 }
@@ -470,7 +452,7 @@ func TestReplacePhraseNewlineInSource(t *testing.T) {
     }
   })
   t.Run("less spaces in from than in to", func(t *testing.T) {
-    source := "lorem ipsum a\ndog world dolor sit amet."
+    source := "lorem ipsum a\ndog dolor sit amet."
     result := ReplaceAll(source, wm)
 
     expected := "lorem ipsum an\namazing dog dolor sit amet."
