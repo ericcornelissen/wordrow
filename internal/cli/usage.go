@@ -15,16 +15,22 @@ func asWhitespace(s string) string {
   return strings.Repeat(" ", len(s))
 }
 
+// Get an option and option alias as a bullet for the usage message.
+func getOptionBullet(option, optionAlias string) string {
+  if optionAlias == "" {
+    return fmt.Sprintf("  %s :", option)
+  } else {
+    return fmt.Sprintf("  %s, %s :", option, optionAlias)
+  }
+}
 
 // Print the usage of a single option.
 func printOption(option, optionAlias, msg string) {
-  var bullet string
-  if optionAlias == "" {
-    bullet = fmt.Sprintf("  %s :", option)
-  } else {
-    bullet = fmt.Sprintf("  %s, %s :", option, optionAlias)
-  }
+  bullet := getOptionBullet(option, optionAlias)
   indent := asWhitespace(bullet)
+
+  msg = strings.ReplaceAll(msg, "\n", " ")
+  msg = strings.TrimSpace(msg)
 
   var sentences []string
   sentence := bullet
@@ -44,21 +50,36 @@ func printOption(option, optionAlias, msg string) {
 
 // Print the usage of the options for the program.
 func printOptions() {
-  logger.Println("Options:")
-  printOption(helpOption, "", "Output this help message.")
-  printOption(versionOption, "", "Output the version number of wordrow.")
-  printOption(dryRunOption, "", "Run wordrow without writing changes back to the input files.")
-  printOption(silentOptionAlias, silentOption, "Don't output informative logging.")
-  printOption(configOptionAlias, configOption, "Specify a configuration file.")
-  printOption(mapfileOptionAlias, mapfileOption, "Specify a dictionary file. To use multiple dictionary files you can use this option multiple times.")
+  logger.Println("Flags:")
+  printOption(helpFlag, "", `Output this help message.`)
+  printOption(versionFlag, "", `Output the version number of wordrow.`)
+  printOption(dryRunFlag, "", `
+    Run wordrow without writing changes back to the input files.
+  `)
+  printOption(invertFlagAlias, invertFlag, `Invert all specified mappings.`)
+  printOption(silentFlagAlias, silentFlag, `Don't output informative logging.`)
+  printOption(verboseFlagAlias, verboseFlag, `Output debug logging.`)
+
+  logger.Println("\nOptions:")
+  printOption(configOptionAlias, configOption, `Specify a configuration file.`)
+  printOption(mapfileOptionAlias, mapfileOption, `
+    Specify a dictionary file. To use multiple dictionary files you can use this
+    option multiple times.
+  `)
+  printOption(mappingOptionAlias, mappingOption, `
+    Specify a single mapping. Use a comma to separate the words of the mapping.
+    If spaces are required use quotation marks. This option can be used multiple
+    times.
+  `)
 }
 
 // Print the usage message of the program.
 func printUsage() {
-  logger.Printf("Usage: wordrow [%s] [%s]\n", helpOption, versionOption)
+  logger.Printf("Usage: wordrow [%s] [%s]\n", helpFlag, versionFlag)
   logger.Printf("               [%s | %s <file>]\n", configOptionAlias, configOption)
   logger.Printf("               [%s | %s <file>]\n", mapfileOptionAlias, mapfileOption)
-  logger.Printf("               [%s] [%s | %s]\n", dryRunOption, silentOptionAlias, silentOption)
+  logger.Printf("               [%s | %s <file>]\n", mappingOptionAlias, mappingOption)
+  logger.Printf("               [%s] [%s | %s]\n", dryRunFlag, silentFlagAlias, silentFlag)
   logger.Println("               <files>")
   logger.Println()
   printOptions()
