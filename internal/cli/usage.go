@@ -19,9 +19,9 @@ func asWhitespace(s string) string {
 func getOptionBullet(option, optionAlias string) string {
   if optionAlias == "" {
     return fmt.Sprintf("  %s :", option)
-  } else {
-    return fmt.Sprintf("  %s, %s :", option, optionAlias)
   }
+
+  return fmt.Sprintf("  %s, %s :", option, optionAlias)
 }
 
 // Print the usage of a single option.

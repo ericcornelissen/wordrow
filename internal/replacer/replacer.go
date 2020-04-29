@@ -29,9 +29,9 @@ func toSentenceCase(s string) string {
 func maintainAllCaps(from, to string) string {
   if strings.ToUpper(from) == from {
     return strings.ToUpper(to)
-  } else {
-    return to
   }
+
+  return to
 }
 
 // If the `from` string starts with a capital letter, it will return the `to`
@@ -40,9 +40,9 @@ func maintainAllCaps(from, to string) string {
 func maintainCapitalization(from, to string) string {
   if isUpperChar(from[0]) {
     return toSentenceCase(to)
-  } else {
-    return to
   }
+
+  return to
 }
 
 // Format the `to` string based on the format of the `from` string.
@@ -74,7 +74,7 @@ func replaceOne(s string, mapping wordmaps.Mapping) string {
 }
 
 
-// Replace substrings of `s` according to the mapping in `wordmap`.
+// ReplaceAll replaces substrings of `s` according to the mapping in `wordmap`.
 func ReplaceAll(s string, wp wordmaps.WordMap) string {
   for mapping := range wp.Iter() {
     s = replaceOne(s, mapping)

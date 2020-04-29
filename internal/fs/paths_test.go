@@ -7,9 +7,9 @@ import "testing"
 func getAnAbsolutePathFor(file string) string {
   if runtime.GOOS == "windows" {
     return "C:\\" + file
-  } else {
-    return "/usr/aang/" + file
   }
+
+  return "/usr/aang/" + file
 }
 
 

@@ -16,7 +16,12 @@ coverage:
 benchmark:
 	go test $(test_root) -bench=. -run=XXX
 
-lint:
+lint: lint-go lint-md
+
+lint-go:
+	golint -set_exit_status ./...
+
+lint-md:
 	npx markdownlint-cli -c .markdownlintrc.yml ./*.md ./**/*.md
 
 clean:
