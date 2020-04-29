@@ -14,6 +14,7 @@ Versioning].
 ### Features
 
 - Add option to specify a mapping from the CLI. ([#31])
+- Replace phrases with spaces if a match is found with a newline. ([#37])
 
 ### Bug Fixes
 
@@ -54,3 +55,4 @@ Versioning].
 [#29]: https://github.com/ericcornelissen/wordrow/pull/29
 [#30]: https://github.com/ericcornelissen/wordrow/pull/30
 [#31]: https://github.com/ericcornelissen/wordrow/pull/31
+[#37]: https://github.com/ericcornelissen/wordrow/pull/37
