@@ -5,9 +5,15 @@ import "strings"
 import "unicode"
 
 
+// A Regular Expression that matches newlines.
+var newlineExpr = regexp.MustCompile(`\r|\n|\r\n`)
+
 // Regular Expression to match the words, and substrings between the words, of a
 // phrase.
 var phraseToWordsExpr = regexp.MustCompile(`([A-z]+)([^A-z]*)`)
+
+// A Regular Expression that matches groups of whitespace characters.
+var whitespaceExpr = regexp.MustCompile(`(\s+)`)
 
 
 // Check if a string starts an uppercase letter.
@@ -72,13 +78,55 @@ func maintainCapitalization(fromPhrase, toPhrase string) string {
   return sb.String()
 }
 
+// If the `from` phrase contains whitespace (spaces, tabs, newlines), it will
+// return the `to` phrase with the same kinds of whitespace. Otherwise, the `to`
+// string is returned unchanged.
+func maintainWhitespace(from, to string) (string, int) {
+  offset := 0
+
+  fromWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(from, -1)
+  toWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(to, -1)
+
+  shortest := len(fromWhitespace)
+  if len(toWhitespace) < len(fromWhitespace) {
+    shortest = len(toWhitespace)
+  }
+
+  for i := 0; i < shortest; i++ {
+    fromMatch, toMatch := fromWhitespace[i], toWhitespace[i]
+    fromStart, fromEnd := fromMatch[0], fromMatch[1]
+    toStart, toEnd := toMatch[0], toMatch[1]
+
+    // Replace the whitespace in the `to` phrase with the whitespace of the
+    // `from` phrase.
+    to = to[:toStart] + from[fromStart:fromEnd] + to[toEnd:]
+  }
+
+  if len(fromWhitespace) > len(toWhitespace) {
+    lastMatchIndex := len(toWhitespace)
+    lastFromMatch := fromWhitespace[lastMatchIndex]
+
+    fromStart, fromEnd := lastFromMatch[0], lastFromMatch[1]
+    trailingFromWhitespace := from[fromStart:fromEnd]
+
+    if newlineExpr.MatchString(trailingFromWhitespace) {
+      to += trailingFromWhitespace
+      offset = 1
+    }
+  }
+
+  return to, offset
+}
+
 // Format the `to` string based on the format of the `from` string.
 //
 // This function does the following:
 //  - Maintain all caps.
 //  - Maintain first letter capitalization.
-func maintainFormatting(from, to string) string {
+//  - Maintain newlines, tabs, etc.
+func maintainFormatting(from, to string) (string, int) {
   to = maintainAllCaps(from, to)
   to = maintainCapitalization(from, to)
-  return to
+  to, offset := maintainWhitespace(from, to)
+  return to, offset
 }

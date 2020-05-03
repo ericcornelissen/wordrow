@@ -11,14 +11,17 @@ func replaceOne(s string, mapping wordmaps.Mapping) string {
 
   lastIndex := 0
   for match := range mapping.Match(s) {
-    replacement := maintainFormatting(match.Full, match.Replacement)
+    replacement, offset := maintainFormatting(match.Full, match.Replacement)
 
     sb.WriteString(s[lastIndex:match.Start])
     sb.WriteString(replacement)
-    lastIndex = match.End
+    lastIndex = match.End + offset
   }
 
-  sb.WriteString(s[lastIndex:])
+  if lastIndex < len(s) {
+    sb.WriteString(s[lastIndex:])
+  }
+
   return sb.String()
 }
 

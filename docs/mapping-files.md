@@ -130,19 +130,23 @@ in this scenario _"doggy"_ is not changed, as it does not match _"a dog"_.
 
 There is no limitation on the number of words in a mapping phrase.
 
-Do be aware that the amount of whitespace between words in a phrase matters. For
-example, if you define the mapping with two spaces between _"a"_ an _"dog"_ as
-in the following example (dots are used to illustrate where the whitespace is).
+Every kind of whitespace (space, tab, newline) in the input text is considered
+to match the spaces in the mapping file. This means that if the phrase that you
+want to replaces appears at a line break, _wordrow_ will still replace it. For
+example, given the mapping:
 
 ```csv
-a..dog,an.amazing.dog
+a hippo, an elephant
 ```
 
-Then, the example text won't be changed, as it does not contain _"a..dog"_.
+A text where _"a hippo"_ appears at a line break will be replaced with _"an
+elephant"_ while preserving the line break.
 
 ```diff
-- I have a dog, but you have a small doggy.
-+ I have a dog, but you have a small doggy.
+- There once was a
+- hippo in town.
++ There once was an
++ elephant in town.
 ```
 
 ### Capitalisation
