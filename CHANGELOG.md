@@ -10,6 +10,7 @@ Versioning].
 ### Breaking Changes
 
 - Rename `--map` and `-m` to `--map-file` and `-M` respectively. ([#30])
+- Hard matching of individual whitespace characters no longer happens. ([#37])
 
 ### Features
 

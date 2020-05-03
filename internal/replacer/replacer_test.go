@@ -128,6 +128,24 @@ func TestReplaceWhiteSpaceInPhrase(t *testing.T) {
       reportIncorrectReplacement(t, to, result)
     }
   })
+  t.Run("two spaces", func(t *testing.T) {
+    from, to := "a  dog", "an amazing dog"
+
+    var wm wordmaps.WordMap
+    wm.AddOne(from, to)
+
+    source := from
+    result := ReplaceAll(source, wm)
+    if result != "an  amazing dog" {
+      reportIncorrectReplacement(t, to, result)
+    }
+
+    source = "a dog"
+    result = ReplaceAll(source, wm)
+    if result != to {
+      reportIncorrectReplacement(t, to, result)
+    }
+  })
 }
 
 func TestReplaceIgnoreCapitalizationInMapping(t *testing.T) {

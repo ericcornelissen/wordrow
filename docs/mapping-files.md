@@ -148,21 +148,6 @@ elephant"_ while preserving the line break.
 + elephant in town.
 ```
 
-Do be aware that the amount of whitespace between words in a phrase matters. For
-example, if you define the mapping with two spaces between _"a"_ an _"dog"_ as
-in the following example (dots are used to illustrate where the whitespace is).
-
-```csv
-a..dog,an.amazing.dog
-```
-
-Then, the example text won't be changed, as it does not contain _"a..dog"_.
-
-```diff
-- I have a dog, but you have a small doggy.
-+ I have a dog, but you have a small doggy.
-```
-
 ## Prefixes and Suffixes
 
 You can define more advanced mappings by replacing words including a prefix, a
