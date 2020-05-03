@@ -16,6 +16,7 @@ In this document you can read about:
   - [Direction](#direction)
   - [Whitespace](#whitespace)
   - [Multiple Words](#multiple-words)
+  - [Capitalisation](#capitalisation)
 - [Prefixes and Suffixes](#prefixes-and-suffixes)
   - [The Preceding and Succeeding Word](#the-preceding-and-succeeding-word)
   - [Omitting Prefixes or Suffixes](#omitting-prefixes-or-suffixes)
@@ -142,6 +143,40 @@ Then, the example text won't be changed, as it does not contain _"a..dog"_.
 ```diff
 - I have a dog, but you have a small doggy.
 + I have a dog, but you have a small doggy.
+```
+
+### Capitalisation
+
+The capitalisation of values in mappings are ignored and instead the
+capitalisation of the words as they appear in the text is maintained. Capital
+letters are maintained at the start of a word and also if the original word
+appears in all capitals in the text.
+
+For example, if you have a mapping to change _"dog"_ into _"horse"_, the
+capitalisation will be maintained as follows.
+
+```diff
+- Dog dog DOG
++ Horse horse HORSE
+```
+
+If a mapping consists of multiple words, the capitalisation of each individual
+word is maintained. This also goes for, e.g., hyphenated words. For example, if
+you use the following mapping file:
+
+```csv
+# mapping.csv
+
+hello world, hey planet
+so called, so-called
+```
+
+Then, a text containing _"So Called"_ or _"Hello World"_ will be updated to use
+_"So-Called"_ and _"Hey Planet"_ with identical capitalisiation:
+
+```diff
+- A So Called "Hello World" program is a program that prints "Hello world!".
++ A So-Called "Hey Planet" program is a program that prints "Hey planet!".
 ```
 
 ## Prefixes and Suffixes

@@ -164,14 +164,44 @@ func TestReplaceIgnoreCapitalizationInMapping(t *testing.T) {
 func TestReplaceMaintainCapitalization(t *testing.T) {
   var wm wordmaps.WordMap
   wm.AddOne("foo", "bar")
+  wm.AddOne("hello world", "hey planet")
+  wm.AddOne("so called", "so-called")
 
-  source := "There once was a foo in the world. Foo did things."
-  result := ReplaceAll(source, wm)
+  t.Run("single word mapping", func(t *testing.T) {
+    source := "There once was a foo in the world. Foo did things."
+    result := ReplaceAll(source, wm)
 
-  expected := "There once was a bar in the world. Bar did things."
-  if result != expected {
-    reportIncorrectReplacement(t, expected, result)
-  }
+    expected := "There once was a bar in the world. Bar did things."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("two word mapping", func(t *testing.T) {
+    source := "Hello World!"
+    result := ReplaceAll(source, wm)
+
+    expected := "Hey Planet!"
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("two word to hyphenated word mapping", func(t *testing.T) {
+    source := "A So called 'hypnotoad'"
+    result := ReplaceAll(source, wm)
+
+    expected := "A So-called 'hypnotoad'"
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+
+    source = "A So Called 'hypnotoad'"
+    result = ReplaceAll(source, wm)
+
+    expected = "A So-Called 'hypnotoad'"
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
 }
 
 func TestReplaceWordAllCaps(t *testing.T) {
