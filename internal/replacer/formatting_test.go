@@ -151,5 +151,99 @@ func TestMaintainCapitalization(t *testing.T) {
 }
 
 func TestMaintainWhitespace(t *testing.T) {
-  // TODO
+  t.Run("no whitespace", func(t *testing.T) {
+    from, to := "foo", "bar"
+    result, _ := maintainWhitespace(from, to)
+
+    if result != to {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+  })
+  t.Run("equal length phrase", func(t *testing.T) {
+    from, to := "Hello world", "Hey planet"
+    result, _ := maintainWhitespace(from, to)
+
+    if result != to {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+
+    from, expected := "Hello\nworld", "Hey\nplanet"
+    result, _ = maintainWhitespace(from, to)
+
+    if result != expected {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+
+    from, expected = "Hello	world", "Hey	planet"
+    result, _ = maintainWhitespace(from, to)
+
+    if result != expected {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+
+    from, to = "Goodbye cruel world", "Goodbye bitter planet"
+    result, _ = maintainWhitespace(from, to)
+
+    if result != to {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+
+    from, expected = "Goodbye\ncruel world", "Goodbye\nbitter planet"
+    result, _ = maintainWhitespace(from, to)
+
+    if result != expected {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+
+    from, expected = "Goodbye cruel\nworld", "Goodbye bitter\nplanet"
+    result, _ = maintainWhitespace(from, to)
+
+    if result != expected {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+
+    from, expected = "Goodbye\ncruel\nworld", "Goodbye\nbitter\nplanet"
+    result, _ = maintainWhitespace(from, to)
+
+    if result != expected {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+  })
+  t.Run("from long to short phrase", func(t *testing.T) {
+    from, to := "Goodbye cruel world", "Hello world"
+    result, _ := maintainWhitespace(from, to)
+
+    if result != to {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+
+    from, expected := "Goodbye\ncruel world", "Hello\nworld"
+    result, _ = maintainWhitespace(from, to)
+
+    if result != expected {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+
+    from, expected = "Goodbye cruel\nworld", "Hello world\n"
+    result, _ = maintainWhitespace(from, to)
+
+    if result != expected {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+  })
+  t.Run("from short to long phrase", func(t *testing.T) {
+    from, to := "Hello world", "Goodbye cruel world"
+    result, _ := maintainWhitespace(from, to)
+
+    if result != to {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+
+    from, expected := "Hello\nworld", "Goodbye\ncruel world"
+    result, _ = maintainWhitespace(from, to)
+
+    if result != expected {
+      t.Errorf("Unexpected result (got '%s')", result)
+    }
+  })
 }
