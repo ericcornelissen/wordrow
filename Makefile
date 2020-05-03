@@ -16,6 +16,12 @@ coverage:
 benchmark:
 	go test $(test_root) -bench=. -run=XXX
 
+analyze:
+	go vet ./...
+
+format:
+	go fmt ./...
+
 lint: lint-go lint-md
 
 lint-go:
