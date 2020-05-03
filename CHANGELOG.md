@@ -7,6 +7,10 @@ Versioning].
 
 ## [Unreleased]
 
+- _No changes yet_
+
+## [0.3.0-beta] - 2020-05-03
+
 ### Breaking Changes
 
 - Rename `--map` and `-m` to `--map-file` and `-M` respectively. ([#30])
