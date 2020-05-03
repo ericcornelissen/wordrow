@@ -63,6 +63,12 @@ func maintainCapitalization(fromPhrase, toPhrase string) string {
     sb.WriteString(toDivider)
   }
 
+  if len(toWords) > len(fromWords) {
+    for i := shortestLen; i < len(toWords); i++ {
+      sb.WriteString(toWords[i][0])
+    }
+  }
+
   return sb.String()
 }
 
