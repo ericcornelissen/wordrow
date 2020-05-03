@@ -34,7 +34,7 @@ func getExt(path string) string {
 }
 
 
-// Resolve any number of globs or file paths into distinct file paths.
+// ResolveGlobs resolves any number of globs or file paths into distinct file paths.
 //
 // The function sets the error if at least one malformed pattern is found. Only
 // the last malformed pattern is reported. The list of paths will contain all
@@ -57,20 +57,21 @@ func ResolveGlobs(patterns ...string) (paths []string, rerr error) {
   return paths, rerr
 }
 
-// Resolve a single absolute or relative path to an absolute path.
+// ResolvePath resolves a single absolute or relative path to an absolute path.
 //
 // The function panics if the (current) working directory is needed but could
 // not be found.
 func ResolvePath(inputPath string) string {
   if filepath.IsAbs(inputPath) {
     return inputPath
-  } else {
-    outputPath := path.Join(getCwd(), inputPath)
-    return outputPath
   }
+
+  outputPath := path.Join(getCwd(), inputPath)
+  return outputPath
 }
 
-// Resolve any number of absolute or relative paths to absolute paths only.
+// ResolvePaths resolves any number of absolute or relative paths to absolute
+// paths only.
 //
 // The function panics if the (current) working directory is needed but could
 // not be found.
