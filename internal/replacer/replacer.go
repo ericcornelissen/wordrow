@@ -48,14 +48,29 @@ func maintainCapitalization(from, to string) string {
   }
 }
 
-// If the `from` phrase contains more whitespace (spaces, tabs, newlines) and
-// the whitespace in the same spot as where the `to` phrase ends is a newline,
-// it will return the `to` string with a trailing newline.
-func maintainTrailingNewlines(from, to string) (string, int) {
+// If the `from` phrase contains whitespace (spaces, tabs, newlines), it will
+// return the `to` phrase with the same kinds of whitespace. Otherwise, the `to`
+// string is returned unchanged.
+func maintainWhitespace(from, to string) (string, int) {
   offset := 0
 
   fromWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(from, -1)
   toWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(to, -1)
+
+  shortest := len(fromWhitespace)
+  if len(toWhitespace) < len(fromWhitespace) {
+    shortest = len(toWhitespace)
+  }
+
+  for i := 0; i < shortest; i++ {
+    fromMatch, toMatch := fromWhitespace[i], toWhitespace[i]
+    fromStart, fromEnd := fromMatch[0], fromMatch[1]
+    toStart, toEnd := toMatch[0], toMatch[1]
+
+    // Replace the whitespace in the `to` phrase with the whitespace of the
+    // `from` phrase.
+    to = to[:toStart] + from[fromStart:fromEnd] + to[toEnd:]
+  }
 
   if len(fromWhitespace) > len(toWhitespace) {
     lastMatchIndex := len(toWhitespace)
@@ -71,31 +86,6 @@ func maintainTrailingNewlines(from, to string) (string, int) {
   }
 
   return to, offset
-}
-
-// If the `from` phrase contains whitespace (spaces, tabs, newlines), it will
-// return the `to` phrase with the same kinds of whitespace. Otherwise, the `to`
-// string is returned unchanged.
-func maintainWhitespace(from, to string) (string, int) {
-  fromWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(from, -1)
-  toWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(to, -1)
-
-  shortest := len(fromWhitespace)
-  if len(toWhitespace) < len(fromWhitespace) {
-    shortest = len(toWhitespace)
-  }
-
-  for i := 0; i < shortest; i++ {
-    fromMatch := fromWhitespace[i]
-    fromStart, fromEnd := fromMatch[0], fromMatch[1]
-
-    toMatch := toWhitespace[i]
-    toStart, toEnd := toMatch[0], toMatch[1]
-
-    to = to[:toStart] + from[fromStart:fromEnd] + to[toEnd:]
-  }
-
-  return maintainTrailingNewlines(from, to)
 }
 
 // Format the `to` string based on the format of the `from` string.
