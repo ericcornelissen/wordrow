@@ -11,7 +11,7 @@ trim_trailing_whitespace = true
 
 # Require tab indentation for .go files (enforced by 'gofmt')
 [*.go]
-indent_style=tab
+indent_style = tab
 
 # Extended line length in test files for failure messages
 [*_test.go]

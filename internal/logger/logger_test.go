@@ -1,362 +1,361 @@
 package logger
 
-
 func ExampleDebug() {
-  SetLogLevel(DEBUG)
+	SetLogLevel(DEBUG)
 
-  Debug("hello", "world!")
-  // Output: [Debug] Hello world!
+	Debug("hello", "world!")
+	// Output: [Debug] Hello world!
 }
 
 func ExampleDebugWhenInfo() {
-  SetLogLevel(INFO)
+	SetLogLevel(INFO)
 
-  Debug("hello world!")
-  // Output:
+	Debug("hello world!")
+	// Output:
 }
 
 func ExampleDebugWhenWarning() {
-  SetLogLevel(WARNING)
+	SetLogLevel(WARNING)
 
-  Debug("hello world!")
-  // Output:
+	Debug("hello world!")
+	// Output:
 }
 
 func ExampleDebugWhenError() {
-  SetLogLevel(ERROR)
+	SetLogLevel(ERROR)
 
-  Debug("hello world!")
-  // Output:
+	Debug("hello world!")
+	// Output:
 }
 
 func ExampleDebugWhenFatal() {
-  SetLogLevel(FATAL)
+	SetLogLevel(FATAL)
 
-  Debug("hello world!")
-  // Output:
+	Debug("hello world!")
+	// Output:
 }
 
 func ExampleDebugf() {
-  SetLogLevel(DEBUG)
+	SetLogLevel(DEBUG)
 
-  Debugf("%s %s!", "hello", "world")
-  // Output: [Debug] Hello world!
+	Debugf("%s %s!", "hello", "world")
+	// Output: [Debug] Hello world!
 }
 
 func ExampleDebugfWhenInfo() {
-  SetLogLevel(INFO)
+	SetLogLevel(INFO)
 
-  Debugf("%s", "hello world!")
-  // Output:
+	Debugf("%s", "hello world!")
+	// Output:
 }
 
 func ExampleDebugfWhenWarning() {
-  SetLogLevel(WARNING)
+	SetLogLevel(WARNING)
 
-  Debugf("%s", "hello world!")
-  // Output:
+	Debugf("%s", "hello world!")
+	// Output:
 }
 
 func ExampleDebugfWhenError() {
-  SetLogLevel(ERROR)
+	SetLogLevel(ERROR)
 
-  Debugf("%s", "hello world!")
-  // Output:
+	Debugf("%s", "hello world!")
+	// Output:
 }
 
 func ExampleDebugfWhenFatal() {
-  SetLogLevel(FATAL)
+	SetLogLevel(FATAL)
 
-  Debugf("%s", "hello world!")
-  // Output:
+	Debugf("%s", "hello world!")
+	// Output:
 }
 
 func ExampleError() {
-  SetLogLevel(ERROR)
+	SetLogLevel(ERROR)
 
-  Error("hello", "world!")
-  // Output: [Error] Hello world!
+	Error("hello", "world!")
+	// Output: [Error] Hello world!
 }
 
 func ExampleErrorWhenDebug() {
-  SetLogLevel(DEBUG)
+	SetLogLevel(DEBUG)
 
-  Error("hello world!")
-  // Output: [Error] Hello world!
+	Error("hello world!")
+	// Output: [Error] Hello world!
 }
 
 func ExampleErrorWhenInfo() {
-  SetLogLevel(INFO)
+	SetLogLevel(INFO)
 
-  Error("hello world!")
-  // Output: [Error] Hello world!
+	Error("hello world!")
+	// Output: [Error] Hello world!
 }
 
 func ExampleErrorWhenWarning() {
-  SetLogLevel(WARNING)
+	SetLogLevel(WARNING)
 
-  Error("hello world!")
-  // Output: [Error] Hello world!
+	Error("hello world!")
+	// Output: [Error] Hello world!
 }
 
 func ExampleErrorWhenFatal() {
-  SetLogLevel(FATAL)
+	SetLogLevel(FATAL)
 
-  Error("hello world!")
-  // Output:
+	Error("hello world!")
+	// Output:
 }
 
 func ExampleErrorf() {
-  SetLogLevel(ERROR)
+	SetLogLevel(ERROR)
 
-  Errorf("%s %s!", "hello", "world")
-  // Output: [Error] Hello world!
+	Errorf("%s %s!", "hello", "world")
+	// Output: [Error] Hello world!
 }
 
 func ExampleErrorfWhenDebug() {
-  SetLogLevel(DEBUG)
+	SetLogLevel(DEBUG)
 
-  Errorf("%s", "hello world!")
-  // Output: [Error] Hello world!
+	Errorf("%s", "hello world!")
+	// Output: [Error] Hello world!
 }
 
 func ExampleErrorfWhenInfo() {
-  SetLogLevel(INFO)
+	SetLogLevel(INFO)
 
-  Errorf("%s", "hello world!")
-  // Output: [Error] Hello world!
+	Errorf("%s", "hello world!")
+	// Output: [Error] Hello world!
 }
 
 func ExampleErrorfWhenWarning() {
-  SetLogLevel(WARNING)
+	SetLogLevel(WARNING)
 
-  Errorf("%s", "hello world!")
-  // Output: [Error] Hello world!
+	Errorf("%s", "hello world!")
+	// Output: [Error] Hello world!
 }
 
 func ExampleErrorfWhenFatal() {
-  SetLogLevel(FATAL)
+	SetLogLevel(FATAL)
 
-  Errorf("%s", "hello world!")
-  // Output:
+	Errorf("%s", "hello world!")
+	// Output:
 }
 
 func ExampleFatal() {
-  SetLogLevel(FATAL)
+	SetLogLevel(FATAL)
 
-  Fatal("hello", "world!")
-  // Output: [Fatal] Hello world!
+	Fatal("hello", "world!")
+	// Output: [Fatal] Hello world!
 }
 
 func ExampleFatalWhenDebug() {
-  SetLogLevel(DEBUG)
+	SetLogLevel(DEBUG)
 
-  Fatal("hello world!")
-  // Output: [Fatal] Hello world!
+	Fatal("hello world!")
+	// Output: [Fatal] Hello world!
 }
 
 func ExampleFatalWhenInfo() {
-  SetLogLevel(INFO)
+	SetLogLevel(INFO)
 
-  Fatal("hello world!")
-  // Output: [Fatal] Hello world!
+	Fatal("hello world!")
+	// Output: [Fatal] Hello world!
 }
 
 func ExampleFatalWhenWarning() {
-  SetLogLevel(WARNING)
+	SetLogLevel(WARNING)
 
-  Fatal("hello world!")
-  // Output: [Fatal] Hello world!
+	Fatal("hello world!")
+	// Output: [Fatal] Hello world!
 }
 
 func ExampleFatalWhenError() {
-  SetLogLevel(ERROR)
+	SetLogLevel(ERROR)
 
-  Fatal("hello world!")
-  // Output: [Fatal] Hello world!
+	Fatal("hello world!")
+	// Output: [Fatal] Hello world!
 }
 
 func ExampleFatalf() {
-  SetLogLevel(FATAL)
+	SetLogLevel(FATAL)
 
-  Fatalf("%s %s!", "hello", "world")
-  // Output: [Fatal] Hello world!
+	Fatalf("%s %s!", "hello", "world")
+	// Output: [Fatal] Hello world!
 }
 
 func ExampleFatalfWhenDebug() {
-  SetLogLevel(DEBUG)
+	SetLogLevel(DEBUG)
 
-  Fatalf("%s", "hello world!")
-  // Output: [Fatal] Hello world!
+	Fatalf("%s", "hello world!")
+	// Output: [Fatal] Hello world!
 }
 
 func ExampleFatalfWhenInfo() {
-  SetLogLevel(INFO)
+	SetLogLevel(INFO)
 
-  Fatalf("%s", "hello world!")
-  // Output: [Fatal] Hello world!
+	Fatalf("%s", "hello world!")
+	// Output: [Fatal] Hello world!
 }
 
 func ExampleFatalfWhenWarning() {
-  SetLogLevel(WARNING)
+	SetLogLevel(WARNING)
 
-  Fatalf("%s", "hello world!")
-  // Output: [Fatal] Hello world!
+	Fatalf("%s", "hello world!")
+	// Output: [Fatal] Hello world!
 }
 
 func ExampleFatalfWhenError() {
-  SetLogLevel(ERROR)
+	SetLogLevel(ERROR)
 
-  Fatalf("%s", "hello world!")
-  // Output: [Fatal] Hello world!
+	Fatalf("%s", "hello world!")
+	// Output: [Fatal] Hello world!
 }
 
 func ExampleInfo() {
-  SetLogLevel(INFO)
+	SetLogLevel(INFO)
 
-  Info("hello", "world!")
-  // Output: [Info] Hello world!
+	Info("hello", "world!")
+	// Output: [Info] Hello world!
 }
 
 func ExampleInfoWhenDebug() {
-  SetLogLevel(DEBUG)
+	SetLogLevel(DEBUG)
 
-  Info("hello world!")
-  // Output: [Info] Hello world!
+	Info("hello world!")
+	// Output: [Info] Hello world!
 }
 
 func ExampleInfoWhenWarning() {
-  SetLogLevel(WARNING)
+	SetLogLevel(WARNING)
 
-  Info("hello world!")
-  // Output:
+	Info("hello world!")
+	// Output:
 }
 
 func ExampleInfoWhenError() {
-  SetLogLevel(ERROR)
+	SetLogLevel(ERROR)
 
-  Info("hello world!")
-  // Output:
+	Info("hello world!")
+	// Output:
 }
 
 func ExampleInfoWhenFatal() {
-  SetLogLevel(FATAL)
+	SetLogLevel(FATAL)
 
-  Info("hello world!")
-  // Output:
+	Info("hello world!")
+	// Output:
 }
 
 func ExampleInfof() {
-  SetLogLevel(INFO)
+	SetLogLevel(INFO)
 
-  Infof("%s %s!", "hello", "world")
-  // Output: [Info] Hello world!
+	Infof("%s %s!", "hello", "world")
+	// Output: [Info] Hello world!
 }
 
 func ExampleInfofWhenDebug() {
-  SetLogLevel(DEBUG)
+	SetLogLevel(DEBUG)
 
-  Infof("%s", "hello world!")
-  // Output: [Info] Hello world!
+	Infof("%s", "hello world!")
+	// Output: [Info] Hello world!
 }
 
 func ExampleInfofWhenWarning() {
-  SetLogLevel(WARNING)
+	SetLogLevel(WARNING)
 
-  Infof("%s", "hello world!")
-  // Output:
+	Infof("%s", "hello world!")
+	// Output:
 }
 
 func ExampleInfofWhenError() {
-  SetLogLevel(ERROR)
+	SetLogLevel(ERROR)
 
-  Infof("%s", "hello world!")
-  // Output:
+	Infof("%s", "hello world!")
+	// Output:
 }
 
 func ExampleInfofWhenFatal() {
-  SetLogLevel(FATAL)
+	SetLogLevel(FATAL)
 
-  Infof("%s", "hello world!")
-  // Output:
+	Infof("%s", "hello world!")
+	// Output:
 }
 
 func ExamplePrintln() {
-  Println("hello", "world!")
-  // Output: hello world!
+	Println("hello", "world!")
+	// Output: hello world!
 }
 
 func ExamplePrintf() {
-  Printf("%s %s!", "hello", "world")
-  // Output: hello world!
+	Printf("%s %s!", "hello", "world")
+	// Output: hello world!
 }
 
 func ExampleWarning() {
-  SetLogLevel(WARNING)
+	SetLogLevel(WARNING)
 
-  Warning("hello", "world!")
-  // Output: [Warning] Hello world!
+	Warning("hello", "world!")
+	// Output: [Warning] Hello world!
 }
 
 func ExampleWarningWhenDebug() {
-  SetLogLevel(DEBUG)
+	SetLogLevel(DEBUG)
 
-  Warning("hello world!")
-  // Output: [Warning] Hello world!
+	Warning("hello world!")
+	// Output: [Warning] Hello world!
 }
 
 func ExampleWarningWhenInfo() {
-  SetLogLevel(INFO)
+	SetLogLevel(INFO)
 
-  Warning("hello world!")
-  // Output: [Warning] Hello world!
+	Warning("hello world!")
+	// Output: [Warning] Hello world!
 }
 
 func ExampleWarningWhenError() {
-  SetLogLevel(ERROR)
+	SetLogLevel(ERROR)
 
-  Warning("hello world!")
-  // Output:
+	Warning("hello world!")
+	// Output:
 }
 
 func ExampleWarningWhenFatal() {
-  SetLogLevel(FATAL)
+	SetLogLevel(FATAL)
 
-  Warning("hello world!")
-  // Output:
+	Warning("hello world!")
+	// Output:
 }
 
 func ExampleWarningf() {
-  SetLogLevel(WARNING)
+	SetLogLevel(WARNING)
 
-  Warningf("%s %s!", "hello", "world")
-  // Output: [Warning] Hello world!
+	Warningf("%s %s!", "hello", "world")
+	// Output: [Warning] Hello world!
 }
 
 func ExampleWarningfWhenDebug() {
-  SetLogLevel(DEBUG)
+	SetLogLevel(DEBUG)
 
-  Warningf("%s", "hello world!")
-  // Output: [Warning] Hello world!
+	Warningf("%s", "hello world!")
+	// Output: [Warning] Hello world!
 }
 
 func ExampleWarningfWhenInfo() {
-  SetLogLevel(INFO)
+	SetLogLevel(INFO)
 
-  Warningf("%s", "hello world!")
-  // Output: [Warning] Hello world!
+	Warningf("%s", "hello world!")
+	// Output: [Warning] Hello world!
 }
 
 func ExampleWarningfWhenError() {
-  SetLogLevel(ERROR)
+	SetLogLevel(ERROR)
 
-  Warningf("%s", "hello world!")
-  // Output:
+	Warningf("%s", "hello world!")
+	// Output:
 }
 
 func ExampleWarningfWhenFatal() {
-  SetLogLevel(FATAL)
+	SetLogLevel(FATAL)
 
-  Warningf("%s", "hello world!")
-  // Output:
+	Warningf("%s", "hello world!")
+	// Output:
 }

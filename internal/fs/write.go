@@ -11,9 +11,9 @@ const mode = 0644
 //
 // If the file could not be written to, an error is logged.
 func WriteFile(filePath string, content string) {
-  contentAsBytes := []byte(content)
-  err := ioutil.WriteFile(filePath, contentAsBytes, mode)
-  if err != nil {
-    logger.Errorf("Could not write to file '%s' (%d)", filePath, mode)
-  }
+	contentAsBytes := []byte(content)
+	err := ioutil.WriteFile(filePath, contentAsBytes, mode)
+	if err != nil {
+		logger.Errorf("Could not write to file '%s' (%d)", filePath, mode)
+	}
 }
