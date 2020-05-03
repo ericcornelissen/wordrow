@@ -10,10 +10,13 @@ Versioning].
 ### Breaking Changes
 
 - Rename `--map` and `-m` to `--map-file` and `-M` respectively. ([#30])
+- Hard matching of individual whitespace characters no longer happens. ([#37])
 
 ### Features
 
+- Maintain capitalization of all words in a mapping phrase. ([#26])
 - Add option to specify a mapping from the CLI. ([#31])
+- Replace phrases with spaces if a match is found with a newline. ([#37])
 
 ### Bug Fixes
 
@@ -51,6 +54,8 @@ Versioning].
 [#22]: https://github.com/ericcornelissen/wordrow/pull/22
 [#21]: https://github.com/ericcornelissen/wordrow/pull/21
 [#23]: https://github.com/ericcornelissen/wordrow/pull/23
+[#26]: https://github.com/ericcornelissen/wordrow/pull/26
 [#29]: https://github.com/ericcornelissen/wordrow/pull/29
 [#30]: https://github.com/ericcornelissen/wordrow/pull/30
 [#31]: https://github.com/ericcornelissen/wordrow/pull/31
+[#37]: https://github.com/ericcornelissen/wordrow/pull/37

@@ -124,26 +124,26 @@ func TestReplaceWhiteSpaceInPhrase(t *testing.T) {
 
     source = "foo  bar"
     result = ReplaceAll(source, wm)
-    if result != source {
-      reportIncorrectReplacement(t, source, result)
+    if result != to {
+      reportIncorrectReplacement(t, to, result)
     }
   })
-  t.Run("mutliple spaces", func(t *testing.T) {
-    from, to := "foo  bar", "foobar"
+  t.Run("two spaces", func(t *testing.T) {
+    from, to := "a  dog", "an amazing dog"
 
     var wm wordmaps.WordMap
     wm.AddOne(from, to)
 
     source := from
     result := ReplaceAll(source, wm)
-    if result != to {
+    if result != "an  amazing dog" {
       reportIncorrectReplacement(t, to, result)
     }
 
-    source = "foo bar"
+    source = "a dog"
     result = ReplaceAll(source, wm)
-    if result != source {
-      reportIncorrectReplacement(t, source, result)
+    if result != to {
+      reportIncorrectReplacement(t, to, result)
     }
   })
 }
@@ -164,14 +164,44 @@ func TestReplaceIgnoreCapitalizationInMapping(t *testing.T) {
 func TestReplaceMaintainCapitalization(t *testing.T) {
   var wm wordmaps.WordMap
   wm.AddOne("foo", "bar")
+  wm.AddOne("hello world", "hey planet")
+  wm.AddOne("so called", "so-called")
 
-  source := "There once was a foo in the world. Foo did things."
-  result := ReplaceAll(source, wm)
+  t.Run("single word mapping", func(t *testing.T) {
+    source := "There once was a foo in the world. Foo did things."
+    result := ReplaceAll(source, wm)
 
-  expected := "There once was a bar in the world. Bar did things."
-  if result != expected {
-    reportIncorrectReplacement(t, expected, result)
-  }
+    expected := "There once was a bar in the world. Bar did things."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("two word mapping", func(t *testing.T) {
+    source := "Hello World!"
+    result := ReplaceAll(source, wm)
+
+    expected := "Hey Planet!"
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("two word to hyphenated word mapping", func(t *testing.T) {
+    source := "A So called 'hypnotoad'"
+    result := ReplaceAll(source, wm)
+
+    expected := "A So-called 'hypnotoad'"
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+
+    source = "A So Called 'hypnotoad'"
+    result = ReplaceAll(source, wm)
+
+    expected = "A So-Called 'hypnotoad'"
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
 }
 
 func TestReplaceWordAllCaps(t *testing.T) {
@@ -420,6 +450,77 @@ func TestReplaceByLongerString(t *testing.T) {
     result := ReplaceAll(source, wm)
 
     expected := "This is a FOO and this is a foo as well."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+}
+
+func TestReplacePhraseNewlineInSource(t *testing.T) {
+  var wm wordmaps.WordMap
+  wm.AddOne("foo bar", "foobar")
+  wm.AddOne("hello world", "hey planet")
+  wm.AddOne("hello beautiful world", "hey planet")
+  wm.AddOne("a dog", "an amazing dog")
+
+  t.Run("newline without indentation", func(t *testing.T) {
+    source := "lorem ipsum hello\nworld dolor sit amet."
+    result := ReplaceAll(source, wm)
+
+    expected := "lorem ipsum hey\nplanet dolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("newline with indentation", func(t *testing.T) {
+    source := "lorem ipsum hello\n  world dolor sit amet."
+    result := ReplaceAll(source, wm)
+
+    expected := "lorem ipsum hey\n  planet dolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("space in from but not in to", func(t *testing.T) {
+    source := "lorem ipsum foo\nbar dolor sit amet."
+    result := ReplaceAll(source, wm)
+
+    expected := "lorem ipsum foobar\ndolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("space in from but not in to, with indentation", func(t *testing.T) {
+    source := "lorem ipsum foo\n  bar dolor sit amet."
+    result := ReplaceAll(source, wm)
+
+    expected := "lorem ipsum foobar\n  dolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("less spaces in from than in to", func(t *testing.T) {
+    source := "lorem ipsum a\ndog dolor sit amet."
+    result := ReplaceAll(source, wm)
+
+    expected := "lorem ipsum an\namazing dog dolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+  })
+  t.Run("more spaces in from than in to", func(t *testing.T) {
+    source := "lorem ipsum hello\nbeautiful world dolor sit amet."
+    result := ReplaceAll(source, wm)
+
+    expected := "lorem ipsum hey\nplanet dolor sit amet."
+    if result != expected {
+      reportIncorrectReplacement(t, expected, result)
+    }
+
+    source = "lorem ipsum hello beautiful\nworld dolor sit amet."
+    result = ReplaceAll(source, wm)
+
+    expected = "lorem ipsum hey planet\ndolor sit amet."
     if result != expected {
       reportIncorrectReplacement(t, expected, result)
     }
