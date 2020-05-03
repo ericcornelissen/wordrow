@@ -3,7 +3,7 @@ package wordmaps
 import "fmt"
 import "testing"
 
-func ExampleMappingMatch() {
+func ExampleMatch() {
 	s := "Hello world!"
 	mapping := Mapping{"hello", "hey"}
 
