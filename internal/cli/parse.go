@@ -1,5 +1,7 @@
 package cli
 
+import "strings"
+
 import "github.com/ericcornelissen/wordrow/internal/errors"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 
@@ -44,7 +46,7 @@ func noArgumentsProvided(args []string) bool {
 
 // Check if a certain argument is an option.
 func argumentIsOption(arg string) bool {
-	return "-" == arg[:1]
+	return strings.HasPrefix(arg, "-")
 }
 
 // Parse an option argument and get the new argument context.
