@@ -110,6 +110,12 @@ func TestNoArgs(t *testing.T) {
 	}
 }
 
+func TestEmptyArgument(t *testing.T) {
+	args := createArgs("")
+	ParseArgs(args)
+	// Expect no panic
+}
+
 func TestHelpArg(t *testing.T) {
 	args := createArgs(helpFlag)
 	run, _ := ParseArgs(args)
