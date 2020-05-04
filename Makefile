@@ -1,6 +1,7 @@
 executable_file=wordrow.o
 coverage_file=coverage.out
 test_root=./internal/...
+fuzz_dir="./_fuzz"
 
 
 build:
@@ -12,6 +13,13 @@ test:
 coverage:
 	 go test $(test_root) -coverprofile $(coverage_file)
 	 go tool cover -html=$(coverage_file)
+
+fuzz-cli:
+	cd internal/cli; go-fuzz-build; go-fuzz -workdir ${fuzz_dir}
+
+# Usage: `make fuzz-wodrmaps FUNC=FuzzXXX`
+fuzz-wordmaps:
+	cd internal/wordmaps; go-fuzz-build; go-fuzz -func ${FUNC} -workdir ${fuzz_dir}
 
 benchmark:
 	go test $(test_root) -bench=. -run=XXX
@@ -33,3 +41,5 @@ lint-md:
 clean:
 	rm -rf $(coverage_file)
 	rm -rf $(executable_file)
+	rm -rf **/*/*-fuzz.zip
+	rm -rf **/*/_fuzz/
