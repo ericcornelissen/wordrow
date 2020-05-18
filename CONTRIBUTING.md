@@ -76,6 +76,9 @@ following shell script as a template.
 ```shell
 #!/bin/sh
 
+# Stash unstaged changes
+git stash -q --keep-index
+
 # See if the project can be build and all tests pass.
 make
 make test
@@ -87,6 +90,9 @@ git update-index --again
 # Check other formatting things. You can use `make lint-go` if you don't have
 # NodeJS on your system.
 make lint
+
+# Restore unstaged changes
+git stash pop -q
 ```
 
 [Golint]: https://github.com/golang/lint
