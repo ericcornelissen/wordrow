@@ -22,7 +22,7 @@ func (wm *WordMap) inRange(i int) bool {
 //
 // The function sets the error if an error occurs when parsing the File.
 func (wm *WordMap) AddFile(file fs.File) error {
-	err := parseFile(&file, wm)
+	err := parseFile(&file.Content, file.Ext, wm)
 	if err != nil {
 		return errors.Newf("Error when parsing %s: %s", file.Path, err)
 	}
