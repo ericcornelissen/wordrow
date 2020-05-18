@@ -2,6 +2,14 @@ package wordmaps
 
 import "github.com/ericcornelissen/wordrow/internal/errors"
 
+var (
+	// List of names considered as MarkDown format.
+	md = []string{".md"}
+
+	// List of names considered as CSV format.
+	csv = []string{".csv"}
+)
+
 // A parse function is a function that takes the contents of a file as a string
 // and outputs a WordMap. If the file is not formatted correctly the function
 // may output an error.
@@ -9,9 +17,9 @@ type parseFunction func(fileContent *string) (WordMap, error)
 
 // Get the parseFunction for a given format.
 func getParserForFormat(format string) (parseFunction, error) {
-	if format == ".md" {
+	if contains(md, format) {
 		return parseMarkDownFile, nil
-	} else if format == ".csv" {
+	} else if contains(csv, format) {
 		return parseCsvFile, nil
 	}
 
