@@ -14,15 +14,29 @@ func getWordMap(
 	mapFilesPaths []string,
 	cliMappings []string,
 ) (wm wordmaps.WordMap, err error) {
-	logger.Debug("Reading specified mapping files")
-	mapFiles, err := fs.ReadFiles(mapFilesPaths)
-	if err != nil {
-		return wm, err
-	}
+	for _, mapFilePath := range mapFilesPaths {
+		format := ""
 
-	for _, mapFile := range mapFiles {
-		logger.Debugf("Processing '%s' as mapping file", mapFile.Path)
-		err := wm.AddFile(mapFile)
+		values := strings.Split(mapFilePath, ":")
+		if len(values) > 1 {
+			mapFilePath = strings.Join(values[:len(values)-1], ":")
+			format = values[len(values)-1]
+		}
+
+		logger.Debugf("Reading '%s'", mapFilePath)
+		mapFile, err := fs.ReadFile(mapFilePath)
+		if err != nil {
+			return wm, err
+		}
+
+		if format == "" {
+			logger.Debugf("Processing '%s' as mapping file", mapFile.Path)
+			err = wm.AddFile(mapFile)
+		} else {
+			logger.Debugf("Processing '%s' as %s mapping file", mapFile.Path, format)
+			err = wm.AddFileAs(mapFile, format)
+		}
+
 		if err != nil {
 			return wm, err
 		}

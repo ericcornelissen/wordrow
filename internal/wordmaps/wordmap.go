@@ -30,6 +30,23 @@ func (wm *WordMap) AddFile(file fs.File) error {
 	return nil
 }
 
+// AddFileAs parses a File as the specified format and adds its mapping to the
+// WordMap.
+//
+// The function sets the error if an error occurs when parsing the File.
+func (wm *WordMap) AddFileAs(file fs.File, as string) error {
+	err := parseFile(&file, wm) // TODO: include as
+	if err != nil {
+		return errors.Newf("Error when parsing %s as %s file: %s",
+			file.Path,
+			as,
+			err,
+		)
+	}
+
+	return nil
+}
+
 // AddFrom adds all mappings from another WordMap to the WordMap.
 func (wm *WordMap) AddFrom(other WordMap) {
 	wm.from = append(wm.from, other.from...)
