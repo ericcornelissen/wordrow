@@ -22,7 +22,7 @@ func getWordMap(
 
 	for _, mapFile := range mapFiles {
 		logger.Debugf("Processing '%s' as mapping file", mapFile.Path)
-		err := wm.AddFile(mapFile)
+		err := wm.AddFile(&mapFile.Content, mapFile.Ext)
 		if err != nil {
 			return wm, err
 		}

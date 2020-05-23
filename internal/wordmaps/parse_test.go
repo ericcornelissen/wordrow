@@ -3,15 +3,8 @@ package wordmaps
 import "reflect"
 import "testing"
 
-import "github.com/ericcornelissen/wordrow/internal/fs"
-
 func TestGetParserForUnknownFileType(t *testing.T) {
-	file := fs.File{
-		Ext:  ".bar",
-		Path: "foo.bar",
-	}
-
-	_, err := getParserForFile(&file)
+	_, err := getParserForFormat(".bar")
 
 	if err == nil {
 		t.Error("The error should be set for unknown file types")
@@ -19,12 +12,7 @@ func TestGetParserForUnknownFileType(t *testing.T) {
 }
 
 func TestGetParserForMarkDownFile(t *testing.T) {
-	file := fs.File{
-		Ext:  ".md",
-		Path: "foo.md",
-	}
-
-	parserFn, err := getParserForFile(&file)
+	parserFn, err := getParserForFormat(".md")
 
 	if err != nil {
 		t.Fatalf("The error should be nil for this test (Error: %s)", err)
@@ -37,12 +25,7 @@ func TestGetParserForMarkDownFile(t *testing.T) {
 }
 
 func TestGetParserForCSVFile(t *testing.T) {
-	file := fs.File{
-		Ext:  ".csv",
-		Path: "foo.csv",
-	}
-
-	parserFn, err := getParserForFile(&file)
+	parserFn, err := getParserForFormat(".csv")
 
 	if err != nil {
 		t.Fatalf("The error should be nil for this test (Error: %s)", err)
@@ -56,13 +39,9 @@ func TestGetParserForCSVFile(t *testing.T) {
 
 func TestParseFileNoParser(t *testing.T) {
 	var wm WordMap
-	file := fs.File{
-		Content: "",
-		Ext:     ".bar",
-		Path:    "foo.bar",
-	}
 
-	err := parseFile(&file, &wm)
+	content := ""
+	err := parseFile(&content, ".bar", &wm)
 
 	if err == nil {
 		t.Error("The error should set for this test")
@@ -71,13 +50,9 @@ func TestParseFileNoParser(t *testing.T) {
 
 func TestParseFileUpdatesWordMap(t *testing.T) {
 	var wm WordMap
-	file := fs.File{
-		Content: "this is definitely not a real CSV file",
-		Ext:     ".csv",
-		Path:    "foo.csv",
-	}
 
-	err := parseFile(&file, &wm)
+	content := "this is definitely not a real CSV file"
+	err := parseFile(&content, ".csv", &wm)
 
 	if err == nil {
 		t.Error("The error should set for this test")
@@ -86,13 +61,9 @@ func TestParseFileUpdatesWordMap(t *testing.T) {
 
 func TestParseFileParseCSV(t *testing.T) {
 	var wm WordMap
-	file := fs.File{
-		Content: "foo,bar",
-		Ext:     ".csv",
-		Path:    "foo.csv",
-	}
 
-	err := parseFile(&file, &wm)
+	content := "foo,bar"
+	err := parseFile(&content, ".csv", &wm)
 
 	if err != nil {
 		t.Fatalf("The error should not be set for this test")
@@ -105,17 +76,13 @@ func TestParseFileParseCSV(t *testing.T) {
 
 func TestParseFileParseMarkDown(t *testing.T) {
 	var wm WordMap
-	file := fs.File{
-		Content: `
-      | From | To  |
-      | ---- | --- |
-      | foo  | bar |
-    `,
-		Ext:  ".md",
-		Path: "foo.md",
-	}
 
-	err := parseFile(&file, &wm)
+	content := `
+		| From | To  |
+		| ---- | --- |
+		| foo  | bar |
+	`
+	err := parseFile(&content, ".md", &wm)
 
 	if err != nil {
 		t.Fatalf("The error should not be set for this test")
