@@ -3,7 +3,6 @@ package wordmaps
 import "strings"
 
 import "github.com/ericcornelissen/wordrow/internal/errors"
-import "github.com/ericcornelissen/wordrow/internal/fs"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 
 // The WordMap type provides a guaranteed mapping from one set of strings to
@@ -21,27 +20,10 @@ func (wm *WordMap) inRange(i int) bool {
 // AddFile parses a File and add its mapping to the WordMap.
 //
 // The function sets the error if an error occurs when parsing the File.
-func (wm *WordMap) AddFile(file fs.File) error {
-	err := parseFile(&file, wm)
+func (wm *WordMap) AddFile(content *string, format string) error {
+	err := parseFile(content, format, wm)
 	if err != nil {
-		return errors.Newf("Error when parsing %s: %s", file.Path, err)
-	}
-
-	return nil
-}
-
-// AddFileAs parses a File as the specified format and adds its mapping to the
-// WordMap.
-//
-// The function sets the error if an error occurs when parsing the File.
-func (wm *WordMap) AddFileAs(file fs.File, as string) error {
-	err := parseFile(&file, wm) // TODO: include as
-	if err != nil {
-		return errors.Newf("Error when parsing %s as %s file: %s",
-			file.Path,
-			as,
-			err,
-		)
+		return errors.Newf("Error when parsing file: %s", err)
 	}
 
 	return nil

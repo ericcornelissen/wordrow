@@ -34,10 +34,10 @@ func getWordMap(
 
 		if format == "" {
 			logger.Debugf("Processing '%s' as mapping file", mapFile.Path)
-			err = wm.AddFile(mapFile)
+			err = wm.AddFile(&mapFile.Content, mapFile.Ext)
 		} else {
 			logger.Debugf("Processing '%s' as %s mapping file", mapFile.Path, format)
-			err = wm.AddFileAs(mapFile, format)
+			err = wm.AddFile(&mapFile.Content, format)
 		}
 
 		if err != nil {

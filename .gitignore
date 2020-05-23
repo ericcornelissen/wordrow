@@ -1,2 +1,6 @@
 wordrow.o
 coverage.out
+
+# IDEs
+.idea
+.vscode
