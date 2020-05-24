@@ -4,7 +4,7 @@ test_root=./internal/...
 
 
 build:
-	go build -o $(executable_file) cmd/wordrow/main.go
+	go build -o $(executable_file) ./cmd/wordrow/
 
 test:
 	go test $(test_root)
