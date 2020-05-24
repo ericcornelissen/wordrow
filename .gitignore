@@ -1,2 +1,10 @@
 wordrow.o
 coverage.out
+
+# IDEs
+.idea
+.vscode
+
+# go-fuzz
+_fuzz/
+*-fuzz.zip

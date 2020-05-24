@@ -7,6 +7,11 @@ Versioning].
 
 ## [Unreleased]
 
+### Features
+
+- Add option to explicitly state map file format. ([#46])
+- Add support for more extensions as MarkDown map file. ([#50])
+
 ### Bug Fixes
 
 - Fix program crash due to empty CLI argument. ([#42])
@@ -66,3 +71,5 @@ Versioning].
 [#31]: https://github.com/ericcornelissen/wordrow/pull/31
 [#37]: https://github.com/ericcornelissen/wordrow/pull/37
 [#42]: https://github.com/ericcornelissen/wordrow/pull/42
+[#46]: https://github.com/ericcornelissen/wordrow/pull/46
+[#50]: https://github.com/ericcornelissen/wordrow/pull/50

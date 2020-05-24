@@ -2,8 +2,6 @@ package wordmaps
 
 import "testing"
 
-import "github.com/ericcornelissen/wordrow/internal/fs"
-
 func TestWordMapEmpty(t *testing.T) {
 	var wm WordMap
 
@@ -14,12 +12,11 @@ func TestWordMapEmpty(t *testing.T) {
 
 func TestWordMapAddFileUnknownType(t *testing.T) {
 	var wm WordMap
-	file := fs.File{
-		Ext:  ".bar",
-		Path: "foo.bar",
-	}
 
-	err := wm.AddFile(file)
+	content := "Hello world"
+	format := ".bar"
+
+	err := wm.AddFile(&content, format)
 	if err == nil {
 		t.Error("Expected error to be set but was not")
 	}
@@ -27,13 +24,11 @@ func TestWordMapAddFileUnknownType(t *testing.T) {
 
 func TestWordMapAddFileKnownType(t *testing.T) {
 	var wm WordMap
-	file := fs.File{
-		Content: "foo,bar",
-		Ext:     ".csv",
-		Path:    "foo.csv",
-	}
 
-	err := wm.AddFile(file)
+	content := "foo,bar"
+	format := ".csv"
+
+	err := wm.AddFile(&content, format)
 	if err != nil {
 		t.Fatalf("Error should not be set for this test")
 	}

@@ -3,15 +3,8 @@ package wordmaps
 import "reflect"
 import "testing"
 
-import "github.com/ericcornelissen/wordrow/internal/fs"
-
 func TestGetParserForUnknownFileType(t *testing.T) {
-	file := fs.File{
-		Ext:  ".bar",
-		Path: "foo.bar",
-	}
-
-	_, err := getParserForFile(&file)
+	_, err := getParserForFormat(".bar")
 
 	if err == nil {
 		t.Error("The error should be set for unknown file types")
@@ -19,36 +12,55 @@ func TestGetParserForUnknownFileType(t *testing.T) {
 }
 
 func TestGetParserForMarkDownFile(t *testing.T) {
-	file := fs.File{
-		Ext:  ".md",
-		Path: "foo.md",
+	check := func(parseFn parseFunction, err error) {
+		if err != nil {
+			t.Fatalf("The error should be nil for this test (Error: %s)", err)
+		}
+
+		actual, expected := reflect.ValueOf(parseFn), reflect.ValueOf(parseMarkDownFile)
+		if actual.Pointer() != expected.Pointer() {
+			t.Error("The parser function should be the MarkDown parse function")
+		}
 	}
 
-	parserFn, err := getParserForFile(&file)
-
-	if err != nil {
-		t.Fatalf("The error should be nil for this test (Error: %s)", err)
-	}
-
-	actual, expected := reflect.ValueOf(parserFn), reflect.ValueOf(parseMarkDownFile)
-	if actual.Pointer() != expected.Pointer() {
-		t.Error("The parser function should be the MarkDown parse function")
-	}
+	t.Run(".md", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".md")
+		check(parseFn, err)
+	})
+	t.Run(".mdown", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".mdown")
+		check(parseFn, err)
+	})
+	t.Run(".markdown", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".markdown")
+		check(parseFn, err)
+	})
+	t.Run(".mdwn", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".mdwn")
+		check(parseFn, err)
+	})
+	t.Run(".mkdn", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".mkdn")
+		check(parseFn, err)
+	})
+	t.Run(".mkdn", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".mdtxt")
+		check(parseFn, err)
+	})
+	t.Run(".mdtext", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".mdtext")
+		check(parseFn, err)
+	})
 }
 
 func TestGetParserForCSVFile(t *testing.T) {
-	file := fs.File{
-		Ext:  ".csv",
-		Path: "foo.csv",
-	}
-
-	parserFn, err := getParserForFile(&file)
+	parseFn, err := getParserForFormat(".csv")
 
 	if err != nil {
 		t.Fatalf("The error should be nil for this test (Error: %s)", err)
 	}
 
-	actual, expected := reflect.ValueOf(parserFn), reflect.ValueOf(parseCsvFile)
+	actual, expected := reflect.ValueOf(parseFn), reflect.ValueOf(parseCsvFile)
 	if actual.Pointer() != expected.Pointer() {
 		t.Error("The parser function should be the CSV parse function")
 	}
@@ -56,13 +68,9 @@ func TestGetParserForCSVFile(t *testing.T) {
 
 func TestParseFileNoParser(t *testing.T) {
 	var wm WordMap
-	file := fs.File{
-		Content: "",
-		Ext:     ".bar",
-		Path:    "foo.bar",
-	}
 
-	err := parseFile(&file, &wm)
+	content := ""
+	err := parseFile(&content, ".bar", &wm)
 
 	if err == nil {
 		t.Error("The error should set for this test")
@@ -71,13 +79,9 @@ func TestParseFileNoParser(t *testing.T) {
 
 func TestParseFileUpdatesWordMap(t *testing.T) {
 	var wm WordMap
-	file := fs.File{
-		Content: "this is definitely not a real CSV file",
-		Ext:     ".csv",
-		Path:    "foo.csv",
-	}
 
-	err := parseFile(&file, &wm)
+	content := "this is definitely not a real CSV file"
+	err := parseFile(&content, ".csv", &wm)
 
 	if err == nil {
 		t.Error("The error should set for this test")
@@ -86,13 +90,9 @@ func TestParseFileUpdatesWordMap(t *testing.T) {
 
 func TestParseFileParseCSV(t *testing.T) {
 	var wm WordMap
-	file := fs.File{
-		Content: "foo,bar",
-		Ext:     ".csv",
-		Path:    "foo.csv",
-	}
 
-	err := parseFile(&file, &wm)
+	content := "foo,bar"
+	err := parseFile(&content, ".csv", &wm)
 
 	if err != nil {
 		t.Fatalf("The error should not be set for this test")
@@ -105,17 +105,13 @@ func TestParseFileParseCSV(t *testing.T) {
 
 func TestParseFileParseMarkDown(t *testing.T) {
 	var wm WordMap
-	file := fs.File{
-		Content: `
-      | From | To  |
-      | ---- | --- |
-      | foo  | bar |
-    `,
-		Ext:  ".md",
-		Path: "foo.md",
-	}
 
-	err := parseFile(&file, &wm)
+	content := `
+		| From | To  |
+		| ---- | --- |
+		| foo  | bar |
+	`
+	err := parseFile(&content, ".md", &wm)
 
 	if err != nil {
 		t.Fatalf("The error should not be set for this test")

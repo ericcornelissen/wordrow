@@ -26,8 +26,8 @@ func getCwd() string {
 	return cwd
 }
 
-// Get the extension of a file give the file path.
-func getExt(path string) string {
+// GetExt returns the extension of a given file path.
+func GetExt(path string) string {
 	return filepath.Ext(path)
 }
 
