@@ -238,3 +238,17 @@ func TestMarkDownIncorrectTableRow(t *testing.T) {
 		t.Errorf("Incorrect error message for (actual '%s')", err)
 	}
 }
+
+func TestMarkdownIncompleteTableEndOfFile(t *testing.T) {
+	markdown := `
+		# Foobar
+
+		| foo | bar |
+	`
+
+	_, err := parseMarkDownFile(&markdown)
+
+	if err == nil {
+		t.Fatal("Error should be set for incomplete table at the end of the file")
+	}
+}

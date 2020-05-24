@@ -58,6 +58,10 @@ func parseTableHeader(tableLines []string) (rerr error) {
 // The error will be set if the table head or any table row has an incorrect
 // format.
 func parseTable(tableLines []string, wm *WordMap) (int, error) {
+	if len(tableLines) < 3 {
+		return 0, &parseError{"Incomplete table", tableLines[0]}
+	}
+
 	if err := parseTableHeader(tableLines); err != nil {
 		return 0, err
 	}
