@@ -239,12 +239,17 @@ func TestMarkDownIncorrectTableRow(t *testing.T) {
 	}
 }
 
-func TestMarkdownLineWithOnlyPipe(t *testing.T) {
-	markdown := `|`
+func TestMarkdownIncompleteTableEndOfFile(t *testing.T) {
+	markdown := `
+		# Foobar
+
+    | foo | bar |
+    | --- | --- |
+	`
 
 	_, err := parseMarkDownFile(&markdown)
 
 	if err == nil {
-		t.Fatal("Error should be set for line containing only a pipe ('|')")
+		t.Fatal("Error should be set for incomplete table at the end of the file")
 	}
 }
