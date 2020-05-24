@@ -243,8 +243,7 @@ func TestMarkdownIncompleteTableEndOfFile(t *testing.T) {
 	markdown := `
 		# Foobar
 
-    | foo | bar |
-    | --- | --- |
+		| foo | bar |
 	`
 
 	_, err := parseMarkDownFile(&markdown)
