@@ -5,40 +5,6 @@ import "strings"
 import "github.com/ericcornelissen/wordrow/internal/errors"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 
-// The Arguments type represents the configuration of the program from the
-// Command-Line Interface (CLI).
-type Arguments struct {
-	// Flag indicating if the program usage should be displayed.
-	help bool
-
-	// Flag indicating if the program version should be displayed.
-	version bool
-
-	// Flag indicating if this is a dry run.
-	DryRun bool
-
-	// Flag indicating if the mapping should be inverted.
-	Invert bool
-
-	// Flag indicating if the program should be silent.
-	Silent bool
-
-	// Flag indicating if the program should be verbose.
-	Verbose bool
-
-	// The config file.
-	ConfigFile string
-
-	// List of files to be processed.
-	InputFiles []string
-
-	// List of files that specify a mapping.
-	MapFiles []string
-
-	// List of mappings defined in the CLI.
-	Mappings []string
-}
-
 // Check if any arguments were provided to the program.
 func noArgumentsProvided(args []string) bool {
 	return len(args) == 1
@@ -56,28 +22,28 @@ func parseArgumentAsOption(
 ) (argContext, error) {
 	newContext := contextInputFile
 	switch option {
-	case helpFlag:
+	case helpFlag.name:
 		arguments.help = true
-	case versionFlag:
+	case versionFlag.name:
 		arguments.version = true
 
-	// Flags
-	case dryRunFlag:
+		// Flags
+	case dryRunFlag.name:
 		arguments.DryRun = true
-	case invertFlag, invertFlagAlias:
+	case invertFlag.name, invertFlag.alias:
 		arguments.Invert = true
-	case silentFlag, silentFlagAlias:
+	case silentFlag.name, silentFlag.alias:
 		arguments.Silent = true
-	case verboseFlag, verboseFlagAlias:
+	case verboseFlag.name, verboseFlag.alias:
 		arguments.Verbose = true
 
 	// Options
-	case configOption, configOptionAlias:
+	case configOption.name, configOption.alias:
 		newContext = contextConfigFile
 		logger.Warningf("The %s argument is not yet supported", option)
-	case mapfileOption, mapfileOptionAlias:
+	case mapfileOption.name, mapfileOption.alias:
 		newContext = contextMapFile
-	case mappingOption, mappingOptionAlias:
+	case mappingOption.name, mappingOption.alias:
 		newContext = contextMapping
 	default:
 		return newContext, errors.Newf("Unknown option '%s'. Use %s for help", option, helpFlag)
@@ -154,10 +120,9 @@ func doParseProgramArguments(args []string) (Arguments, error) {
 	return arguments, nil
 }
 
-// ParseArgs parses a slice of arguments (e.g. `os.Args`) into an Arguments
+// ParseArgs parses a list of arguments (e.g. `os.Args`) into an Arguments
 // instance.
-func ParseArgs(args []string) (bool, Arguments) {
-	var arguments Arguments
+func ParseArgs(args []string) (run bool, arguments Arguments) {
 	if noArgumentsProvided(args) {
 		printUsage()
 		return false, arguments

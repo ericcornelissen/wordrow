@@ -30,19 +30,22 @@ func getOptionBullet(option, optionAlias string) string {
 }
 
 // Format the usage of a single option.
-func formatOption(topic, message string, lineLen int) string {
+func formatOption(option Option, message string) string {
 	var sb strings.Builder
+	var lineCount = 1
 
 	message = clean(message)
+
+	topic := getOptionBullet(option.name, option.alias)
 	indentation := asWhitespace(topic)
 
 	sb.WriteString(topic)
 	for _, word := range strings.Fields(message) {
-		if sb.Len()+len(word) > lineLen {
+		if (sb.Len() + len(word)) > (lineCount * maxLineLen) {
 			sb.WriteRune('\n')
 			sb.WriteString(indentation)
 
-			lineLen += lineLen
+			lineCount++
 		}
 
 		sb.WriteRune(' ')
@@ -53,9 +56,8 @@ func formatOption(topic, message string, lineLen int) string {
 }
 
 // Print the usage of a single option.
-func printOption(option, optionAlias, message string) {
-	topic := getOptionBullet(option, optionAlias)
-	optionDoc := formatOption(topic, message, maxLineLen)
+func printOption(option Option, message string) {
+	optionDoc := formatOption(option, message)
 	fmt.Println(optionDoc)
 }
 
@@ -66,22 +68,20 @@ func printSectionTitle(title string) {
 // Print the usage of the options for the program.
 func printOptions() {
 	printSectionTitle("Flags")
-	printOption(helpFlag, "", `Output this help message.`)
-	printOption(versionFlag, "", `Output the version number of wordrow.`)
-	printOption(dryRunFlag, "", `
-		Run wordrow without writing changes back to the input files.
-	`)
-	printOption(invertFlagAlias, invertFlag, `Invert all specified mappings.`)
-	printOption(silentFlagAlias, silentFlag, `Don't output informative logging.`)
-	printOption(verboseFlagAlias, verboseFlag, `Output debug logging.`)
+	printOption(helpFlag, `Output this help message.`)
+	printOption(versionFlag, `Output the version number of wordrow.`)
+	printOption(dryRunFlag, `Don't make any changes to the input files.`)
+	printOption(invertFlag, `Invert all specified mappings.`)
+	printOption(silentFlag, `Don't output informative logging.`)
+	printOption(verboseFlag, `Output debug logging.`)
 
 	printSectionTitle("Options")
-	printOption(configOptionAlias, configOption, `Specify a configuration file.`)
-	printOption(mapfileOptionAlias, mapfileOption, `
+	printOption(configOption, `Specify a configuration file.`)
+	printOption(mapfileOption, `
 		Specify a dictionary file. To use multiple dictionary files you can use this
 		option multiple times.
 	`)
-	printOption(mappingOptionAlias, mappingOption, `
+	printOption(mappingOption, `
 		Specify a single mapping. Use a comma to separate the words of the mapping.
 		If spaces are required use quotation marks. This option can be used multiple
 		times.
@@ -95,29 +95,29 @@ func printInterface() {
 
 	fmt.Printf("%s [%s] [%s]\n",
 		base,
-		helpFlag,
-		versionFlag,
+		helpFlag.name,
+		versionFlag.name,
 	)
 	fmt.Printf("%s [%s] [%s | %s]\n",
 		indentation,
-		dryRunFlag,
-		silentFlagAlias,
-		silentFlag,
+		dryRunFlag.name,
+		silentFlag.alias,
+		silentFlag.name,
 	)
 	fmt.Printf("%s [%s | %s <file>]\n",
 		indentation,
-		configOptionAlias,
-		configOption,
+		configOption.alias,
+		configOption.name,
 	)
 	fmt.Printf("%s [%s | %s <file>]\n",
 		indentation,
-		mapfileOptionAlias,
-		mapfileOption,
+		mapfileOption.alias,
+		mapfileOption.name,
 	)
 	fmt.Printf("%s [%s | %s <file>]\n",
 		indentation,
-		mappingOptionAlias,
-		mappingOption,
+		mappingOption.alias,
+		mappingOption.name,
 	)
 	fmt.Printf("%s <files>\n", indentation)
 }

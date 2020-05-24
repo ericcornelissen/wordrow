@@ -117,7 +117,7 @@ func TestEmptyArgument(t *testing.T) {
 }
 
 func TestHelpArg(t *testing.T) {
-	args := createArgs(helpFlag)
+	args := createArgs(helpFlag.name)
 	run, _ := ParseArgs(args)
 
 	if run == true {
@@ -127,7 +127,7 @@ func TestHelpArg(t *testing.T) {
 
 func TestVersionArg(t *testing.T) {
 	t.Run("--version only", func(t *testing.T) {
-		args := createArgs(versionFlag)
+		args := createArgs(versionFlag.name)
 		run, _ := ParseArgs(args)
 
 		if run == true {
@@ -135,7 +135,7 @@ func TestVersionArg(t *testing.T) {
 		}
 	})
 	t.Run("--version and other", func(t *testing.T) {
-		args := createArgs(versionFlag, "foo.bar")
+		args := createArgs(versionFlag.name, "foo.bar")
 		run, _ := ParseArgs(args)
 
 		if run != true {
@@ -160,7 +160,7 @@ func TestDefaultOptions(t *testing.T) {
 }
 
 func TestDryRunFlag(t *testing.T) {
-	args := createArgs(dryRunFlag, "foo.bar")
+	args := createArgs(dryRunFlag.name, "foo.bar")
 	run, arguments := ParseArgs(args)
 
 	if run != true {
@@ -175,8 +175,8 @@ func TestDryRunFlag(t *testing.T) {
 }
 
 func TestInvertFlag(t *testing.T) {
-	t.Run(invertFlag, func(t *testing.T) {
-		args := createArgs(invertFlag, "foo.bar")
+	t.Run(invertFlag.name, func(t *testing.T) {
+		args := createArgs(invertFlag.name, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -189,8 +189,8 @@ func TestInvertFlag(t *testing.T) {
 			t.Errorf("The Invert value should be true if %s is an argument", invertFlag)
 		}
 	})
-	t.Run(invertFlagAlias, func(t *testing.T) {
-		args := createArgs(invertFlagAlias, "foo.bar")
+	t.Run(invertFlag.alias, func(t *testing.T) {
+		args := createArgs(invertFlag.alias, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -200,14 +200,14 @@ func TestInvertFlag(t *testing.T) {
 		testDefaultsExcept(t, arguments, "invert")
 
 		if arguments.Invert != true {
-			t.Errorf("The Invert value should be true if %s is an argument", invertFlagAlias)
+			t.Errorf("The Invert value should be true if %s is an argument", invertFlag.alias)
 		}
 	})
 }
 
 func TestSilentFlag(t *testing.T) {
-	t.Run(silentFlag, func(t *testing.T) {
-		args := createArgs(silentFlag, "foo.bar")
+	t.Run(silentFlag.name, func(t *testing.T) {
+		args := createArgs(silentFlag.name, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -220,8 +220,8 @@ func TestSilentFlag(t *testing.T) {
 			t.Errorf("The Silent value should be true if %s is an argument", silentFlag)
 		}
 	})
-	t.Run(silentFlagAlias, func(t *testing.T) {
-		args := createArgs(silentFlagAlias, "foo.bar")
+	t.Run(silentFlag.alias, func(t *testing.T) {
+		args := createArgs(silentFlag.alias, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -231,14 +231,14 @@ func TestSilentFlag(t *testing.T) {
 		testDefaultsExcept(t, arguments, "silent")
 
 		if arguments.Silent != true {
-			t.Errorf("The Silent value should be true if %s is an argument", silentFlagAlias)
+			t.Errorf("The Silent value should be true if %s is an argument", silentFlag.alias)
 		}
 	})
 }
 
 func TestVerboseFlag(t *testing.T) {
-	t.Run(verboseFlag, func(t *testing.T) {
-		args := createArgs(verboseFlag, "foo.bar")
+	t.Run(verboseFlag.name, func(t *testing.T) {
+		args := createArgs(verboseFlag.name, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -251,8 +251,8 @@ func TestVerboseFlag(t *testing.T) {
 			t.Errorf("The Verbose value should be true if %s is an argument", verboseFlag)
 		}
 	})
-	t.Run(verboseFlagAlias, func(t *testing.T) {
-		args := createArgs(verboseFlagAlias, "foo.bar")
+	t.Run(verboseFlag.alias, func(t *testing.T) {
+		args := createArgs(verboseFlag.alias, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -262,7 +262,7 @@ func TestVerboseFlag(t *testing.T) {
 		testDefaultsExcept(t, arguments, "verbose")
 
 		if arguments.Verbose != true {
-			t.Errorf("The Verbose value should be true if %s is an argument", verboseFlagAlias)
+			t.Errorf("The Verbose value should be true if %s is an argument", verboseFlag.alias)
 		}
 	})
 }
@@ -270,8 +270,8 @@ func TestVerboseFlag(t *testing.T) {
 func TestConfigFileOption(t *testing.T) {
 	configFile := "config.json"
 
-	t.Run(configOption, func(t *testing.T) {
-		args := createArgs(configOption, configFile, "foo.bar")
+	t.Run(configOption.name, func(t *testing.T) {
+		args := createArgs(configOption.name, configFile, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -284,8 +284,8 @@ func TestConfigFileOption(t *testing.T) {
 			t.Errorf("The config file was incorrect (was '%s')", arguments.ConfigFile)
 		}
 	})
-	t.Run(configOptionAlias, func(t *testing.T) {
-		args := createArgs(configOptionAlias, configFile, "foo.bar")
+	t.Run(configOption.alias, func(t *testing.T) {
+		args := createArgs(configOption.alias, configFile, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -301,7 +301,7 @@ func TestConfigFileOption(t *testing.T) {
 	t.Run("multiple configuration files (overrides)", func(t *testing.T) {
 		otherConfigFile := "foobar.json"
 
-		args := createArgs(configOption, configFile, configOption, otherConfigFile, "foo.bar")
+		args := createArgs(configOption.name, configFile, configOption.name, otherConfigFile, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -318,7 +318,7 @@ func TestConfigFileOption(t *testing.T) {
 
 func TestConfigFileOptionIncorrect(t *testing.T) {
 	t.Run("value missing", func(t *testing.T) {
-		args := createArgs(configOption)
+		args := createArgs(configOption.name)
 		run, _ := ParseArgs(args)
 
 		if run != false {
@@ -326,7 +326,7 @@ func TestConfigFileOptionIncorrect(t *testing.T) {
 		}
 	})
 	t.Run("other flag", func(t *testing.T) {
-		args := createArgs(configOption, silentFlag)
+		args := createArgs(configOption.name, silentFlag.name)
 		run, _ := ParseArgs(args)
 
 		if run != false {
@@ -338,8 +338,8 @@ func TestConfigFileOptionIncorrect(t *testing.T) {
 func TestMapFileOption(t *testing.T) {
 	mapFile := "foo.map"
 
-	t.Run(mapfileOption, func(t *testing.T) {
-		args := createArgs(mapfileOption, mapFile, "foo.bar")
+	t.Run(mapfileOption.name, func(t *testing.T) {
+		args := createArgs(mapfileOption.name, mapFile, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -356,8 +356,8 @@ func TestMapFileOption(t *testing.T) {
 			t.Errorf("First map file was incorrect (was '%s')", arguments.MapFiles[0])
 		}
 	})
-	t.Run(mapfileOptionAlias, func(t *testing.T) {
-		args := createArgs(mapfileOptionAlias, mapFile, "foo.bar")
+	t.Run(mapfileOption.alias, func(t *testing.T) {
+		args := createArgs(mapfileOption.alias, mapFile, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -377,7 +377,7 @@ func TestMapFileOption(t *testing.T) {
 	t.Run("multiple map files", func(t *testing.T) {
 		otherMapFile := "bar.map"
 
-		args := createArgs(mapfileOption, mapFile, mapfileOption, otherMapFile, "foo.bar")
+		args := createArgs(mapfileOption.name, mapFile, mapfileOption.name, otherMapFile, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -402,7 +402,7 @@ func TestMapFileOption(t *testing.T) {
 
 func TestMapFileOptionIncorrect(t *testing.T) {
 	t.Run("value missing", func(t *testing.T) {
-		args := createArgs(mapfileOption)
+		args := createArgs(mapfileOption.name)
 		run, _ := ParseArgs(args)
 
 		if run != false {
@@ -410,7 +410,7 @@ func TestMapFileOptionIncorrect(t *testing.T) {
 		}
 	})
 	t.Run("other flag", func(t *testing.T) {
-		args := createArgs(mapfileOption, silentFlag)
+		args := createArgs(mapfileOption.name, silentFlag.name)
 		run, _ := ParseArgs(args)
 
 		if run != false {
@@ -422,8 +422,8 @@ func TestMapFileOptionIncorrect(t *testing.T) {
 func TestMappingOption(t *testing.T) {
 	mapping := "foo,bar"
 
-	t.Run(mappingOption, func(t *testing.T) {
-		args := createArgs(mappingOption, mapping, "foo.bar")
+	t.Run(mappingOption.name, func(t *testing.T) {
+		args := createArgs(mappingOption.name, mapping, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -440,8 +440,8 @@ func TestMappingOption(t *testing.T) {
 			t.Errorf("First mapping was incorrect (was '%s')", arguments.Mappings[0])
 		}
 	})
-	t.Run(mappingOptionAlias, func(t *testing.T) {
-		args := createArgs(mappingOptionAlias, mapping, "foo.bar")
+	t.Run(mappingOption.alias, func(t *testing.T) {
+		args := createArgs(mappingOption.alias, mapping, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -461,7 +461,7 @@ func TestMappingOption(t *testing.T) {
 	t.Run("multiple mappings", func(t *testing.T) {
 		otherMapping := "cat,dog"
 
-		args := createArgs(mappingOption, mapping, mappingOptionAlias, otherMapping, "foo.bar")
+		args := createArgs(mappingOption.name, mapping, mappingOption.alias, otherMapping, "foo.bar")
 		run, arguments := ParseArgs(args)
 
 		if run != true {
@@ -486,7 +486,7 @@ func TestMappingOption(t *testing.T) {
 
 func TestMappingOptionIncorrect(t *testing.T) {
 	t.Run("value missing", func(t *testing.T) {
-		args := createArgs(mappingOption)
+		args := createArgs(mappingOption.name)
 		run, _ := ParseArgs(args)
 
 		if run != false {
@@ -494,7 +494,7 @@ func TestMappingOptionIncorrect(t *testing.T) {
 		}
 	})
 	t.Run("other flag", func(t *testing.T) {
-		args := createArgs(mappingOption, silentFlag)
+		args := createArgs(mappingOption.name, silentFlag.name)
 		run, _ := ParseArgs(args)
 
 		if run != false {
