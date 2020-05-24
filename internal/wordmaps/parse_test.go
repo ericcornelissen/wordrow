@@ -51,19 +51,32 @@ func TestGetParserForMarkDownFile(t *testing.T) {
 		parseFn, err := getParserForFormat(".mdtext")
 		check(parseFn, err)
 	})
+	t.Run("md", func(t *testing.T) {
+		parseFn, err := getParserForFormat("md")
+		check(parseFn, err)
+	})
 }
 
 func TestGetParserForCSVFile(t *testing.T) {
-	parseFn, err := getParserForFormat(".csv")
+	check := func(parseFn parseFunction, err error) {
+		if err != nil {
+			t.Fatalf("The error should be nil for this test (Error: %s)", err)
+		}
 
-	if err != nil {
-		t.Fatalf("The error should be nil for this test (Error: %s)", err)
+		actual, expected := reflect.ValueOf(parseFn), reflect.ValueOf(parseCsvFile)
+		if actual.Pointer() != expected.Pointer() {
+			t.Error("The parser function should be the MarkDown parse function")
+		}
 	}
 
-	actual, expected := reflect.ValueOf(parseFn), reflect.ValueOf(parseCsvFile)
-	if actual.Pointer() != expected.Pointer() {
-		t.Error("The parser function should be the CSV parse function")
-	}
+	t.Run(".csv", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".csv")
+		check(parseFn, err)
+	})
+	t.Run("csv", func(t *testing.T) {
+		parseFn, err := getParserForFormat("csv")
+		check(parseFn, err)
+	})
 }
 
 func TestParseFileNoParser(t *testing.T) {
