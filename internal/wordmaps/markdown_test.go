@@ -238,3 +238,13 @@ func TestMarkDownIncorrectTableRow(t *testing.T) {
 		t.Errorf("Incorrect error message for (actual '%s')", err)
 	}
 }
+
+func TestMarkdownLineWithOnlyPipe(t *testing.T) {
+	markdown := `|`
+
+	_, err := parseMarkDownFile(&markdown)
+
+	if err == nil {
+		t.Fatal("Error should be set for line containing only a pipe ('|')")
+	}
+}
