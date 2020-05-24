@@ -1,6 +1,7 @@
 package main
 
 import "strings"
+import "path/filepath"
 
 import "github.com/ericcornelissen/wordrow/internal/errors"
 import "github.com/ericcornelissen/wordrow/internal/fs"
@@ -9,15 +10,15 @@ import "github.com/ericcornelissen/wordrow/internal/wordmaps"
 
 // Parse a --map-file argument into its component parts.
 func parseWordMapArgument(argument string) (path string, format string) {
-	values := strings.Split(argument, ":")
-	if len(values) > 1 {
-		path = strings.Join(values[:len(values)-1], ":")
-		format = values[len(values)-1]
-	} else {
-		path = argument
+	fileExtension := filepath.Ext(path)
+
+	tmp := strings.Split(fileExtension, ":")
+	if len(tmp) > 1 {
+		format := tmp[len(tmp)-1]
+		return strings.TrimSuffix(argument, ":"+format), format
 	}
 
-	return path, format
+	return argument, fileExtension
 }
 
 // Add the mappings defined in the specified map files to the WordMap.
@@ -32,14 +33,8 @@ func processMapFiles(mapFilesArgs []string, wm *wordmaps.WordMap) error {
 			return err
 		}
 
-		if format == "" {
-			logger.Debugf("Processing '%s' as mapping file", mapFile.Path)
-			err = wm.AddFile(&mapFile.Content, mapFile.Ext)
-		} else {
-			logger.Debugf("Processing '%s' as %s mapping file", mapFile.Path, format)
-			err = wm.AddFile(&mapFile.Content, format)
-		}
-
+		logger.Debugf("Processing '%s' as a %s mapping file", mapFile.Path, format)
+		err = wm.AddFile(&mapFile.Content, format)
 		if err != nil {
 			return err
 		}
