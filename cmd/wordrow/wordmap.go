@@ -7,6 +7,7 @@ import "github.com/ericcornelissen/wordrow/internal/fs"
 import "github.com/ericcornelissen/wordrow/internal/logger"
 import "github.com/ericcornelissen/wordrow/internal/wordmaps"
 
+// Parse a --map-file argument into its component parts.
 func parseWordMapArgument(argument string) (path string, format string) {
 	values := strings.Split(argument, ":")
 	if len(values) > 1 {
@@ -19,17 +20,16 @@ func parseWordMapArgument(argument string) (path string, format string) {
 	return path, format
 }
 
-func getWordMap(
-	mapFilesPaths []string,
-	cliMappings []string,
-) (wm wordmaps.WordMap, err error) {
-	for _, mapFilePath := range mapFilesPaths {
-		file, format := parseWordMapArgument(mapFilePath)
+// Add the mappings defined in the specified map files to the WordMap.
+func processMapFiles(mapFilesArgs []string, wm *wordmaps.WordMap) error {
+	for _, mapFileArg := range mapFilesArgs {
+		logger.Debugf("Parsing argument '%s'", mapFileArg)
+		file, format := parseWordMapArgument(mapFileArg)
 
 		logger.Debugf("Reading '%s'", file)
-		mapFile, err := fs.ReadFile(mapFilePath)
+		mapFile, err := fs.ReadFile(file)
 		if err != nil {
-			return wm, err
+			return err
 		}
 
 		if format == "" {
@@ -41,21 +41,38 @@ func getWordMap(
 		}
 
 		if err != nil {
-			return wm, err
+			return err
 		}
 	}
 
-	logger.Debug("Processing CLI specified mappings")
-	for _, mapping := range cliMappings {
-		logger.Debugf("Processing CLI specified mapping: '%s'", mapping)
+	return nil
+}
 
+// Add the mappings defined in the CLI to the WordMap.
+func processMappings(mappings []string, wm *wordmaps.WordMap) error {
+	for _, mapping := range mappings {
+		logger.Debugf("Processing CLI specified mapping: '%s'", mapping)
 		values := strings.Split(mapping, ",")
 		if len(values) != 2 {
-			return wm, errors.Newf("Incorrect mapping from CLI: '%s'", mapping)
+			return errors.Newf("Incorrect mapping from CLI: '%s'", mapping)
 		}
 
 		wm.AddOne(values[0], values[1])
 	}
 
-	return wm, err
+	return nil
+}
+
+// Get a WordMap based on the specified mappings and map files.
+func getWordMap(
+	mapFilesArgs []string,
+	cliMappings []string,
+) (wordmap wordmaps.WordMap, err error) {
+	logger.Debug("Processing CLI specified map files...")
+	err = processMapFiles(mapFilesArgs, &wordmap)
+
+	logger.Debug("Processing CLI specified mappings...")
+	err = processMappings(cliMappings, &wordmap)
+
+	return wordmap, err
 }
