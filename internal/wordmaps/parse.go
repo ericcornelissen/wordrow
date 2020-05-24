@@ -6,10 +6,10 @@ import "github.com/ericcornelissen/wordrow/internal/errors"
 
 var (
 	// Regular expression of names considered as MarkDown format.
-	md = regexp.MustCompile(`\.(md(te?xt)?|markdown|mdown|mkdown|mkd|mdwn|mkdn)`)
+	md = regexp.MustCompile(`(?i)\.?(md(te?xt)?|markdown|mdown|mkdown|mkd|mdwn|mkdn)`)
 
 	// Regular expression of names considered as CSV format.
-	csv = regexp.MustCompile(`csv`)
+	csv = regexp.MustCompile(`(?i)\.?csv`)
 )
 
 // A parse function is a function that takes the contents of a file as a string
