@@ -7,7 +7,13 @@ Versioning].
 
 ## [Unreleased]
 
-- _No changes yet_
+### Features
+
+- Add option to explicitly state map file format. ([#46])
+
+### Bug Fixes
+
+- Fix program crash due to empty CLI argument. ([#42])
 
 ## [0.3.0-beta] - 2020-05-03
 
@@ -63,3 +69,5 @@ Versioning].
 [#30]: https://github.com/ericcornelissen/wordrow/pull/30
 [#31]: https://github.com/ericcornelissen/wordrow/pull/31
 [#37]: https://github.com/ericcornelissen/wordrow/pull/37
+[#42]: https://github.com/ericcornelissen/wordrow/pull/42
+[#46]: https://github.com/ericcornelissen/wordrow/pull/46

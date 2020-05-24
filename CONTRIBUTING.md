@@ -1,0 +1,96 @@
+# Contributing Guidelines
+
+The _wordrow_ project welcomes contributions and corrections of all forms. This
+includes improvements to the documentation or code base, new tests, bug fixes,
+and implementations of new features. We recommend opening an issue before making
+any significant changes so you can be sure your work won't be rejected. But for
+changes such as fixing a typo you can open a Pull Request directly.
+
+Before you continue, please do make sure to read through the relevant sections
+of this document. In this document you can read about:
+
+- [Bug Reports](#bug-reports)
+- [Feature Requests](#feature-requests)
+- [Workflow](#workflow)
+- [Project Setup](#project-setup)
+  - [Prerequisites](#prerequisites)
+  - [Git Hooks](#git-hooks)
+
+---
+
+## Bug Reports
+
+Bugs can be reported as a GitHub issue. Please provide as much information as
+possible to help diagnose the problem. This may include:
+
+- The _wordrow_ version (run `wordrow --version`) and operating system.
+- The exact command that causes the bug.
+- A working example that demonstrates the bug.
+- The actual and expected behaviour.
+- The debug output of _wordrow_ (run with the `--verbose` flag).
+
+Suggestions for how the bug can be resolved are welcome and so are bug fixes.
+
+## Feature Requests
+
+New features can be requested through GitHub issues. Please provide as much
+information as possible to help us understand the feature. This may include:
+
+- Both a summary and detailed explanation of the feature.
+- An example use case of the feature.
+- A list of potential drawbacks of the feature.
+- An outline for an implementation of the feature.
+- Possible test cases for an implementation.
+
+## Workflow
+
+If you decide to make a contribution, please do use the following workflow:
+
+- Fork the repository.
+- Create a new branch from the latest `master`.
+- Make your changes on the new branch.
+- Commit to the new branch and push the commit(s).
+- Make a Pull Request.
+
+## Project Setup
+
+This project is build for version `1.12` of Go and uses [GNU Make] as build
+tool. In addition [Golint] and [markdownlint] are used to lint the source files.
+
+### Prerequisites
+
+The prerequisites for contributing to this project are:
+
+- Go; version `1.12`
+- Git
+- [GNU Make] (_Windows users can use [Make by GNUWin32]_)
+- [Golint]
+- [NodeJS]; version `>=10` (_only needed for [markdownlint]_)
+
+### Git Hooks
+
+We recommend [setting up a Git hook](https://githooks.com) on commits or pushes
+to make sure your changes don't include any accidental mistakes. You can use the
+following shell script as a template.
+
+```shell
+#!/bin/sh
+
+# See if the project can be build and all tests pass.
+make
+make test
+
+# Format the codebase and include (relevant) formatting changes in the commit.
+make format
+git update-index --again
+
+# Check other formatting things. You can use `make lint-go` if you don't have
+# NodeJS on your system.
+make lint
+```
+
+[Golint]: https://github.com/golang/lint
+[GNU Make]: https://www.gnu.org/software/make/
+[Make by GNUWin32]: http://gnuwin32.sourceforge.net/packages/make.htm
+[markdownlint]: https://github.com/DavidAnson/markdownlint
+[NodeJS]: https://nodejs.org/en/
