@@ -12,26 +12,55 @@ func TestGetParserForUnknownFileType(t *testing.T) {
 }
 
 func TestGetParserForMarkDownFile(t *testing.T) {
-	parserFn, err := getParserForFormat(".md")
+	check := func(parseFn parseFunction, err error) {
+		if err != nil {
+			t.Fatalf("The error should be nil for this test (Error: %s)", err)
+		}
 
-	if err != nil {
-		t.Fatalf("The error should be nil for this test (Error: %s)", err)
+		actual, expected := reflect.ValueOf(parseFn), reflect.ValueOf(parseMarkDownFile)
+		if actual.Pointer() != expected.Pointer() {
+			t.Error("The parser function should be the MarkDown parse function")
+		}
 	}
 
-	actual, expected := reflect.ValueOf(parserFn), reflect.ValueOf(parseMarkDownFile)
-	if actual.Pointer() != expected.Pointer() {
-		t.Error("The parser function should be the MarkDown parse function")
-	}
+	t.Run(".md", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".md")
+		check(parseFn, err)
+	})
+	t.Run(".mdown", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".mdown")
+		check(parseFn, err)
+	})
+	t.Run(".markdown", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".markdown")
+		check(parseFn, err)
+	})
+	t.Run(".mdwn", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".mdwn")
+		check(parseFn, err)
+	})
+	t.Run(".mkdn", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".mkdn")
+		check(parseFn, err)
+	})
+	t.Run(".mkdn", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".mdtxt")
+		check(parseFn, err)
+	})
+	t.Run(".mdtext", func(t *testing.T) {
+		parseFn, err := getParserForFormat(".mdtext")
+		check(parseFn, err)
+	})
 }
 
 func TestGetParserForCSVFile(t *testing.T) {
-	parserFn, err := getParserForFormat(".csv")
+	parseFn, err := getParserForFormat(".csv")
 
 	if err != nil {
 		t.Fatalf("The error should be nil for this test (Error: %s)", err)
 	}
 
-	actual, expected := reflect.ValueOf(parserFn), reflect.ValueOf(parseCsvFile)
+	actual, expected := reflect.ValueOf(parseFn), reflect.ValueOf(parseCsvFile)
 	if actual.Pointer() != expected.Pointer() {
 		t.Error("The parser function should be the CSV parse function")
 	}
