@@ -9,7 +9,7 @@ Versioning].
 
 ### Features
 
-- Add option to explicitly state map file format. ([#46])
+- Add option to explicitly state map file format. ([#46], [#57])
 - Add support for more extensions as MarkDown map file. ([#50])
 - Allow file extension of map files to be upper or mixed case. ([#55])
 
@@ -75,3 +75,4 @@ Versioning].
 [#46]: https://github.com/ericcornelissen/wordrow/pull/46
 [#50]: https://github.com/ericcornelissen/wordrow/pull/50
 [#55]: https://github.com/ericcornelissen/wordrow/pull/55
+[#57]: https://github.com/ericcornelissen/wordrow/pull/57

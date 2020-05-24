@@ -55,6 +55,10 @@ func TestGetParserForMarkDownFile(t *testing.T) {
 		parseFn, err := getParserForFormat(".mdtext")
 		check(parseFn, err)
 	})
+	t.Run("md", func(t *testing.T) {
+		parseFn, err := getParserForFormat("md")
+		check(parseFn, err)
+	})
 }
 
 func TestGetParserForCSVFile(t *testing.T) {
@@ -75,6 +79,10 @@ func TestGetParserForCSVFile(t *testing.T) {
 	})
 	t.Run(".CSV", func(t *testing.T) {
 		parseFn, err := getParserForFormat(".CSV")
+		check(parseFn, err)
+	})
+	t.Run("csv", func(t *testing.T) {
+		parseFn, err := getParserForFormat("csv")
 		check(parseFn, err)
 	})
 }
