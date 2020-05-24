@@ -16,6 +16,7 @@ Versioning].
 ### Bug Fixes
 
 - Fix program crash due to empty CLI argument. ([#42])
+- Fix program crash because of an incomplete MarkDown file. ([#58])
 
 ## [0.3.0-beta] - 2020-05-03
 
@@ -76,3 +77,4 @@ Versioning].
 [#50]: https://github.com/ericcornelissen/wordrow/pull/50
 [#55]: https://github.com/ericcornelissen/wordrow/pull/55
 [#57]: https://github.com/ericcornelissen/wordrow/pull/57
+[#58]: https://github.com/ericcornelissen/wordrow/pull/58
