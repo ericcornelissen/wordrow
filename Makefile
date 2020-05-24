@@ -3,7 +3,6 @@ coverage_file=coverage.out
 test_root=./internal/...
 fuzz_dir="./_fuzz"
 
-
 build:
 	go build -o $(executable_file) ./cmd/wordrow/
 
@@ -11,8 +10,8 @@ test:
 	go test $(test_root)
 
 coverage:
-	 go test $(test_root) -coverprofile $(coverage_file)
-	 go tool cover -html=$(coverage_file)
+	go test $(test_root) -coverprofile $(coverage_file)
+	go tool cover -html=$(coverage_file)
 
 fuzz:
 	cd ${PKG}; go-fuzz-build; go-fuzz -func Fuzz${FUNC} -workdir ${fuzz_dir}
