@@ -14,7 +14,7 @@ func getAnAbsolutePathFor(file string) string {
 func TestGetExt(t *testing.T) {
 	path := "foo.bar"
 
-	result := getExt(path)
+	result := GetExt(path)
 
 	if result != ".bar" {
 		t.Errorf("Unexpected file extension (got '%s')", result)
