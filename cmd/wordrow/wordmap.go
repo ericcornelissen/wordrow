@@ -1,7 +1,6 @@
 package main
 
 import "strings"
-import "path/filepath"
 
 import "github.com/ericcornelissen/wordrow/internal/errors"
 import "github.com/ericcornelissen/wordrow/internal/fs"
@@ -10,7 +9,7 @@ import "github.com/ericcornelissen/wordrow/internal/wordmaps"
 
 // Parse a --map-file argument into its component parts.
 func parseWordMapArgument(argument string) (path string, format string) {
-	fileExtension := filepath.Ext(path)
+	fileExtension := fs.GetExt(path)
 
 	tmp := strings.Split(fileExtension, ":")
 	if len(tmp) > 1 {
