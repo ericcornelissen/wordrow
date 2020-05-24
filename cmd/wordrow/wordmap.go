@@ -9,7 +9,7 @@ import "github.com/ericcornelissen/wordrow/internal/wordmaps"
 
 // Parse a --map-file argument into its component parts.
 func parseWordMapArgument(argument string) (path string, format string) {
-	fileExtension := fs.GetExt(path)
+	fileExtension := fs.GetExt(argument)
 
 	tmp := strings.Split(fileExtension, ":")
 	if len(tmp) > 1 {
