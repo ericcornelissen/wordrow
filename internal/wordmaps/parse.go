@@ -1,13 +1,15 @@
 package wordmaps
 
+import "regexp"
+
 import "github.com/ericcornelissen/wordrow/internal/errors"
 
 var (
-	// List of names considered as MarkDown format.
-	md = []string{".md"}
+	// Regular expression of names considered as MarkDown format.
+	md = regexp.MustCompile(`\.(md(te?xt)?|markdown|mdown|mkdown|mkd|mdwn|mkdn)`)
 
-	// List of names considered as CSV format.
-	csv = []string{".csv"}
+	// Regular expression of names considered as CSV format.
+	csv = regexp.MustCompile(`csv`)
 )
 
 // A parse function is a function that takes the contents of a file as a string
@@ -17,13 +19,13 @@ type parseFunction func(fileContent *string) (WordMap, error)
 
 // Get the parseFunction for a given format.
 func getParserForFormat(format string) (parseFunction, error) {
-	if contains(md, format) {
+	if md.MatchString(format) {
 		return parseMarkDownFile, nil
-	} else if contains(csv, format) {
+	} else if csv.MatchString(format) {
 		return parseCsvFile, nil
 	}
 
-	return nil, errors.New("Unknown file type")
+	return nil, errors.Newf("Unknown format '%s'", format)
 }
 
 // Parse a string formatted in a certain way into a WordMap.
