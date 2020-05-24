@@ -3,10 +3,17 @@ package cli
 import "fmt"
 import "strings"
 
-import "github.com/ericcornelissen/wordrow/internal/logger"
-
 // The maximum line length for the usage message.
 const maxLineLen = 80
+
+// Utility function to clean a source-formatted string into a single line
+// string.
+func clean(s string) string {
+	s = strings.ReplaceAll(s, "\n", " ")
+	s = strings.TrimSpace(s)
+
+	return s
+}
 
 // Utility function to get a string of spaces the length of a given string.
 func asWhitespace(s string) string {
@@ -16,69 +23,107 @@ func asWhitespace(s string) string {
 // Get an option and option alias as a bullet for the usage message.
 func getOptionBullet(option, optionAlias string) string {
 	if optionAlias == "" {
-		return fmt.Sprintf("  %s :", option)
+		return fmt.Sprintf("  %s:", option)
 	}
 
-	return fmt.Sprintf("  %s, %s :", option, optionAlias)
+	return fmt.Sprintf("  %s, %s:", option, optionAlias)
+}
+
+// Format the usage of a single option.
+func formatOption(option Option, message string) string {
+	var sb strings.Builder
+	var lineCount = 1
+
+	message = clean(message)
+
+	topic := getOptionBullet(option.name, option.alias)
+	indentation := asWhitespace(topic)
+
+	sb.WriteString(topic)
+	for _, word := range strings.Fields(message) {
+		if (sb.Len() + len(word)) > (lineCount * maxLineLen) {
+			sb.WriteRune('\n')
+			sb.WriteString(indentation)
+
+			lineCount++
+		}
+
+		sb.WriteRune(' ')
+		sb.WriteString(word)
+	}
+
+	return sb.String()
 }
 
 // Print the usage of a single option.
-func printOption(option, optionAlias, msg string) {
-	bullet := getOptionBullet(option, optionAlias)
-	indent := asWhitespace(bullet)
+func printOption(option Option, message string) {
+	optionDoc := formatOption(option, message)
+	fmt.Println(optionDoc)
+}
 
-	msg = strings.ReplaceAll(msg, "\n", " ")
-	msg = strings.TrimSpace(msg)
-
-	var sentences []string
-	sentence := bullet
-	for _, word := range strings.Fields(msg) {
-		if len(sentence+" "+word) > maxLineLen {
-			sentences = append(sentences, sentence)
-			sentence = indent
-		}
-		sentence = sentence + " " + word
-	}
-	sentences = append(sentences, sentence)
-
-	for _, sentence := range sentences {
-		logger.Println(sentence)
-	}
+func printSectionTitle(title string) {
+	fmt.Printf("\n%s:\n", title)
 }
 
 // Print the usage of the options for the program.
 func printOptions() {
-	logger.Println("Flags:")
-	printOption(helpFlag, "", `Output this help message.`)
-	printOption(versionFlag, "", `Output the version number of wordrow.`)
-	printOption(dryRunFlag, "", `
-    Run wordrow without writing changes back to the input files.
-  `)
-	printOption(invertFlagAlias, invertFlag, `Invert all specified mappings.`)
-	printOption(silentFlagAlias, silentFlag, `Don't output informative logging.`)
-	printOption(verboseFlagAlias, verboseFlag, `Output debug logging.`)
+	printSectionTitle("Flags")
+	printOption(helpFlag, `Output this help message.`)
+	printOption(versionFlag, `Output the version number of wordrow.`)
+	printOption(dryRunFlag, `Don't make any changes to the input files.`)
+	printOption(invertFlag, `Invert all specified mappings.`)
+	printOption(silentFlag, `Don't output informative logging.`)
+	printOption(verboseFlag, `Output debug logging.`)
 
-	logger.Println("\nOptions:")
-	printOption(configOptionAlias, configOption, `Specify a configuration file.`)
-	printOption(mapfileOptionAlias, mapfileOption, `
-    Specify a dictionary file. To use multiple dictionary files you can use this
-    option multiple times.
-  `)
-	printOption(mappingOptionAlias, mappingOption, `
-    Specify a single mapping. Use a comma to separate the words of the mapping.
-    If spaces are required use quotation marks. This option can be used multiple
-    times.
-  `)
+	printSectionTitle("Options")
+	printOption(configOption, `Specify a configuration file.`)
+	printOption(mapfileOption, `
+		Specify a dictionary file. To use multiple dictionary files you can use this
+		option multiple times.
+	`)
+	printOption(mappingOption, `
+		Specify a single mapping. Use a comma to separate the words of the mapping.
+		If spaces are required use quotation marks. This option can be used multiple
+		times.
+	`)
+}
+
+// Print the usage of the CLI of the program.
+func printInterface() {
+	base := "Usage: wordrow"
+	indentation := asWhitespace(base)
+
+	fmt.Printf("%s [%s] [%s]\n",
+		base,
+		helpFlag.name,
+		versionFlag.name,
+	)
+	fmt.Printf("%s [%s] [%s | %s]\n",
+		indentation,
+		dryRunFlag.name,
+		silentFlag.alias,
+		silentFlag.name,
+	)
+	fmt.Printf("%s [%s | %s <file>]\n",
+		indentation,
+		configOption.alias,
+		configOption.name,
+	)
+	fmt.Printf("%s [%s | %s <file>]\n",
+		indentation,
+		mapfileOption.alias,
+		mapfileOption.name,
+	)
+	fmt.Printf("%s [%s | %s <file>]\n",
+		indentation,
+		mappingOption.alias,
+		mappingOption.name,
+	)
+	fmt.Printf("%s <files>\n", indentation)
 }
 
 // Print the usage message of the program.
 func printUsage() {
-	logger.Printf("Usage: wordrow [%s] [%s]\n", helpFlag, versionFlag)
-	logger.Printf("               [%s | %s <file>]\n", configOptionAlias, configOption)
-	logger.Printf("               [%s | %s <file>]\n", mapfileOptionAlias, mapfileOption)
-	logger.Printf("               [%s | %s <file>]\n", mappingOptionAlias, mappingOption)
-	logger.Printf("               [%s] [%s | %s]\n", dryRunFlag, silentFlagAlias, silentFlag)
-	logger.Println("               <files>")
-	logger.Println()
+	printInterface()
 	printOptions()
 }
