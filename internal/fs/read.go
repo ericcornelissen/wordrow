@@ -15,7 +15,7 @@ func ReadFile(filePath string) (File, error) {
 
 	return File{
 		Content: string(binaryFileData),
-		Ext:     getExt(filePath),
+		Ext:     GetExt(filePath),
 		Path:    filePath,
 	}, nil
 }
