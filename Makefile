@@ -14,12 +14,8 @@ coverage:
 	 go test $(test_root) -coverprofile $(coverage_file)
 	 go tool cover -html=$(coverage_file)
 
-fuzz-cli:
-	cd internal/cli; go-fuzz-build; go-fuzz -workdir ${fuzz_dir}
-
-# Usage: `make fuzz-wodrmaps FUNC=FuzzXXX`
-fuzz-wordmaps:
-	cd internal/wordmaps; go-fuzz-build; go-fuzz -func ${FUNC} -workdir ${fuzz_dir}
+fuzz:
+	cd ${PKG}; go-fuzz-build; go-fuzz -func Fuzz${FUNC} -workdir ${fuzz_dir}
 
 benchmark:
 	go test $(test_root) -bench=. -run=XXX
