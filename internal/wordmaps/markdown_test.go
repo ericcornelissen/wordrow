@@ -39,9 +39,9 @@ func TestMarkDownTextAndTable(t *testing.T) {
 		mauris, sollicitudin et mauris quis, luctus bibendum risus. Vestibulum
 		vitae ligula et ex semper ullamcorper at eu massa.
 
-		| foo   | bar    |
+		| foo   | bar   |
 		| ----- | ----- |
-		| cat   | dog    |
+		| cat   | dog   |
 		| horse | zebra |
 
 		Suspendisse ante ante, interdum id felis vel, posuere.
@@ -80,7 +80,7 @@ func TestMarkDownTextAndTable(t *testing.T) {
 
 func TestMarkDownTwoTables(t *testing.T) {
 	markdown := `
-		| foo   | bar    |
+		| foo   | bar   |
 		| ----- | ----- |
 		| zebra | horse |
 
