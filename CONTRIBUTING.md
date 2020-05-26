@@ -66,6 +66,7 @@ The prerequisites for contributing to this project are:
 - Git
 - [GNU Make] (_Windows users can use [Make by GNUWin32]_)
 - [Golint]
+- [go sec]
 - [go-fuzz]; _only for fuzzing_
 - [NodeJS]; version `>=10` (_only needed for [markdownlint]_)
 
@@ -117,6 +118,7 @@ fuzzing, please follow the [Bug Reports](#bug-reports) steps.
 
 [go-fuzz]: https://github.com/dvyukov/go-fuzz
 [Golint]: https://github.com/golang/lint
+[go sec]: https://github.com/securego/gosec
 [GNU Make]: https://www.gnu.org/software/make/
 [Make by GNUWin32]: http://gnuwin32.sourceforge.net/packages/make.htm
 [markdownlint]: https://github.com/DavidAnson/markdownlint
