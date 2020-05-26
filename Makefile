@@ -27,7 +27,7 @@ fuzz:
 benchmark:
 	go test $(test_root) -bench=. -run=XXX
 
-analyze:
+analysis:
 	go vet ./...
 
 format:

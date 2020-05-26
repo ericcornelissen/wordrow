@@ -14,6 +14,7 @@ of this document. In this document you can read about:
 - [Workflow](#workflow)
 - [Project Setup](#project-setup)
   - [Prerequisites](#prerequisites)
+  - [Commands](#commands)
   - [Git Hooks](#git-hooks)
 - [Testing](#testing)
   - [Fuzzing](#fuzzing)
@@ -72,6 +73,22 @@ The prerequisites for contributing to this project are:
 - [golint]
 - [go-fuzz] (_only for fuzzing_)
 - [NodeJS]; version `>=10` (_only needed for [markdownlint]_)
+
+### Commands
+
+The table below shows an overview of the commands available for the development
+of this project. Note that the table is (intentionally) incomplete.
+
+| Command          | Description                                          |
+| ---------------- | ---------------------------------------------------- |
+| `make`           | Compile a binary for the current OS called `wordrow` |
+| `make format`    | Format the source files of the project               |
+| `make test`      | Run all test suites for the project                  |
+| `make coverage`  | Run all test suites and show the coverage results    |
+| `make lint`      | Lint the source files of the project                 |
+| `make analysis`  | Run static analysis tools on the code base           |
+| `make build-all` | Compile all target binaries for the project          |
+| `make clean`     | Delete all generated files                           |
 
 ### Git Hooks
 
