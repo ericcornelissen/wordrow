@@ -1,11 +1,13 @@
 package main
 
-import "os"
+import (
+	"os"
 
-import "github.com/ericcornelissen/wordrow/internal/cli"
-import "github.com/ericcornelissen/wordrow/internal/fs"
-import "github.com/ericcornelissen/wordrow/internal/logger"
-import "github.com/ericcornelissen/wordrow/internal/replacer"
+	"github.com/ericcornelissen/wordrow/internal/cli"
+	"github.com/ericcornelissen/wordrow/internal/fs"
+	"github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/ericcornelissen/wordrow/internal/replacer"
+)
 
 func run(args cli.Arguments) error {
 	wm, err := getWordMap(args.MapFiles, args.Mappings)

@@ -1,7 +1,9 @@
 package wordmaps
 
-import "reflect"
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestGetParserForUnknownFileType(t *testing.T) {
 	_, err := getParserForFormat(".bar")

@@ -1,8 +1,10 @@
 package replacer
 
-import "strings"
+import (
+	"strings"
 
-import "github.com/ericcornelissen/wordrow/internal/wordmaps"
+	"github.com/ericcornelissen/wordrow/internal/wordmaps"
+)
 
 // Replace all instances of `from` by `to` in `s`.
 func replaceOne(s string, mapping wordmaps.Mapping) string {

@@ -1,8 +1,10 @@
 package wordmaps
 
-import "regexp"
+import (
+	"regexp"
 
-import "github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/errors"
+)
 
 var (
 	// Regular expression of names considered as MarkDown format.

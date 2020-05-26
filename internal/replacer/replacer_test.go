@@ -1,17 +1,11 @@
 package replacer
 
-import "fmt"
-import "testing"
+import (
+	"fmt"
+	"testing"
 
-import "github.com/ericcornelissen/wordrow/internal/wordmaps"
-
-func reportIncorrectReplacement(t *testing.T, expected, actual string) {
-	t.Helper()
-	t.Errorf(`Replacement did not work as intended
-    expected : '%s'
-    got      : '%s'
-  `, expected, actual)
-}
+	"github.com/ericcornelissen/wordrow/internal/wordmaps"
+)
 
 func TestReplaceEmptyString(t *testing.T) {
 	var wm wordmaps.WordMap
@@ -69,10 +63,10 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
 	})
 	t.Run("Multiple lines", func(t *testing.T) {
 		template := `
-      This is a %s. And this is
-      an %s as well. And, ow,
-      over there, another %s one!
-    `
+			This is a %s. And this is
+			an %s as well. And, ow,
+			over there, another %s one!
+		`
 		source := fmt.Sprintf(template, from, from, from)
 		result := ReplaceAll(source, wm)
 

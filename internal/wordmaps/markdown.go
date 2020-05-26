@@ -1,7 +1,9 @@
 package wordmaps
 
-import "regexp"
-import "strings"
+import (
+	"regexp"
+	"strings"
+)
 
 // Regular expression of a MarkDown table row.
 var tableDividerExpr = regexp.MustCompile("^\\s*\\|\\s*-+\\s*\\|\\s*-+\\s*\\|\\s*$")

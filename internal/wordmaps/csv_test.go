@@ -1,7 +1,9 @@
 package wordmaps
 
-import "strings"
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestCsvOneRow(t *testing.T) {
 	csv := `cat,dog`
@@ -28,9 +30,9 @@ func TestCsvOneRow(t *testing.T) {
 
 func TestCsvMultipleRows(t *testing.T) {
 	csv := `
-    cat,dog
-    horse,zebra
-  `
+		cat,dog
+		horse,zebra
+	`
 	wm, err := parseCsvFile(&csv)
 
 	if err != nil {
@@ -85,10 +87,10 @@ func TestCsvEmptyColumnValues(t *testing.T) {
 
 func TestCsvIgnoreEmptyLines(t *testing.T) {
 	csv := `
-    cat,dog
+		cat,dog
 
-    horse,zebra
-  `
+		horse,zebra
+	`
 	wm, err := parseCsvFile(&csv)
 
 	if err != nil {
@@ -122,9 +124,9 @@ func TestCsvIgnoreEmptyLines(t *testing.T) {
 
 func TestCsvIgnoresWhitespaceInRow(t *testing.T) {
 	csv := `
-    cat, dog
-    horse  , zebra
-  `
+		cat, dog
+		horse  , zebra
+	`
 	wm, err := parseCsvFile(&csv)
 
 	if err != nil {

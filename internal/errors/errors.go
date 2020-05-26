@@ -1,7 +1,9 @@
 package errors
 
-import "errors"
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // New creates a new `error` with a certain error text.
 func New(text string) error {

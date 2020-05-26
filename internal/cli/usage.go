@@ -1,7 +1,9 @@
 package cli
 
-import "fmt"
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // The maximum line length for the usage message.
 const maxLineLen = 80
