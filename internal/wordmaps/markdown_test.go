@@ -5,10 +5,10 @@ import "testing"
 
 func TestMarkDownTableOnly(t *testing.T) {
 	markdown := `
-    | foo | bar |
-    | --- | --- |
-    | cat | dog |
-  `
+		| foo | bar |
+		| --- | --- |
+		| cat | dog |
+	`
 
 	wm, err := parseMarkDownFile(&markdown)
 
@@ -33,19 +33,19 @@ func TestMarkDownTableOnly(t *testing.T) {
 
 func TestMarkDownTextAndTable(t *testing.T) {
 	markdown := `
-    # Translation table
+		# Translation table
 
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quam
-    mauris, sollicitudin et mauris quis, luctus bibendum risus. Vestibulum
-    vitae ligula et ex semper ullamcorper at eu massa.
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quam
+		mauris, sollicitudin et mauris quis, luctus bibendum risus. Vestibulum
+		vitae ligula et ex semper ullamcorper at eu massa.
 
-    | foo   | bar   |
-    | ----- | ----- |
-    | cat   | dog   |
-    | horse | zebra |
+		| foo   | bar    |
+		| ----- | ----- |
+		| cat   | dog    |
+		| horse | zebra |
 
-    Suspendisse ante ante, interdum id felis vel, posuere.
-  `
+		Suspendisse ante ante, interdum id felis vel, posuere.
+	`
 
 	wm, err := parseMarkDownFile(&markdown)
 
@@ -80,14 +80,14 @@ func TestMarkDownTextAndTable(t *testing.T) {
 
 func TestMarkDownTwoTables(t *testing.T) {
 	markdown := `
-    | foo   | bar   |
-    | ----- | ----- |
-    | zebra | horse |
+		| foo   | bar    |
+		| ----- | ----- |
+		| zebra | horse |
 
-    | foo | bar |
-    | --- | --- |
-    | dog | cat |
-  `
+		| foo | bar |
+		| --- | --- |
+		| dog | cat |
+	`
 
 	wm, err := parseMarkDownFile(&markdown)
 
@@ -123,10 +123,10 @@ func TestMarkDownTwoTables(t *testing.T) {
 func TestMarkDownEmptyColumnValues(t *testing.T) {
 	t.Run("Empty from value", func(t *testing.T) {
 		markdown := `
-      | from | to  |
-      | ---- | --- |
-      |      | bar |
-    `
+			| from | to  |
+			| ---- | --- |
+			|      | bar |
+		`
 
 		_, err := parseMarkDownFile(&markdown)
 
@@ -136,10 +136,10 @@ func TestMarkDownEmptyColumnValues(t *testing.T) {
 	})
 	t.Run("Empty to value", func(t *testing.T) {
 		markdown := `
-      | from | to |
-      | ---- | -- |
-      | foo  |    |
-    `
+			| from | to |
+			| ---- | -- |
+			| foo  |    |
+		`
 
 		_, err := parseMarkDownFile(&markdown)
 
@@ -151,10 +151,10 @@ func TestMarkDownEmptyColumnValues(t *testing.T) {
 
 func TestMarkDownIncorrectHeader(t *testing.T) {
 	markdown := `
-    | foo |
-    | --- | --- |
-    | cat | dog |
-  `
+		| foo |
+		| --- | --- |
+		| cat | dog |
+	`
 
 	_, err := parseMarkDownFile(&markdown)
 
@@ -169,9 +169,9 @@ func TestMarkDownIncorrectHeader(t *testing.T) {
 
 func TestMarkDownMissingDivider(t *testing.T) {
 	markdown := `
-    | foo | bar |
-    | cat | dog |
-  `
+		| foo | bar |
+		| cat | dog |
+	`
 
 	_, err := parseMarkDownFile(&markdown)
 
@@ -186,10 +186,10 @@ func TestMarkDownMissingDivider(t *testing.T) {
 
 func TestMarkDownIncorrectDivider(t *testing.T) {
 	markdown := `
-    | foo | bar |
-    | --- |
-    | cat | dog |
-  `
+		| foo | bar |
+		| --- |
+		| cat | dog |
+	`
 
 	_, err := parseMarkDownFile(&markdown)
 
@@ -204,9 +204,9 @@ func TestMarkDownIncorrectDivider(t *testing.T) {
 
 func TestMarkDownMissingTableBody(t *testing.T) {
 	markdown := `
-    | foo | bar |
-    | --- | --- |
-  `
+		| foo | bar |
+		| --- | --- |
+	`
 
 	_, err := parseMarkDownFile(&markdown)
 
@@ -221,12 +221,12 @@ func TestMarkDownMissingTableBody(t *testing.T) {
 
 func TestMarkDownIncorrectTableRow(t *testing.T) {
 	markdown := `
-    | foo   | bar   |
-    | ----- | ----- |
-    | dog   | cat   |
-    | hello | world | ! |
-    | horse | zebra |
-  `
+		| foo   | bar   |
+		| ----- | ----- |
+		| dog   | cat   |
+		| hello | world | ! |
+		| horse | zebra |
+	`
 
 	_, err := parseMarkDownFile(&markdown)
 
