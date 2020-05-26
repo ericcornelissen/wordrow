@@ -1,10 +1,18 @@
-executable_file=wordrow.o
-coverage_file=coverage.out
+program_main=./cmd/wordrow
+executable_file=wordrow
+
 test_root=./internal/...
+coverage_file=coverage.out
+
 fuzz_dir="./_fuzz"
 
+
 build:
-	go build -o $(executable_file) ./cmd/wordrow/
+	go build -o $(executable_file) $(program_main)
+
+build-all:
+	GOOS=windows GOARCH=amd64 go build -o $(executable_file)_win-amd64.exe $(program_main)
+	GOOS=linux GOARCH=amd64 go build -o $(executable_file)_linux-amd64.o $(program_main)
 
 test:
 	go test $(test_root)
@@ -34,7 +42,7 @@ lint-md:
 	npx markdownlint-cli -c .markdownlintrc.yml ./*.md ./**/*.md
 
 clean:
+	rm -rf $(executable_file)*
 	rm -rf $(coverage_file)
-	rm -rf $(executable_file)
 	rm -rf **/*/*-fuzz.zip
 	rm -rf **/*/_fuzz/
