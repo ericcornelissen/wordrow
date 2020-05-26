@@ -1,7 +1,9 @@
 package wordmaps
 
-import "strings"
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestCsvOneRow(t *testing.T) {
 	csv := `cat,dog`

@@ -1,9 +1,11 @@
 package cli
 
-import "strings"
+import (
+	"strings"
 
-import "github.com/ericcornelissen/wordrow/internal/errors"
-import "github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/logger"
+)
 
 // Check if any arguments were provided to the program.
 func noArgumentsProvided(args []string) bool {

@@ -1,7 +1,9 @@
 package cli
 
-import "strings"
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestAsWhitespace(t *testing.T) {
 	original := "Hello world!"

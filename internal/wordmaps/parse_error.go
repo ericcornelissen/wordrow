@@ -1,7 +1,9 @@
 package wordmaps
 
-import "fmt"
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // An error representing an issue when parsing a file. The error should be
 // provided, first, an error message describing why parsing failed, and second,

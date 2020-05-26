@@ -1,9 +1,11 @@
 package replacer
 
-import "fmt"
-import "testing"
+import (
+	"fmt"
+	"testing"
 
-import "github.com/ericcornelissen/wordrow/internal/wordmaps"
+	"github.com/ericcornelissen/wordrow/internal/wordmaps"
+)
 
 func reportIncorrectReplacement(t *testing.T, expected, actual string) {
 	t.Helper()

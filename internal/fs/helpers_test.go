@@ -1,7 +1,9 @@
 package fs
 
-import "fmt"
-import "runtime"
+import (
+	"fmt"
+	"runtime"
+)
 
 // The value of `runtime.GOOS` on Windows.
 const windows = `windows`

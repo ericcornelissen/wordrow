@@ -1,7 +1,9 @@
 package logger
 
-import "fmt"
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // The maximum log level that should be logged.
 var maxLogLevel = INFO

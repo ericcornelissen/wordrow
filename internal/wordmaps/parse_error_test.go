@@ -1,7 +1,9 @@
 package wordmaps
 
-import "strings"
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestParseError(t *testing.T) {
 	msg := "Unexpected format"

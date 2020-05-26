@@ -1,7 +1,9 @@
 package errors
 
-import "fmt"
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func ExampleNew() {
 	err := New("foobar")

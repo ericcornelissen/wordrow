@@ -1,7 +1,9 @@
 package cli
 
-import "fmt"
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func createArgs(args ...string) []string {
 	cliArgs := []string{"wordrow"}

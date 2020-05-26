@@ -1,8 +1,10 @@
 package replacer
 
-import "regexp"
-import "strings"
-import "unicode"
+import (
+	"regexp"
+	"strings"
+	"unicode"
+)
 
 // A Regular Expression that matches newlines.
 var newlineExpr = regexp.MustCompile(`\r|\n|\r\n`)
