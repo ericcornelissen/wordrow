@@ -44,6 +44,8 @@ information as possible to help us understand the feature. This may include:
 - An outline for an implementation of the feature.
 - Possible test cases for an implementation.
 
+---
+
 ## Workflow
 
 If you decide to make a contribution, please do use the following workflow:
@@ -54,11 +56,9 @@ If you decide to make a contribution, please do use the following workflow:
 - Commit to the new branch and push the commit(s).
 - Make a Pull Request.
 
----
-
 ## Project Setup
 
-This project is build for version `1.12` of Go and uses [GNU Make] as build
+This project is build for version `1.13` of Go and uses [GNU Make] as build
 tool. In addition [golint] and [markdownlint] are used to lint the source files
 and [gofmt] is used to format source files.
 
@@ -66,7 +66,7 @@ and [gofmt] is used to format source files.
 
 The prerequisites for contributing to this project are:
 
-- Go; version `1.12`
+- Go; version `1.13`
 - Git
 - [GNU Make] (_Windows users can use [Make by GNUWin32]_)
 - [golint]
