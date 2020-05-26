@@ -1,15 +1,6 @@
 package fs
 
-import "runtime"
 import "testing"
-
-func getAnAbsolutePathFor(file string) string {
-	if runtime.GOOS == "windows" {
-		return "C:\\" + file
-	}
-
-	return "/usr/aang/" + file
-}
 
 func TestGetExt(t *testing.T) {
 	path := "foo.bar"
