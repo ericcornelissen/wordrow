@@ -5,97 +5,6 @@ import (
 	"testing"
 )
 
-func createArgs(args ...string) []string {
-	cliArgs := []string{"wordrow"}
-	for _, arg := range args {
-		cliArgs = append(cliArgs, arg)
-	}
-
-	return cliArgs
-}
-
-func testDefaultDryRun(t *testing.T, arguments Arguments) {
-	t.Helper()
-
-	if arguments.DryRun == true {
-		t.Error("The default value for the DryRun option should be false")
-	}
-}
-
-func testDefaultInvert(t *testing.T, arguments Arguments) {
-	t.Helper()
-
-	if arguments.Invert == true {
-		t.Error("The default value for the Invert option should be false")
-	}
-}
-
-func testDefaultSilent(t *testing.T, arguments Arguments) {
-	t.Helper()
-
-	if arguments.Silent == true {
-		t.Error("The default value for the Silent option should be false")
-	}
-}
-
-func testDefaultVerbose(t *testing.T, arguments Arguments) {
-	t.Helper()
-
-	if arguments.Verbose == true {
-		t.Error("The default value for the Silent option should be false")
-	}
-}
-
-func testDefaultConfigFile(t *testing.T, arguments Arguments) {
-	t.Helper()
-
-	if arguments.ConfigFile != "" {
-		t.Error("The default ConfigFile should not be set")
-	}
-}
-
-func testDefaultMapFiles(t *testing.T, arguments Arguments) {
-	t.Helper()
-
-	if len(arguments.MapFiles) != 0 {
-		t.Error("The default list of MapFiles should be empty")
-	}
-}
-
-func testDefaultMappings(t *testing.T, arguments Arguments) {
-	t.Helper()
-
-	if len(arguments.Mappings) != 0 {
-		t.Error("The default list of Mappings should be empty")
-	}
-}
-
-func testDefaultsExcept(t *testing.T, arguments Arguments, exclude string) {
-	t.Helper()
-
-	if exclude != "dryrun" {
-		testDefaultDryRun(t, arguments)
-	}
-	if exclude != "invert" {
-		testDefaultInvert(t, arguments)
-	}
-	if exclude != "silent" {
-		testDefaultSilent(t, arguments)
-	}
-	if exclude != "verbose" {
-		testDefaultVerbose(t, arguments)
-	}
-	if exclude != "config file" {
-		testDefaultConfigFile(t, arguments)
-	}
-	if exclude != "map files" {
-		testDefaultMapFiles(t, arguments)
-	}
-	if exclude != "mappings" {
-		testDefaultMappings(t, arguments)
-	}
-}
-
 func ExampleParseArgs() {
 	args := []string{"wordrow", "foo.bar"}
 	run, _ := ParseArgs(args)
@@ -115,7 +24,6 @@ func TestNoArgs(t *testing.T) {
 func TestEmptyArgument(t *testing.T) {
 	args := createArgs("")
 	ParseArgs(args)
-	// Expect no panic
 }
 
 func TestHelpArg(t *testing.T) {
