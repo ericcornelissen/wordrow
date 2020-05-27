@@ -88,7 +88,7 @@ func parseTable(tableLines []string, wm *WordMap) (int, error) {
 
 // Parse a MarkDown, MD, formatted file into a WordMap.
 //
-// The error will be set if any error occured while parsing the MD file.
+// The error will be set if any error occurred while parsing the MD file.
 func parseMarkDownFile(rawFileData *string) (WordMap, error) {
 	var wm WordMap
 

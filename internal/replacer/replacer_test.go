@@ -223,7 +223,7 @@ func TestReplaceWordWithPrefixes(t *testing.T) {
 			reportIncorrectReplacement(t, expected, result)
 		}
 	})
-	t.Run("replace only if preceeded by another word", func(t *testing.T) {
+	t.Run("replace only if preceded by another word", func(t *testing.T) {
 		var wm wordmaps.WordMap
 		wm.AddOne("- dogs", "- cats")
 
