@@ -4,7 +4,7 @@ executable_file=wordrow
 test_root=./internal/...
 coverage_file=coverage.out
 
-fuzz_dir="./_fuzz"
+fuzz_dir=./_fuzz
 
 
 build:
