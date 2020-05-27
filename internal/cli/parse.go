@@ -27,7 +27,7 @@ func parseArgumentAsOption(
 	case helpFlag.name:
 		arguments.help = true
 	case versionFlag.name:
-		arguments.version = true
+		arguments.Version = true
 
 		// Flags
 	case dryRunFlag.name:
@@ -139,10 +139,6 @@ func ParseArgs(args []string) (run bool, arguments Arguments) {
 	if arguments.help {
 		printUsage()
 		return false, arguments
-	}
-
-	if arguments.version {
-		printVersion()
 	}
 
 	return len(arguments.InputFiles) > 0, arguments
