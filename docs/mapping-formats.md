@@ -30,7 +30,7 @@ Any file with one of the following extension is considered to be a CSV file by
 ## MarkDown
 
 A MarkDown file can be used to define a mapping through two-column MarkDown
-tables. Every table in a MarkDown file is considerd to be a mapping. The table
+tables. Every table in a MarkDown file is considered to be a mapping. The table
 header is ignored by *wordrow*, but it must be present as the MarkDown is
 invalid otherwise. All other lines in a MarkDown file are ignored (you may use
 it as comments). For example:

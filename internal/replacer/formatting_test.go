@@ -27,14 +27,14 @@ func TestToSentenceCase(t *testing.T) {
 			t.Errorf("Unexpected result (got '%s')", result)
 		}
 	})
-	t.Run("uncapatalized sentence", func(t *testing.T) {
+	t.Run("uncapitalised sentence", func(t *testing.T) {
 		result := toSentenceCase("hello world!")
 
 		if result != "Hello world!" {
 			t.Errorf("Unexpected result (got '%s')", result)
 		}
 	})
-	t.Run("capatalized sentence", func(t *testing.T) {
+	t.Run("capitalised sentence", func(t *testing.T) {
 		result := toSentenceCase("Hello world!")
 
 		if result != "Hello world!" {

@@ -176,7 +176,7 @@ so called, so-called
 ```
 
 Then, a text containing _"So Called"_ or _"Hello World"_ will be updated to use
-_"So-Called"_ and _"Hey Planet"_ with identical capitalisiation:
+_"So-Called"_ and _"Hey Planet"_ with identical capitalisation:
 
 ```diff
 - A So Called "Hello World" program is a program that prints "Hello world!".
