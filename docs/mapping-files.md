@@ -20,6 +20,7 @@ In this document you can read about:
 - [Prefixes and Suffixes](#prefixes-and-suffixes)
   - [The Preceding and Succeeding Word](#the-preceding-and-succeeding-word)
   - [Omitting Prefixes or Suffixes](#omitting-prefixes-or-suffixes)
+  - [Escaping a Prefix or Suffix Dash](#escaping-a-prefix-or-suffix-dash)
 - [Order Matters](#order-matters)
   - [Using Ordering to Your Advantage](#using-ordering-to-your-advantage)
 
@@ -305,6 +306,23 @@ before _"dog"_, as illustrated by this text:
 
 Again, it is necessary to specify the dash in both words. Otherwise the word
 before or after the matched word is omitted from the result.
+
+### Escaping a Prefix or Suffix Dash
+
+Occasionally, you may need to replace a dash at the start or end of a word. In
+this scenario you can escape the dash using a backslash (`\`).
+
+```csv
+world\-, world!
+```
+
+Given this mapping, any instance of the string _"world-"_ will be replaced by
+_"world!"_, but words like _"worlds"_ will not not changed.
+
+```diff
+- Hello world- What is life like on other worlds?
++ Hello world! What is life like on other worlds?
+```
 
 ## Order matters
 

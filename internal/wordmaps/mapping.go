@@ -3,6 +3,7 @@ package wordmaps
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 // A Regular Expression that matches groups of whitespace characters.
@@ -10,7 +11,7 @@ var whitespaceExpr = regexp.MustCompile(`(\s+)`)
 
 // Check if a string ends with the suffix symbol.
 func endsWithSuffixSymbol(s string) bool {
-	return s[len(s)-1:] == "-"
+	return strings.HasSuffix(s, `-`) && !strings.HasSuffix(s, `\-`)
 }
 
 // Remove the prefix and suffix symbols from a string. If the symbols are not
@@ -31,7 +32,7 @@ func removePrefixAndSuffixSymbols(s string) string {
 
 // Check if a string starts with the prefix symbol.
 func startsWithPrefixSymbol(s string) bool {
-	return s[0:1] == "-"
+	return strings.HasPrefix(s, `-`) && !strings.HasPrefix(s, `\-`)
 }
 
 // The Match type represents a matching substring in a larger string of a
@@ -68,6 +69,7 @@ func getAllMatches(s, substr string) chan Match {
 		defer close(ch)
 
 		strToMatch := whitespaceExpr.ReplaceAllString(substr, `\s+`)
+
 		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, strToMatch)
 		expr := regexp.MustCompile(rawExpr)
 

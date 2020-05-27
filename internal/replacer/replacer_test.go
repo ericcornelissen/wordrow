@@ -519,3 +519,53 @@ func TestReplacePhraseNewlineInSource(t *testing.T) {
 		}
 	})
 }
+
+func TestReplaceEscapeHyphen(t *testing.T) {
+	var wm wordmaps.WordMap
+	wm.AddOne(`\-foobar`, `foobar`)
+	wm.AddOne(`world\-`, `world!`)
+
+	t.Run("prefix", func(t *testing.T) {
+		source := `-foobar`
+		result := ReplaceAll(source, wm)
+
+		expected := `foobar`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("suffix", func(t *testing.T) {
+		source := `Hello world-`
+		result := ReplaceAll(source, wm)
+
+		expected := `Hello world!`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+}
+
+func TestReplaceEscapeEscapeCharacter(t *testing.T) {
+	var wm wordmaps.WordMap
+	wm.AddOne(`\\bar`, `bar`)
+	wm.AddOne(`foo\\`, `foo`)
+
+	t.Run("prefix", func(t *testing.T) {
+		source := `foo \bar`
+		result := ReplaceAll(source, wm)
+
+		expected := `foo bar`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("suffix", func(t *testing.T) {
+		source := `foo\ bar`
+		result := ReplaceAll(source, wm)
+
+		expected := `foo bar`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+}
