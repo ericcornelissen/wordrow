@@ -1,8 +1,10 @@
 package fs
 
-import "io/ioutil"
+import (
+	"io/ioutil"
 
-import "github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/ericcornelissen/wordrow/internal/logger"
+)
 
 // The standard write mode to write files.
 const mode = 0644

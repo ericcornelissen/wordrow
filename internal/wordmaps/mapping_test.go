@@ -1,7 +1,9 @@
 package wordmaps
 
-import "fmt"
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func ExampleMatch() {
 	s := "Hello world!"

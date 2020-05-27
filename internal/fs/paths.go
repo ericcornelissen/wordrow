@@ -1,14 +1,15 @@
 package fs
 
-import "os"
-import "path"
-import "path/filepath"
-import "regexp"
+import (
+	"os"
+	"path"
+	"path/filepath"
+	"regexp"
 
-import "github.com/ericcornelissen/wordrow/internal/errors"
-import "github.com/ericcornelissen/wordrow/internal/logger"
-
-import "github.com/yargevad/filepathx"
+	"github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/yargevad/filepathx"
+)
 
 // Regular expression for glob strings.
 var globExpr = regexp.MustCompile(`[\*\?\[\]]`)

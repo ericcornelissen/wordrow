@@ -1,7 +1,9 @@
 package wordmaps
 
-import "fmt"
-import "regexp"
+import (
+	"fmt"
+	"regexp"
+)
 
 // A Regular Expression that matches groups of whitespace characters.
 var whitespaceExpr = regexp.MustCompile(`(\s+)`)

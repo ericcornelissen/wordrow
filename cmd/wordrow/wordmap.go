@@ -1,11 +1,13 @@
 package main
 
-import "strings"
+import (
+	"strings"
 
-import "github.com/ericcornelissen/wordrow/internal/errors"
-import "github.com/ericcornelissen/wordrow/internal/fs"
-import "github.com/ericcornelissen/wordrow/internal/logger"
-import "github.com/ericcornelissen/wordrow/internal/wordmaps"
+	"github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/fs"
+	"github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/ericcornelissen/wordrow/internal/wordmaps"
+)
 
 // Parse a --map-file argument into its component parts.
 func parseWordMapArgument(argument string) (path string, format string) {
