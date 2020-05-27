@@ -1,0 +1,16 @@
+name: Security
+on:
+  - pull_request
+
+jobs:
+  test:
+    name: Security
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run gosec Security Scanner
+      uses: securego/gosec@master
+      with:
+        args: ./...

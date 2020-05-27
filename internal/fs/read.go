@@ -1,6 +1,7 @@
 package fs
 
 import "io/ioutil"
+import "path/filepath"
 
 // ReadFile reads a file given a path and get it as a File instance. Relative
 // file paths are automatically resolved.
@@ -8,7 +9,8 @@ import "io/ioutil"
 // The function sets the error if the file couldn't be read.
 func ReadFile(filePath string) (File, error) {
 	filePath = ResolvePath(filePath)
-	binaryFileData, err := ioutil.ReadFile(filePath)
+
+	binaryFileData, err := ioutil.ReadFile(filepath.Clean(filePath))
 	if err != nil {
 		return File{}, err
 	}
