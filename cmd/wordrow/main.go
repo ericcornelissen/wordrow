@@ -49,6 +49,11 @@ func setLogLevel(args cli.Arguments) {
 
 func main() {
 	shouldRun, args := cli.ParseArgs(os.Args)
+
+	if args.Version {
+		printVersion()
+	}
+
 	if shouldRun {
 		setLogLevel(args)
 

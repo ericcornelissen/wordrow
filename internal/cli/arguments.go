@@ -7,7 +7,7 @@ type Arguments struct {
 	help bool
 
 	// Flag indicating if the program version should be displayed.
-	version bool
+	Version bool
 
 	// Flag indicating if this is a dry run.
 	DryRun bool
