@@ -1,6 +1,6 @@
 module github.com/ericcornelissen/wordrow
 
-go 1.12
+go 1.13
 
 require (
 	github.com/dvyukov/go-fuzz v0.0.0-20200318091601-be3528f3a813 // indirect
