@@ -1,7 +1,9 @@
 package fs
 
-import "io/ioutil"
-import "path/filepath"
+import (
+	"io/ioutil"
+	"path/filepath"
+)
 
 // ReadFile reads a file given a path and get it as a File instance. Relative
 // file paths are automatically resolved.

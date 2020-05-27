@@ -7,6 +7,10 @@ Versioning].
 
 ## [Unreleased]
 
+- _No changes yet_
+
+## [0.4.0-beta] - 2020-05-27
+
 ### Features
 
 - Add option to explicitly state map file format. ([#46], [#57])
