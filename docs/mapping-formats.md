@@ -51,4 +51,5 @@ If any row in any table contains more than two columns, the entire file is
 considered invalid and will not be used by *wordrow*.
 
 Any file with one of the following extension is considered to be a MarkDown
-file by *wordrow*: `.md`
+file by *wordrow*: `.md`, `.markdown`, `.mdown`, `.mkdown`, `.mkd`, `.mdwn`,
+`.mkdn`, `.mktxt`, `.mktext`

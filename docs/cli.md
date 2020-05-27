@@ -77,6 +77,14 @@ Then, `input.txt` will be updated as follows:
 + Proton, and a parrot named Atom.
 ```
 
+If you require a file extension for the mapping file that is not recognised by
+*wordrow* you can make it explicit by appending `:format` to the argument that
+specifies the map file. For example:
+
+```shell
+$ wordrow input.txt --map-file animals.ext:csv
+```
+
 ## Converting Multiple Files
 
 In a typically scenario, you may want to run *wordrow* on multiple files. To run
