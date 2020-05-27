@@ -544,3 +544,28 @@ func TestReplaceEscapeHyphen(t *testing.T) {
 		}
 	})
 }
+
+func TestReplaceEscapeEscapeCharacter(t *testing.T) {
+	var wm wordmaps.WordMap
+	wm.AddOne(`\\bar`, `bar`)
+	wm.AddOne(`foo\\`, `foo`)
+
+	t.Run("prefix", func(t *testing.T) {
+		source := `foo \bar`
+		result := ReplaceAll(source, wm)
+
+		expected := `foo bar`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("suffix", func(t *testing.T) {
+		source := `foo\ bar`
+		result := ReplaceAll(source, wm)
+
+		expected := `foo bar`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+}

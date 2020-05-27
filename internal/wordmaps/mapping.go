@@ -9,9 +9,6 @@ import (
 // A Regular Expression that matches groups of whitespace characters.
 var whitespaceExpr = regexp.MustCompile(`(\s+)`)
 
-// A Regular Expression that matches the escape character.
-var escapeCharExpr = regexp.MustCompile(`(\\)`)
-
 // Check if a string ends with the suffix symbol.
 func endsWithSuffixSymbol(s string) bool {
 	return strings.HasSuffix(s, `-`) && !strings.HasSuffix(s, `\-`)
@@ -71,8 +68,7 @@ func getAllMatches(s, substr string) chan Match {
 	go func() {
 		defer close(ch)
 
-		strToMatch := escapeCharExpr.ReplaceAllString(substr, ``)
-		strToMatch = whitespaceExpr.ReplaceAllString(strToMatch, `\s+`)
+		strToMatch := whitespaceExpr.ReplaceAllString(substr, `\s+`)
 
 		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, strToMatch)
 		expr := regexp.MustCompile(rawExpr)
