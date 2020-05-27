@@ -122,7 +122,21 @@ git stash pop -q
 
 ## Testing
 
-TODO
+In this project tests are written using Go's standard `testing` package. Tests
+are located in files with a `_test.go` suffix and test function names always
+start with the prefix `Test`. Helper methods for tests go into a file named
+`helpers_test.go` in the same package.
+
+All changes should be tested. New features should be tested thoroughly to ensure
+they work correctly. Bug fixes should include at least one test case to verify
+the bug has been fixed.
+
+Public functions may have [testable examples]. The name of a testable example
+function start with the prefix `Example` instead of `Test`, followed by the name
+of the function of which the test is an example. All testable examples should
+appear in the `_test.go` file before any _normal_ test.
+
+_Below are guidelines regarding more advanced testing topics._
 
 ### Fuzzing
 
@@ -171,3 +185,4 @@ fuzzing, please follow the [Bug Reports](#bug-reports) steps.
 [Make by GNUWin32]: http://gnuwin32.sourceforge.net/packages/make.htm
 [markdownlint]: https://github.com/DavidAnson/markdownlint
 [NodeJS]: https://nodejs.org/en/
+[testable examples]: https://blog.golang.org/examples
