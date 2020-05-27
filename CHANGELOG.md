@@ -12,6 +12,7 @@ Versioning].
 - Add option to explicitly state map file format. ([#46], [#57])
 - Add support for more extensions as MarkDown map file. ([#50])
 - Allow file extension of map files to be upper or mixed case. ([#55])
+- Allow for replacing hyphens through escaping with backslash. ([#61])
 
 ### Bug Fixes
 
@@ -78,3 +79,4 @@ Versioning].
 [#55]: https://github.com/ericcornelissen/wordrow/pull/55
 [#57]: https://github.com/ericcornelissen/wordrow/pull/57
 [#58]: https://github.com/ericcornelissen/wordrow/pull/58
+[#61]: https://github.com/ericcornelissen/wordrow/pull/61
