@@ -23,16 +23,28 @@ of this document. In this document you can read about:
 
 ## Bug Reports
 
-Bugs can be reported as a GitHub issue. Please provide as much information as
-possible to help diagnose the problem. This may include:
+If you have problems with _wordrow_ or think you've found a bug, please report
+it to the developers; we cannot promise to do anything but we might well want to
+fix it.
 
-- The _wordrow_ version (run `wordrow --version`) and operating system.
-- The exact command that causes the bug.
-- A working example that demonstrates the bug.
-- The actual and expected behaviour.
-- The debug output of _wordrow_ (run with the `--verbose` flag).
+Before reporting a bug, make sure you've actually found a real bug. Carefully
+read the documentation and see if it really says you can do what you're trying
+to do. If it's not clear whether you should be able to do something or not,
+report that too; it's a bug in the documentation!
 
-Suggestions for how the bug can be resolved are welcome and so are bug fixes.
+Before reporting a bug, try to isolate it to a small working example that
+reproduces the problem. Then, create a bug report including this example and the
+results, including any error or warning messages. Please don't paraphrase these
+messages: it's best to copy and paste them into your report. Finally, be sure to
+explain what you expected to happen; this will help us decide whether it is a
+bug or a problem with the documentation.
+
+In addition to the information above, please be careful to include the version
+number of _wordrow_ you are using. You can get this information with the command
+`wordrow --version`. Be sure also to include the type of machine and operating
+system you are using.
+
+Once you have a precise problem you can report it online as a [Bug Report](https://github.com/ericcornelissen/wordrow/issues/new?labels=bug&template=bug_report.md).
 
 ## Feature Requests
 
