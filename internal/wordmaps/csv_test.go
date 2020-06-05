@@ -1,67 +1,42 @@
 package wordmaps
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
 
 func TestCsvOneRow(t *testing.T) {
-	csv := `cat,dog`
+	from, to := "cat", "dog"
+	csv := fmt.Sprintf("%s,%s", from, to)
+
 	wm, err := parseCsvFile(&csv)
-
 	if err != nil {
-		t.Fatalf("Error should be nil for this test (Error: %s)", err)
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
-	if wm.Size() != 1 {
-		t.Fatalf("The WordMap size should be 1 (was %d)", wm.Size())
-	}
-
-	actual, expected := wm.GetFrom(0), "cat"
-	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
-	}
+	expected := make([][]string, 1)
+	expected[0] = []string{from, to}
+	checkWordMap(t, wm, expected)
 }
 
 func TestCsvMultipleRows(t *testing.T) {
-	csv := `
-		cat,dog
-		horse,zebra
-	`
+	from0, to0 := "cat", "dog"
+	from1, to1 := "horse", "zebra"
+	csv := fmt.Sprintf(`
+		%s,%s
+		%s,%s
+	`, from0, to0, from1, to1)
+
 	wm, err := parseCsvFile(&csv)
-
 	if err != nil {
-		t.Fatalf("Error should be nil for this test (Error: %s)", err)
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
-	if wm.Size() != 2 {
-		t.Fatalf("The WordMap size should be 2 (was %d)", wm.Size())
-	}
-
-	actual, expected := wm.GetFrom(0), "cat"
-	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetFrom(1), "horse"
-	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetTo(1), "zebra"
-	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
-	}
+	expected := make([][]string, 2)
+	expected[0] = []string{from0, to0}
+	expected[1] = []string{from1, to1}
+	checkWordMap(t, wm, expected)
 }
 
 func TestCsvEmptyColumnValues(t *testing.T) {
@@ -71,7 +46,7 @@ func TestCsvEmptyColumnValues(t *testing.T) {
 		_, err := parseCsvFile(&csv)
 
 		if err == nil {
-			t.Errorf("Error should be set if the from value is empty")
+			t.Fatalf("Error should be set if the from value is empty")
 		}
 	})
 	t.Run("Empty to value", func(t *testing.T) {
@@ -80,82 +55,49 @@ func TestCsvEmptyColumnValues(t *testing.T) {
 		_, err := parseCsvFile(&csv)
 
 		if err == nil {
-			t.Errorf("Error should be set if the to value is empty")
+			t.Fatalf("Error should be set if the to value is empty")
 		}
 	})
 }
 
 func TestCsvIgnoreEmptyLines(t *testing.T) {
-	csv := `
-		cat,dog
+	from0, to0 := "cat", "dog"
+	from1, to1 := "horse", "zebra"
+	csv := fmt.Sprintf(`
+		%s,%s
 
-		horse,zebra
-	`
+		%s,%s
+	`, from0, to0, from1, to1)
+
 	wm, err := parseCsvFile(&csv)
-
 	if err != nil {
-		t.Fatalf("Error should be nil for this test (Error: %s)", err)
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
-	if wm.Size() != 2 {
-		t.Fatalf("The WordMap size should be 2 (was %d)", wm.Size())
-	}
-
-	actual, expected := wm.GetFrom(0), "cat"
-	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetFrom(1), "horse"
-	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetTo(1), "zebra"
-	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
-	}
+	expected := make([][]string, 2)
+	expected[0] = []string{from0, to0}
+	expected[1] = []string{from1, to1}
+	checkWordMap(t, wm, expected)
 }
 
 func TestCsvIgnoresWhitespaceInRow(t *testing.T) {
-	csv := `
-		cat, dog
-		horse  , zebra
-	`
+	from0, to0 := "cat", "dog"
+	from1, to1 := "horse", "zebra"
+	csv := fmt.Sprintf(`
+		%s, %s
+
+		%s  , %s
+	`, from0, to0, from1, to1)
+
 	wm, err := parseCsvFile(&csv)
-
 	if err != nil {
-		t.Fatalf("Error should be nil for this test (Error: %s)", err)
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
-	if wm.Size() != 2 {
-		t.Fatalf("The WordMap size should be 2 (was %d)", wm.Size())
-	}
-
-	actual, expected := wm.GetFrom(0), "cat"
-	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetFrom(1), "horse"
-	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetTo(1), "zebra"
-	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
-	}
+	expected := make([][]string, 2)
+	expected[0] = []string{from0, to0}
+	expected[1] = []string{from1, to1}
+	checkWordMap(t, wm, expected)
 }
 
 func TestCsvToFewColumns(t *testing.T) {
@@ -167,7 +109,7 @@ func TestCsvToFewColumns(t *testing.T) {
 	}
 
 	if !strings.Contains(err.Error(), "Unexpected row") {
-		t.Errorf("Incorrect error message for (actual '%s')", err)
+		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
 
@@ -180,6 +122,6 @@ func TestCsvToManyColumns(t *testing.T) {
 	}
 
 	if !strings.Contains(err.Error(), "Unexpected row") {
-		t.Errorf("Incorrect error message for (actual '%s')", err)
+		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
