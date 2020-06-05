@@ -196,16 +196,3 @@ func TestWordMapIter(t *testing.T) {
 		i++
 	}
 }
-
-func TestWordMapString(t *testing.T) {
-	var wm WordMap
-
-	if wm.String() == "" {
-		t.Error("A new WordMap should return a non-empty string for String()")
-	}
-
-	wm.AddOne("cat", "dog")
-	if wm.String() == "" {
-		t.Error("A non-empty WordMap should return a non-empty string for String()")
-	}
-}

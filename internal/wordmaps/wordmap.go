@@ -116,18 +116,3 @@ func (wm *WordMap) Iter() chan Mapping {
 func (wm *WordMap) Size() int {
 	return len(wm.from)
 }
-
-// Get the WordMap as a human readable string.
-func (wm *WordMap) String() string {
-	var sb strings.Builder
-	for i := 0; i < len(wm.from); i++ {
-		from, to := wm.from[i], wm.to[i]
-		sb.WriteString("[")
-		sb.WriteString(from)
-		sb.WriteString("->")
-		sb.WriteString(to)
-		sb.WriteString("]")
-	}
-
-	return "{" + sb.String() + "}"
-}
