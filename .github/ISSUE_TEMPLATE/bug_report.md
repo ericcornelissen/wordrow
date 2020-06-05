@@ -34,8 +34,8 @@ Provide a small working example that reproduces the bug, e.g.:
 ## Log Output
 
 <!--
-Provide the log output of the program when running the working
-example. Preferably using the `--verbose` flag.
+Provide the log output of the program when running the working example.
+Preferably using the `--verbose` flag.
 -->
 
 ```shell
