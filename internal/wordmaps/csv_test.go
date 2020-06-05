@@ -10,21 +10,21 @@ func TestCsvOneRow(t *testing.T) {
 	wm, err := parseCsvFile(&csv)
 
 	if err != nil {
-		t.Fatalf("Error should be nil for this test (Error: %s)", err)
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
 	if wm.Size() != 1 {
-		t.Fatalf("The WordMap size should be 1 (was %d)", wm.Size())
+		t.Fatalf("The WordMap size should be 1 (got %d)", wm.Size())
 	}
 
 	actual, expected := wm.GetFrom(0), "cat"
 	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 	}
 
 	actual, expected = wm.GetTo(0), "dog"
 	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 	}
 }
 
@@ -36,31 +36,31 @@ func TestCsvMultipleRows(t *testing.T) {
 	wm, err := parseCsvFile(&csv)
 
 	if err != nil {
-		t.Fatalf("Error should be nil for this test (Error: %s)", err)
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
 	if wm.Size() != 2 {
-		t.Fatalf("The WordMap size should be 2 (was %d)", wm.Size())
+		t.Fatalf("The WordMap size should be 2 (got %d)", wm.Size())
 	}
 
 	actual, expected := wm.GetFrom(0), "cat"
 	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 	}
 
 	actual, expected = wm.GetTo(0), "dog"
 	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 	}
 
 	actual, expected = wm.GetFrom(1), "horse"
 	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect from-value at index 1 (got '%s')", actual)
 	}
 
 	actual, expected = wm.GetTo(1), "zebra"
 	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect to-value at index 1 (got '%s')", actual)
 	}
 }
 
@@ -94,31 +94,31 @@ func TestCsvIgnoreEmptyLines(t *testing.T) {
 	wm, err := parseCsvFile(&csv)
 
 	if err != nil {
-		t.Fatalf("Error should be nil for this test (Error: %s)", err)
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
 	if wm.Size() != 2 {
-		t.Fatalf("The WordMap size should be 2 (was %d)", wm.Size())
+		t.Fatalf("The WordMap size should be 2 (got %d)", wm.Size())
 	}
 
 	actual, expected := wm.GetFrom(0), "cat"
 	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 	}
 
 	actual, expected = wm.GetTo(0), "dog"
 	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 	}
 
 	actual, expected = wm.GetFrom(1), "horse"
 	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect from-value at index 1 (got '%s')", actual)
 	}
 
 	actual, expected = wm.GetTo(1), "zebra"
 	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect to-value at index 1 (got '%s')", actual)
 	}
 }
 
@@ -130,31 +130,31 @@ func TestCsvIgnoresWhitespaceInRow(t *testing.T) {
 	wm, err := parseCsvFile(&csv)
 
 	if err != nil {
-		t.Fatalf("Error should be nil for this test (Error: %s)", err)
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
 	if wm.Size() != 2 {
-		t.Fatalf("The WordMap size should be 2 (was %d)", wm.Size())
+		t.Fatalf("The WordMap size should be 2 (got %d)", wm.Size())
 	}
 
 	actual, expected := wm.GetFrom(0), "cat"
 	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 	}
 
 	actual, expected = wm.GetTo(0), "dog"
 	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 	}
 
 	actual, expected = wm.GetFrom(1), "horse"
 	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect from-value at index 1 (got '%s')", actual)
 	}
 
 	actual, expected = wm.GetTo(1), "zebra"
 	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
+		t.Errorf("Incorrect to-value at index 1 (got '%s')", actual)
 	}
 }
 
@@ -167,7 +167,7 @@ func TestCsvToFewColumns(t *testing.T) {
 	}
 
 	if !strings.Contains(err.Error(), "Unexpected row") {
-		t.Errorf("Incorrect error message for (actual '%s')", err)
+		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
 
@@ -180,6 +180,6 @@ func TestCsvToManyColumns(t *testing.T) {
 	}
 
 	if !strings.Contains(err.Error(), "Unexpected row") {
-		t.Errorf("Incorrect error message for (actual '%s')", err)
+		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }

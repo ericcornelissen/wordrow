@@ -9,14 +9,14 @@ func TestGetParserForUnknownFileType(t *testing.T) {
 	_, err := getParserForFormat(".bar")
 
 	if err == nil {
-		t.Error("The error should be set for unknown file types")
+		t.Error("The error should be set for unknown formats")
 	}
 }
 
 func TestGetParserForMarkDownFile(t *testing.T) {
 	check := func(parseFn parseFunction, err error) {
 		if err != nil {
-			t.Fatalf("The error should be nil for this test (Error: %s)", err)
+			t.Fatalf("The error should be nil for this test (got '%s')", err)
 		}
 
 		actual, expected := reflect.ValueOf(parseFn), reflect.ValueOf(parseMarkDownFile)
@@ -66,7 +66,7 @@ func TestGetParserForMarkDownFile(t *testing.T) {
 func TestGetParserForCSVFile(t *testing.T) {
 	check := func(parseFn parseFunction, err error) {
 		if err != nil {
-			t.Fatalf("The error should be nil for this test (Error: %s)", err)
+			t.Fatalf("The error should be nil for this test (got '%s')", err)
 		}
 
 		actual, expected := reflect.ValueOf(parseFn), reflect.ValueOf(parseCsvFile)
@@ -118,11 +118,11 @@ func TestParseFileParseCSV(t *testing.T) {
 	err := parseFile(&content, ".csv", &wm)
 
 	if err != nil {
-		t.Fatalf("The error should not be set for this test")
+		t.Fatalf("The error should not be set for this test (got '%s')", err)
 	}
 
 	if wm.Size() == 0 {
-		t.Error("The size of the wm should be greater than 0")
+		t.Error("The size of the WordMap should be greater than 0")
 	}
 }
 
@@ -137,10 +137,10 @@ func TestParseFileParseMarkDown(t *testing.T) {
 	err := parseFile(&content, ".md", &wm)
 
 	if err != nil {
-		t.Fatalf("The error should not be set for this test")
+		t.Fatalf("The error should not be set for this test (got '%s')", err)
 	}
 
 	if wm.Size() == 0 {
-		t.Error("The size of the wm should be greater than 0")
+		t.Error("The size of the WordMap should be greater than 0")
 	}
 }

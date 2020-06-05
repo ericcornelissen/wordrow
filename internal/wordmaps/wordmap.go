@@ -19,9 +19,9 @@ func (wm *WordMap) inRange(i int) bool {
 	return i < 0 || i >= wm.Size()
 }
 
-// AddFile parses a File and add its mapping to the WordMap.
+// AddFile parses a file and adds its mapping to the WordMap.
 //
-// The function sets the error if an error occurs when parsing the File.
+// The function sets the error if an error occurs when parsing the file.
 func (wm *WordMap) AddFile(content *string, format string) error {
 	err := parseFile(content, format, wm)
 	if err != nil {
@@ -39,8 +39,7 @@ func (wm *WordMap) AddFrom(other WordMap) {
 
 // AddOne adds a single mapping from one word to another to the WordMap.
 //
-// This function panics if an empty string is provided as first or second
-// argument.
+// This function panics if an empty string is provided.
 func (wm *WordMap) AddOne(from, to string) {
 	fromValue := strings.TrimSpace(strings.ToLower(from))
 	toValue := strings.TrimSpace(strings.ToLower(to))
@@ -55,9 +54,9 @@ func (wm *WordMap) AddOne(from, to string) {
 // Contains checks whether the WordMap contains a mapping from a certain string.
 // Note that this only returns `true` if the queried string is in the "from"
 // part of the WordMap.
-func (wm *WordMap) Contains(x string) bool {
-	for _, y := range wm.from {
-		if x == y {
+func (wm *WordMap) Contains(query string) bool {
+	for _, from := range wm.from {
+		if query == from {
 			return true
 		}
 	}
@@ -88,15 +87,15 @@ func (wm *WordMap) GetTo(i int) string {
 	return wm.to[i]
 }
 
-// Invert changes the direction of the WordMap. I.e. invert the `to` and `from`
-// values.
+// Invert changes the direction of the WordMap. I.e. it inverts the `to` and
+// `from` values in the WordMap.
 func (wm *WordMap) Invert() {
 	tmp := wm.from
 	wm.from = wm.to
 	wm.to = tmp
 }
 
-// Iter gives the contents of the WordMap as an iterable slice.
+// Iter returns the contents of the WordMap as an iterable.
 func (wm *WordMap) Iter() chan Mapping {
 	ch := make(chan Mapping)
 
