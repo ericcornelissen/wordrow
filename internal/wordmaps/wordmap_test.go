@@ -1,6 +1,9 @@
 package wordmaps
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestWordMapEmpty(t *testing.T) {
 	var wm WordMap
@@ -25,7 +28,8 @@ func TestWordMapAddFileUnknownType(t *testing.T) {
 func TestWordMapAddFileKnownType(t *testing.T) {
 	var wm WordMap
 
-	content := "foo,bar"
+	from, to := "foo", "bar"
+	content := fmt.Sprintf("%s,%s", from, to)
 	format := ".csv"
 
 	err := wm.AddFile(&content, format)
@@ -37,30 +41,33 @@ func TestWordMapAddFileKnownType(t *testing.T) {
 		t.Fatalf("The WordMap size should to be 1 (got %d)", wm.Size())
 	}
 
-	if wm.GetFrom(0) != "foo" {
-		t.Errorf("Unexpected from-value at index 0 (got '%s')", wm.GetFrom(0))
+	actual := wm.GetFrom(0)
+	if actual != from {
+		t.Errorf("Unexpected from-value at index 0 (got '%s')", actual)
 	}
 
-	if wm.GetTo(0) != "bar" {
-		t.Errorf("Unexpected to-value at index 0 (got '%s')", wm.GetTo(0))
+	actual = wm.GetTo(0)
+	if actual != to {
+		t.Errorf("Unexpected to-value at index 0 (got '%s')", actual)
 	}
 }
 
 func TestWordMapAddOne(t *testing.T) {
 	var wm WordMap
+	from, to := "cat", "dog"
 
-	wm.AddOne("cat", "dog")
+	wm.AddOne(from, to)
 	if wm.Size() != 1 {
 		t.Fatalf("The size after WordMap.AddOne should be 1 (got %d)", wm.Size())
 	}
 
-	actual, expected := wm.GetFrom(0), "cat"
-	if wm.Size() != 1 {
+	actual := wm.GetFrom(0)
+	if actual != from {
 		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
+	actual = wm.GetTo(0)
+	if actual != to {
 		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 	}
 }
@@ -111,25 +118,27 @@ func TestWordMapAddFrom(t *testing.T) {
 
 func TestWordMapContains(t *testing.T) {
 	var wm WordMap
+	from, to := "cat", "dog"
 
-	if wm.Contains("a") {
+	if wm.Contains(from) || wm.Contains(to) {
 		t.Fatal("A new WordMap should not contain anything")
 	}
 
-	wm.AddOne("cat", "dog")
-	if !wm.Contains("cat") {
+	wm.AddOne(from, to)
+	if !wm.Contains(from) {
 		t.Error("The WordMap should contain a word added by AddOne")
 	}
 
-	if wm.Contains("dog") {
+	if wm.Contains(to) {
 		t.Error("The WordMap should NOT contain the 'to' word that was added")
 	}
 }
 
 func TestWordMapGet(t *testing.T) {
 	var wm WordMap
+	from, to := "cat", "dog"
 
-	wm.AddOne("cat", "dog")
+	wm.AddOne(from, to)
 	if wm.Size() != 1 {
 		t.Fatalf("The size of the WordMap must be 1 (got %d)", wm.Size())
 	}
@@ -137,13 +146,15 @@ func TestWordMapGet(t *testing.T) {
 	outOfRangeIndex := wm.Size() + 1
 
 	t.Run("GetFrom", func(t *testing.T) {
-		if wm.GetFrom(0) != "cat" {
-			t.Errorf("Incorrect from-value at index 0 (got '%s')", wm.GetFrom(0))
+		actual := wm.GetFrom(0)
+		if actual != from {
+			t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 		}
 	})
 	t.Run("GetTo", func(t *testing.T) {
-		if wm.GetTo(0) != "dog" {
-			t.Errorf("Incorrect to-value at index 0 (got '%s')", wm.GetTo(0))
+		actual := wm.GetTo(0)
+		if actual != to {
+			t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 		}
 	})
 	t.Run("GetFrom out of range", func(t *testing.T) {
@@ -170,13 +181,14 @@ func TestWordMapGet(t *testing.T) {
 
 func TestWordMapInvert(t *testing.T) {
 	var wm WordMap
+	from, to := "cat", "dog"
 
 	wm.Invert()
 	if wm.Size() != 0 {
 		t.Error("Inverting an empty WordMap should not do anything")
 	}
 
-	wm.AddOne("cat", "dog")
+	wm.AddOne(from, to)
 	if wm.Size() != 1 {
 		t.Fatalf("The size should be 1 after AddOne (got %d)", wm.Size())
 	}
@@ -186,28 +198,31 @@ func TestWordMapInvert(t *testing.T) {
 		t.Fatalf("The size should be the same after inverting (got %d)", wm.Size())
 	}
 
-	actual, expected := wm.GetFrom(0), "dog"
-	if wm.Size() != 1 {
+	actual := wm.GetFrom(0)
+	if actual != to {
 		t.Errorf("Incorrect from-value at index 0 after inverting (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(0), "cat"
-	if actual != expected {
+	actual = wm.GetTo(0)
+	if actual != from {
 		t.Errorf("Incorrect to-value at index 0 after inverting (got '%s')", actual)
 	}
 }
 
 func TestWordMapIter(t *testing.T) {
 	var wm WordMap
-	wm.AddOne("cat", "dog")
-	wm.AddOne("horse", "zebra")
+	from0, to0 := "cat", "dog"
+	from1, to1 := "horse", "zebra"
+
+	wm.AddOne(from0, to0)
+	wm.AddOne(from1, to1)
 
 	if wm.Size() != 2 {
 		t.Fatalf("The size of the WordMap must be 2 (got %d)", wm.Size())
 	}
 
-	expectedFrom := []string{"cat", "horse"}
-	expectedTo := []string{"dog", "zebra"}
+	expectedFrom := []string{from0, from1}
+	expectedTo := []string{to0, to1}
 
 	i := 0
 	for mapping := range wm.Iter() {

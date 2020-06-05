@@ -1,14 +1,16 @@
 package wordmaps
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
 
 func TestCsvOneRow(t *testing.T) {
-	csv := `cat,dog`
-	wm, err := parseCsvFile(&csv)
+	from, to := "cat", "dog"
+	csv := fmt.Sprintf("%s,%s", from, to)
 
+	wm, err := parseCsvFile(&csv)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -17,24 +19,26 @@ func TestCsvOneRow(t *testing.T) {
 		t.Fatalf("The WordMap size should be 1 (got %d)", wm.Size())
 	}
 
-	actual, expected := wm.GetFrom(0), "cat"
-	if actual != expected {
+	actual := wm.GetFrom(0)
+	if actual != from {
 		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
+	actual = wm.GetTo(0)
+	if actual != to {
 		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 	}
 }
 
 func TestCsvMultipleRows(t *testing.T) {
-	csv := `
-		cat,dog
-		horse,zebra
-	`
-	wm, err := parseCsvFile(&csv)
+	from0, to0 := "cat", "dog"
+	from1, to1 := "horse", "zebra"
+	csv := fmt.Sprintf(`
+		%s,%s
+		%s,%s
+	`, from0, to0, from1, to1)
 
+	wm, err := parseCsvFile(&csv)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -43,23 +47,23 @@ func TestCsvMultipleRows(t *testing.T) {
 		t.Fatalf("The WordMap size should be 2 (got %d)", wm.Size())
 	}
 
-	actual, expected := wm.GetFrom(0), "cat"
-	if actual != expected {
+	actual := wm.GetFrom(0)
+	if actual != from0 {
 		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
+	actual = wm.GetTo(0)
+	if actual != to0 {
 		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetFrom(1), "horse"
-	if actual != expected {
+	actual = wm.GetFrom(1)
+	if actual != from1 {
 		t.Errorf("Incorrect from-value at index 1 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(1), "zebra"
-	if actual != expected {
+	actual = wm.GetTo(1)
+	if actual != to1 {
 		t.Errorf("Incorrect to-value at index 1 (got '%s')", actual)
 	}
 }
@@ -86,13 +90,15 @@ func TestCsvEmptyColumnValues(t *testing.T) {
 }
 
 func TestCsvIgnoreEmptyLines(t *testing.T) {
-	csv := `
-		cat,dog
+	from0, to0 := "cat", "dog"
+	from1, to1 := "horse", "zebra"
+	csv := fmt.Sprintf(`
+		%s,%s
 
-		horse,zebra
-	`
+		%s,%s
+	`, from0, to0, from1, to1)
+
 	wm, err := parseCsvFile(&csv)
-
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -101,34 +107,37 @@ func TestCsvIgnoreEmptyLines(t *testing.T) {
 		t.Fatalf("The WordMap size should be 2 (got %d)", wm.Size())
 	}
 
-	actual, expected := wm.GetFrom(0), "cat"
-	if actual != expected {
+	actual := wm.GetFrom(0)
+	if actual != from0 {
 		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
+	actual = wm.GetTo(0)
+	if actual != to0 {
 		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetFrom(1), "horse"
-	if actual != expected {
+	actual = wm.GetFrom(1)
+	if actual != from1 {
 		t.Errorf("Incorrect from-value at index 1 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(1), "zebra"
-	if actual != expected {
+	actual = wm.GetTo(1)
+	if actual != to1 {
 		t.Errorf("Incorrect to-value at index 1 (got '%s')", actual)
 	}
 }
 
 func TestCsvIgnoresWhitespaceInRow(t *testing.T) {
-	csv := `
-		cat, dog
-		horse  , zebra
-	`
-	wm, err := parseCsvFile(&csv)
+	from0, to0 := "cat", "dog"
+	from1, to1 := "horse", "zebra"
+	csv := fmt.Sprintf(`
+		%s, %s
 
+		%s  , %s
+	`, from0, to0, from1, to1)
+
+	wm, err := parseCsvFile(&csv)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -137,23 +146,23 @@ func TestCsvIgnoresWhitespaceInRow(t *testing.T) {
 		t.Fatalf("The WordMap size should be 2 (got %d)", wm.Size())
 	}
 
-	actual, expected := wm.GetFrom(0), "cat"
-	if actual != expected {
+	actual := wm.GetFrom(0)
+	if actual != from0 {
 		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
+	actual = wm.GetTo(0)
+	if actual != to0 {
 		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetFrom(1), "horse"
-	if actual != expected {
+	actual = wm.GetFrom(1)
+	if actual != from1 {
 		t.Errorf("Incorrect from-value at index 1 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(1), "zebra"
-	if actual != expected {
+	actual = wm.GetTo(1)
+	if actual != to1 {
 		t.Errorf("Incorrect to-value at index 1 (got '%s')", actual)
 	}
 }

@@ -1,19 +1,20 @@
 package wordmaps
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
 
 func TestMarkDownTableOnly(t *testing.T) {
-	markdown := `
-		| foo | bar |
-		| --- | --- |
-		| cat | dog |
-	`
+	from, to := "cat", "dog"
+	markdown := fmt.Sprintf(`
+		| from | to  |
+		| ---- | --- |
+		| %s   | %s  |
+	`, from, to)
 
 	wm, err := parseMarkDownFile(&markdown)
-
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -22,35 +23,36 @@ func TestMarkDownTableOnly(t *testing.T) {
 		t.Fatalf("The WordMap size should be 1 (got %d)", wm.Size())
 	}
 
-	actual, expected := wm.GetFrom(0), "cat"
-	if actual != expected {
+	actual := wm.GetFrom(0)
+	if actual != from {
 		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
+	actual = wm.GetTo(0)
+	if actual != to {
 		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 	}
 }
 
 func TestMarkDownTextAndTable(t *testing.T) {
-	markdown := `
+	from0, to0 := "cat", "dog"
+	from1, to1 := "horse", "zebra"
+	markdown := fmt.Sprintf(`
 		# Translation table
 
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quam
 		mauris, sollicitudin et mauris quis, luctus bibendum risus. Vestibulum
 		vitae ligula et ex semper ullamcorper at eu massa.
 
-		| foo   | bar   |
-		| ----- | ----- |
-		| cat   | dog   |
-		| horse | zebra |
+		| from | to  |
+		| ---- | --- |
+		| %s   | %s  |
+		| %s   | %s  |
 
 		Suspendisse ante ante, interdum id felis vel, posuere.
-	`
+	`, from0, to0, from1, to1)
 
 	wm, err := parseMarkDownFile(&markdown)
-
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -59,40 +61,41 @@ func TestMarkDownTextAndTable(t *testing.T) {
 		t.Fatalf("The WordMap size should be 2 (got %d)", wm.Size())
 	}
 
-	actual, expected := wm.GetFrom(0), "cat"
-	if actual != expected {
+	actual := wm.GetFrom(0)
+	if actual != from0 {
 		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
+	actual = wm.GetTo(0)
+	if actual != to0 {
 		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetFrom(1), "horse"
-	if actual != expected {
+	actual = wm.GetFrom(1)
+	if actual != from1 {
 		t.Errorf("Incorrect from-value at index 1 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(1), "zebra"
-	if actual != expected {
+	actual = wm.GetTo(1)
+	if actual != to1 {
 		t.Errorf("Incorrect to-value at index 1 (got '%s')", actual)
 	}
 }
 
 func TestMarkDownTwoTables(t *testing.T) {
-	markdown := `
-		| foo   | bar   |
-		| ----- | ----- |
-		| zebra | horse |
+	from0, to0 := "horse", "zebra"
+	from1, to1 := "cat", "dog"
+	markdown := fmt.Sprintf(`
+		| from | to  |
+		| ---- | --- |
+		| %s   | %s  |
 
-		| foo | bar |
-		| --- | --- |
-		| dog | cat |
-	`
+		| from | to  |
+		| ---- | --- |
+		| %s   | %s  |
+	`, from0, to0, from1, to1)
 
 	wm, err := parseMarkDownFile(&markdown)
-
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -101,23 +104,23 @@ func TestMarkDownTwoTables(t *testing.T) {
 		t.Fatalf("The WordMap size should be 2 (got %d)", wm.Size())
 	}
 
-	actual, expected := wm.GetFrom(0), "zebra"
-	if actual != expected {
+	actual := wm.GetFrom(0)
+	if actual != from0 {
 		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(0), "horse"
-	if actual != expected {
+	actual = wm.GetTo(0)
+	if actual != to0 {
 		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetFrom(1), "dog"
-	if actual != expected {
+	actual = wm.GetFrom(1)
+	if actual != from1 {
 		t.Errorf("Incorrect from-value at index 1 (got '%s')", actual)
 	}
 
-	actual, expected = wm.GetTo(1), "cat"
-	if actual != expected {
+	actual = wm.GetTo(1)
+	if actual != to1 {
 		t.Errorf("Incorrect to-value at index 1 (got '%s')", actual)
 	}
 }
