@@ -34,7 +34,7 @@ func TestWordMapAddFileKnownType(t *testing.T) {
 	}
 
 	if wm.Size() != 1 {
-		t.Errorf("Expected WordMap size to be 1 (got %d)", wm.Size())
+		t.Fatalf("The WordMap size should to be 1 (got %d)", wm.Size())
 	}
 
 	if wm.GetFrom(0) != "foo" {
@@ -51,7 +51,7 @@ func TestWordMapAddOne(t *testing.T) {
 
 	wm.AddOne("cat", "dog")
 	if wm.Size() != 1 {
-		t.Errorf("The size after WordMap.AddOne should be 1 (got %d)", wm.Size())
+		t.Fatalf("The size after WordMap.AddOne should be 1 (got %d)", wm.Size())
 	}
 
 	actual, expected := wm.GetFrom(0), "cat"
@@ -95,12 +95,12 @@ func TestWordMapAddFrom(t *testing.T) {
 
 	wmA.AddOne("cat", "dog")
 	if wmA.Size() != 1 || wmB.Size() != 0 {
-		t.Error("The initial sizes of the WordMaps was incorrect for this test")
+		t.Fatal("The initial sizes of the WordMaps was incorrect for this test")
 	}
 
 	wmA.AddFrom(wmB)
 	if wmA.Size() != 1 {
-		t.Errorf("Adding an empty WordMap should not change that WordMap's size")
+		t.Error("Adding an empty WordMap should not change that WordMap's size")
 	}
 
 	wmB.AddFrom(wmA)
@@ -113,7 +113,7 @@ func TestWordMapContains(t *testing.T) {
 	var wm WordMap
 
 	if wm.Contains("a") {
-		t.Error("A new WordMap should not contain anything")
+		t.Fatal("A new WordMap should not contain anything")
 	}
 
 	wm.AddOne("cat", "dog")

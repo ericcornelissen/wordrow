@@ -71,7 +71,7 @@ func TestCsvEmptyColumnValues(t *testing.T) {
 		_, err := parseCsvFile(&csv)
 
 		if err == nil {
-			t.Errorf("Error should be set if the from value is empty")
+			t.Fatalf("Error should be set if the from value is empty")
 		}
 	})
 	t.Run("Empty to value", func(t *testing.T) {
@@ -80,7 +80,7 @@ func TestCsvEmptyColumnValues(t *testing.T) {
 		_, err := parseCsvFile(&csv)
 
 		if err == nil {
-			t.Errorf("Error should be set if the to value is empty")
+			t.Fatalf("Error should be set if the to value is empty")
 		}
 	})
 }
