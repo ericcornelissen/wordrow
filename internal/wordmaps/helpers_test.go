@@ -23,7 +23,5 @@ func checkWordMap(t *testing.T, wm WordMap, expected [][]string) {
 		if actual != to {
 			t.Errorf("Incorrect to-value at index %d (got '%s')", i, actual)
 		}
-
-		i++
 	}
 }
