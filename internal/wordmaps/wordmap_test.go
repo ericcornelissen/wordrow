@@ -37,19 +37,9 @@ func TestWordMapAddFileKnownType(t *testing.T) {
 		t.Fatalf("Error should not be set for this test (got '%s')", err)
 	}
 
-	if wm.Size() != 1 {
-		t.Fatalf("The WordMap size should to be 1 (got %d)", wm.Size())
-	}
-
-	actual := wm.GetFrom(0)
-	if actual != from {
-		t.Errorf("Unexpected from-value at index 0 (got '%s')", actual)
-	}
-
-	actual = wm.GetTo(0)
-	if actual != to {
-		t.Errorf("Unexpected to-value at index 0 (got '%s')", actual)
-	}
+	expected := make([][]string, 1)
+	expected[0] = []string{from, to}
+	checkWordMap(t, wm, expected)
 }
 
 func TestWordMapAddOne(t *testing.T) {
@@ -57,19 +47,10 @@ func TestWordMapAddOne(t *testing.T) {
 	from, to := "cat", "dog"
 
 	wm.AddOne(from, to)
-	if wm.Size() != 1 {
-		t.Fatalf("The size after WordMap.AddOne should be 1 (got %d)", wm.Size())
-	}
 
-	actual := wm.GetFrom(0)
-	if actual != from {
-		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
-	}
-
-	actual = wm.GetTo(0)
-	if actual != to {
-		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
-	}
+	expected := make([][]string, 1)
+	expected[0] = []string{from, to}
+	checkWordMap(t, wm, expected)
 }
 
 func TestWordMapEmptyValues(t *testing.T) {
@@ -139,24 +120,12 @@ func TestWordMapGet(t *testing.T) {
 	from, to := "cat", "dog"
 
 	wm.AddOne(from, to)
-	if wm.Size() != 1 {
-		t.Fatalf("The size of the WordMap must be 1 (got %d)", wm.Size())
-	}
+
+	expected := make([][]string, 1)
+	expected[0] = []string{from, to}
+	checkWordMap(t, wm, expected)
 
 	outOfRangeIndex := wm.Size() + 1
-
-	t.Run("GetFrom", func(t *testing.T) {
-		actual := wm.GetFrom(0)
-		if actual != from {
-			t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
-		}
-	})
-	t.Run("GetTo", func(t *testing.T) {
-		actual := wm.GetTo(0)
-		if actual != to {
-			t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
-		}
-	})
 	t.Run("GetFrom out of range", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
@@ -194,19 +163,10 @@ func TestWordMapInvert(t *testing.T) {
 	}
 
 	wm.Invert()
-	if wm.Size() != 1 {
-		t.Fatalf("The size should be the same after inverting (got %d)", wm.Size())
-	}
 
-	actual := wm.GetFrom(0)
-	if actual != to {
-		t.Errorf("Incorrect from-value at index 0 after inverting (got '%s')", actual)
-	}
-
-	actual = wm.GetTo(0)
-	if actual != from {
-		t.Errorf("Incorrect to-value at index 0 after inverting (got '%s')", actual)
-	}
+	expected := make([][]string, 1)
+	expected[0] = []string{to, from}
+	checkWordMap(t, wm, expected)
 }
 
 func TestWordMapIter(t *testing.T) {

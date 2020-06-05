@@ -19,19 +19,9 @@ func TestMarkDownTableOnly(t *testing.T) {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
-	if wm.Size() != 1 {
-		t.Fatalf("The WordMap size should be 1 (got %d)", wm.Size())
-	}
-
-	actual := wm.GetFrom(0)
-	if actual != from {
-		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
-	}
-
-	actual = wm.GetTo(0)
-	if actual != to {
-		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
-	}
+	expected := make([][]string, 1)
+	expected[0] = []string{from, to}
+	checkWordMap(t, wm, expected)
 }
 
 func TestMarkDownTextAndTable(t *testing.T) {
@@ -57,29 +47,10 @@ func TestMarkDownTextAndTable(t *testing.T) {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
-	if wm.Size() != 2 {
-		t.Fatalf("The WordMap size should be 2 (got %d)", wm.Size())
-	}
-
-	actual := wm.GetFrom(0)
-	if actual != from0 {
-		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
-	}
-
-	actual = wm.GetTo(0)
-	if actual != to0 {
-		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
-	}
-
-	actual = wm.GetFrom(1)
-	if actual != from1 {
-		t.Errorf("Incorrect from-value at index 1 (got '%s')", actual)
-	}
-
-	actual = wm.GetTo(1)
-	if actual != to1 {
-		t.Errorf("Incorrect to-value at index 1 (got '%s')", actual)
-	}
+	expected := make([][]string, 2)
+	expected[0] = []string{from0, to0}
+	expected[1] = []string{from1, to1}
+	checkWordMap(t, wm, expected)
 }
 
 func TestMarkDownTwoTables(t *testing.T) {
@@ -100,29 +71,10 @@ func TestMarkDownTwoTables(t *testing.T) {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
-	if wm.Size() != 2 {
-		t.Fatalf("The WordMap size should be 2 (got %d)", wm.Size())
-	}
-
-	actual := wm.GetFrom(0)
-	if actual != from0 {
-		t.Errorf("Incorrect from-value at index 0 (got '%s')", actual)
-	}
-
-	actual = wm.GetTo(0)
-	if actual != to0 {
-		t.Errorf("Incorrect to-value at index 0 (got '%s')", actual)
-	}
-
-	actual = wm.GetFrom(1)
-	if actual != from1 {
-		t.Errorf("Incorrect from-value at index 1 (got '%s')", actual)
-	}
-
-	actual = wm.GetTo(1)
-	if actual != to1 {
-		t.Errorf("Incorrect to-value at index 1 (got '%s')", actual)
-	}
+	expected := make([][]string, 2)
+	expected[0] = []string{from0, to0}
+	expected[1] = []string{from1, to1}
+	checkWordMap(t, wm, expected)
 }
 
 func TestMarkDownEmptyColumnValues(t *testing.T) {
