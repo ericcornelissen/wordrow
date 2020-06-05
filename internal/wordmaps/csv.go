@@ -1,31 +1,6 @@
 package wordmaps
 
-import "strings"
-
-// TrimSpaceAll trims leading and trailing spaces in all strings. Note that this
-// function operates in place.
-func trimSpaceAll(v []string) {
-	for i, s := range v {
-		v[i] = strings.TrimSpace(s)
-	}
-}
-
-// AnyString returns true if at least one item in the list fulfills the
-// condition and false otherwise.
-func anyString(v []string, condition func(string) bool) bool {
-	for _, s := range v {
-		if condition(s) {
-			return true
-		}
-	}
-
-	return false
-}
-
-// IsEmptyString returns true if the string is empty and false otherwise.
-func isEmptyString(s string) bool {
-	return s == ""
-}
+import "github.com/ericcornelissen/wordrow/internal/strings"
 
 // Parse a single row of a CSV file and add it to the WordMap.
 //
@@ -37,8 +12,8 @@ func parseRow(row string, wm *WordMap) error {
 		return &parseError{"Unexpected row format", row}
 	}
 
-	trimSpaceAll(rowValues)
-	if anyString(rowValues, isEmptyString) {
+	strings.TrimSpaceAll(rowValues)
+	if strings.Any(rowValues, strings.IsEmpty) {
 		return &parseError{"Missing value", row}
 	}
 
