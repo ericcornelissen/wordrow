@@ -65,6 +65,35 @@ func TestWordMapAddOne(t *testing.T) {
 	}
 }
 
+func TestWordMapAddMany(t *testing.T) {
+	var wm WordMap
+
+	wm.AddMany([]string{"doge", "puppy"}, "dog")
+	if wm.Size() != 2 {
+		t.Fatalf("The size after WordMap.AddMany should be 2 (was: %d)", wm.Size())
+	}
+
+	actual, expected := wm.GetFrom(0), "doge"
+	if actual != expected {
+		t.Errorf("Incorrect from-value at index 0 (actual '%s')", actual)
+	}
+
+	actual, expected = wm.GetTo(0), "dog"
+	if actual != expected {
+		t.Errorf("Incorrect to-value at index 0 (actual '%s')", actual)
+	}
+
+	actual, expected = wm.GetFrom(1), "puppy"
+	if actual != expected {
+		t.Errorf("Incorrect from-value at index 1 (actual '%s')", actual)
+	}
+
+	actual, expected = wm.GetTo(1), "dog"
+	if actual != expected {
+		t.Errorf("Incorrect to-value at index 1 (actual '%s')", actual)
+	}
+}
+
 func TestWordMapEmptyValues(t *testing.T) {
 	var wm WordMap
 
