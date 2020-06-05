@@ -40,7 +40,7 @@ lint-go:
 	golint -set_exit_status ./...
 
 lint-md:
-	npx markdownlint-cli -c .markdownlintrc.yml ./*.md ./**/*.md
+	npx markdownlint-cli -c .markdownlintrc.yml ./*.md ./**/*.md ./.github/**/*.md
 
 clean:
 	rm -rf $(executable_file)*

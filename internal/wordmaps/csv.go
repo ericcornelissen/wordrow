@@ -22,9 +22,9 @@ func parseRow(row string, wm *WordMap) error {
 	return nil
 }
 
-// Parse a Comma Separated Values, CSV, file into a WordMap.
+// Parse a Comma Separated Values (CSV) file into a WordMap.
 //
-// The error will be set if any error occured while parsing the CSV file.
+// The error will be set if any error occurred while parsing the CSV file.
 func parseCsvFile(rawFileData *string) (WordMap, error) {
 	var wm WordMap
 

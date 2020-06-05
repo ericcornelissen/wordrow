@@ -23,27 +23,49 @@ of this document. In this document you can read about:
 
 ## Bug Reports
 
-Bugs can be reported as a GitHub issue. Please provide as much information as
-possible to help diagnose the problem. This may include:
+If you have problems with _wordrow_ or think you've found a bug, please report
+it to the developers; we cannot promise to do anything but we might well want to
+fix it.
 
-- The _wordrow_ version (run `wordrow --version`) and operating system.
-- The exact command that causes the bug.
-- A working example that demonstrates the bug.
-- The actual and expected behaviour.
-- The debug output of _wordrow_ (run with the `--verbose` flag).
+Before reporting a bug, make sure you've actually found a real bug. Carefully
+read the documentation and see if it really says you can do what you're trying
+to do. If it's not clear whether you should be able to do something or not,
+report that too; it's a bug in the documentation! Also, make sure the bug has
+not already been reported.
 
-Suggestions for how the bug can be resolved are welcome and so are bug fixes.
+When preparing to report a bug, try to isolate it to a small working example
+that reproduces the problem. Then, create a bug report including this example
+and its results as well as any error or warning messages. Please don't
+paraphrase these messages: it's best to copy and paste them into your report.
+Finally, be sure to explain what you expected to happen; this will help us
+decide whether it is a bug or a problem with the documentation.
+
+In addition to the information above, please be careful to include the version
+number of _wordrow_ you are using. You can get this information with the command
+`wordrow --version`. Be sure also to include the type of machine and operating
+system you are using.
+
+Once you have a precise problem you can report it online as a [Bug Report].
 
 ## Feature Requests
 
-New features can be requested through GitHub issues. Please provide as much
-information as possible to help us understand the feature. This may include:
+If you require a new feature from _wordrow_ you can request for it to be added
+to the program. But, do be aware that the developers may dismiss the request for
+any reason.
 
-- Both a summary and detailed explanation of the feature.
-- An example use case of the feature.
-- A list of potential drawbacks of the feature.
-- An outline for an implementation of the feature.
-- Possible test cases for an implementation.
+Before submitting a feature request, make sure you've checked if what you want
+to achieve isn't already possible. Carefully read the documentation and try to
+get _wordrow_ to do what you want. If it is possible, but not (clearly)
+documented, report that too; it's a gap in the documentation (or unintended
+behaviour). Also, make sure the feature has not already been requested.
+
+When preparing to submit a feature request, take a moment to consider if your
+situation is generally applicable. Try to make the feature request generic so
+that it is not only useful to your situation but other situations as well. Be
+sure to explain in detail why the feature is useful and, if possible, how it
+should work.
+
+Once you have a precise request you can report it online as a [Feature Request].
 
 ---
 
@@ -177,8 +199,10 @@ func Fuzz(data []byte) int {
 You are welcome to use existing fuzzing functions to discover bugs. You can also
 contribute by adding new fuzzing functions for previously unfuzzed code, or by
 improving any of the existing fuzzing functions. If you discover a bug while
-fuzzing, please follow the [Bug Reports](#bug-reports) steps.
+fuzzing, please submit a [Bug Report].
 
+[Bug Report]: https://github.com/ericcornelissen/wordrow/issues/new?labels=bug&template=bug_report.md
+[Feature Request]: https://github.com/ericcornelissen/wordrow/issues/new?labels=enhancement&template=feature_request.md
 [go-fuzz]: https://github.com/dvyukov/go-fuzz
 [gofmt]: https://golang.org/cmd/gofmt/
 [golint]: https://github.com/golang/lint
