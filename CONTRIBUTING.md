@@ -48,14 +48,23 @@ Once you have a precise problem you can report it online as a [Bug Report](https
 
 ## Feature Requests
 
-New features can be requested through GitHub issues. Please provide as much
-information as possible to help us understand the feature. This may include:
+If you require a new feature for _wordrow_ you can request for it to be added to
+the program. But, do be aware that the developers may dismiss the request for
+any reason.
 
-- Both a summary and detailed explanation of the feature.
-- An example use case of the feature.
-- A list of potential drawbacks of the feature.
-- An outline for an implementation of the feature.
-- Possible test cases for an implementation.
+Before submitting a feature request, make sure you've checked if what you want
+to achieve isn't already possible. Carefully read the documentation and try to
+get _wordrow_ to do what you want. If it is possible, but not (clearly)
+documented, report that too; it's a gap in the documentation (or unintended
+behaviour).
+
+When preparing to submit a feature request, take a moment to consider if your
+situation is generally applicable. Try to make the feature request generic so
+that it is not only useful to your situation but other situations as well. Be
+sure to explain in detail why the feature is useful and, if possible, how it
+should work.
+
+Once you have a precise request you can report it online as a [Feature Request](https://github.com/ericcornelissen/wordrow/issues/new?labels=enhancement&template=feature_request.md).
 
 ---
 
