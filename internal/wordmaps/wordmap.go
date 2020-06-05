@@ -97,12 +97,12 @@ func (wm *WordMap) Invert() {
 
 // Iter returns the contents of the WordMap as an iterable.
 func (wm *WordMap) Iter() chan Mapping {
-	ch := make(chan Mapping)
+	ch := make(chan Mapping, wm.Size())
 
 	go func() {
 		defer close(ch)
 
-		for i := 0; i < len(wm.from); i++ {
+		for i := 0; i < wm.Size(); i++ {
 			from, to := wm.from[i], wm.to[i]
 			ch <- Mapping{from, to}
 		}
