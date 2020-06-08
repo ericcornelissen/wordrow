@@ -82,7 +82,7 @@ only the word _"dog"_ is replaced by _"cat"_. For example:
 A mapping can be inverted using the [*wordrow* CLI] as shown here.
 
 ```shell
-$ wordrow input.txt --mapping mapping.csv --invert
+$ wordrow input.txt --map-file mapping.csv --invert
 ```
 
 Then, in the example before, only the word _"cat"_ will be replaced by _"dog"_:
