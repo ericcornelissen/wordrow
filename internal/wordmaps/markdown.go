@@ -2,11 +2,12 @@ package wordmaps
 
 import (
 	"regexp"
-	"strings"
+
+	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // Regular expression of a MarkDown table row.
-var tableDividerExpr = regexp.MustCompile("^\\s*\\|\\s*-+\\s*\\|\\s*-+\\s*\\|\\s*$")
+var tableDividerExpr = regexp.MustCompile(`^\s*\|(\s*-+\s*\|){2,}\s*$`)
 
 // Check whether or not a line in a MarkDown file is part of a table.
 func isTableRow(row string) bool {
@@ -20,17 +21,18 @@ func isTableRow(row string) bool {
 // incorrect number of columns.
 func parseTableRow(row string) ([]string, error) {
 	rowValues := strings.Split(row, "|")
-	if len(rowValues) != 4 {
+	if len(rowValues) < 4 {
 		return nil, &parseError{"Unexpected table row format", row}
 	}
 
-	fromValue := strings.TrimSpace(rowValues[1])
-	toValue := strings.TrimSpace(rowValues[2])
-	if fromValue == "" || toValue == "" {
+	rowValues = rowValues[1 : len(rowValues)-1]
+
+	strings.Map(rowValues, strings.TrimSpace)
+	if strings.Any(rowValues, strings.IsEmpty) {
 		return nil, &parseError{"Missing value", row}
 	}
 
-	return []string{fromValue, toValue}, nil
+	return rowValues, nil
 }
 
 // Parse the header of a MarkDown table.
@@ -80,7 +82,8 @@ func parseTable(tableLines []string, wm *WordMap) (int, error) {
 			return 0, err
 		}
 
-		wm.AddOne(rowValues[0], rowValues[1])
+		last := len(rowValues) - 1
+		wm.AddMany(rowValues[0:last], rowValues[last])
 	}
 
 	return (2 + (wm.Size() - sizeBefore)), nil

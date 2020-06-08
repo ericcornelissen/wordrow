@@ -14,9 +14,27 @@ func Any(v []string, condition func(string) bool) bool {
 	return false
 }
 
+// HasPrefix runs strings.HasPrefix.
+func HasPrefix(s, prefix string) bool {
+	return strings.HasPrefix(s, prefix)
+}
+
+// HasSuffix runs strings.HasSuffix.
+func HasSuffix(s, suffix string) bool {
+	return strings.HasSuffix(s, suffix)
+}
+
 // IsEmpty returns true if the string is empty and false otherwise.
 func IsEmpty(s string) bool {
 	return s == ""
+}
+
+// Map maps every string in a list using the specified function. Note that this
+// function operates in place.
+func Map(v []string, fn func(string) string) {
+	for i, s := range v {
+		v[i] = fn(s)
+	}
 }
 
 // Split runs strings.Split.
@@ -27,12 +45,4 @@ func Split(s, sep string) []string {
 // TrimSpace runs strings.TrimSpace.
 func TrimSpace(s string) string {
 	return strings.TrimSpace(s)
-}
-
-// TrimSpaceAll trims leading and trailing spaces in all strings. Note that this
-// function operates in place.
-func TrimSpaceAll(v []string) {
-	for i, s := range v {
-		v[i] = strings.TrimSpace(s)
-	}
 }

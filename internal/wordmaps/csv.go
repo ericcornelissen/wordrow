@@ -12,7 +12,7 @@ func parseRow(row string, wm *WordMap) error {
 		return &parseError{"Unexpected row format", row}
 	}
 
-	strings.TrimSpaceAll(rowValues)
+	strings.Map(rowValues, strings.TrimSpace)
 	if strings.Any(rowValues, strings.IsEmpty) {
 		return &parseError{"Missing value", row}
 	}

@@ -39,6 +39,30 @@ func TestAny(t *testing.T) {
 	})
 }
 
+func TestHasPrefix(t *testing.T) {
+	result := HasPrefix("foobar", "foo")
+	if result == false {
+		t.Error("Unexpected result 'false' for string")
+	}
+
+	result = HasPrefix("foobar", "bar")
+	if result == true {
+		t.Error("Unexpected result 'true' for string")
+	}
+}
+
+func TestHasSuffix(t *testing.T) {
+	result := HasSuffix("foobar", "foo")
+	if result == true {
+		t.Error("Unexpected result 'true' for string")
+	}
+
+	result = HasSuffix("foobar", "bar")
+	if result == false {
+		t.Error("Unexpected result 'false' for string")
+	}
+}
+
 func TestIsEmpty(t *testing.T) {
 	result := IsEmpty("")
 	if result == false {
@@ -48,6 +72,33 @@ func TestIsEmpty(t *testing.T) {
 	result = IsEmpty("Hello world!")
 	if result == true {
 		t.Error("Unexpected result `true` for non-empty string")
+	}
+}
+
+func TestMap(t *testing.T) {
+	subject := []string{
+		"a",
+		" b",
+		"c ",
+		" d ",
+	}
+
+	Map(subject, TrimSpace)
+
+	if subject[0] != "a" {
+		t.Errorf("Incorrect first value (got '%s')", subject[0])
+	}
+
+	if subject[1] != "b" {
+		t.Errorf("Incorrect second value (got '%s')", subject[1])
+	}
+
+	if subject[2] != "c" {
+		t.Errorf("Incorrect third value (got '%s')", subject[2])
+	}
+
+	if subject[3] != "d" {
+		t.Errorf("Incorrect fourth value (got '%s')", subject[3])
 	}
 }
 
@@ -72,32 +123,5 @@ func TestTrimSpace(t *testing.T) {
 
 	if result != "foobar" {
 		t.Fatalf("Unexpected trimmed value (got '%s')", result)
-	}
-}
-
-func TestTrimSpaceAll(t *testing.T) {
-	subject := []string{
-		"a",
-		" b",
-		"c ",
-		" d ",
-	}
-
-	TrimSpaceAll(subject)
-
-	if subject[0] != "a" {
-		t.Errorf("Incorrect first value (got '%s')", subject[0])
-	}
-
-	if subject[1] != "b" {
-		t.Errorf("Incorrect second value (got '%s')", subject[1])
-	}
-
-	if subject[2] != "c" {
-		t.Errorf("Incorrect third value (got '%s')", subject[2])
-	}
-
-	if subject[3] != "d" {
-		t.Errorf("Incorrect fourth value (got '%s')", subject[3])
 	}
 }
