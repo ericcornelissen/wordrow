@@ -11,6 +11,10 @@ Versioning].
 
 - Add functionality to map many words to one word. ([#65])
 
+### Documentation
+
+- Update use of outdated CLI argument name. ([#67])
+
 ## [0.4.0-beta] - 2020-05-27
 
 ### Features
@@ -87,3 +91,4 @@ Versioning].
 [#58]: https://github.com/ericcornelissen/wordrow/pull/58
 [#61]: https://github.com/ericcornelissen/wordrow/pull/61
 [#65]: https://github.com/ericcornelissen/wordrow/pull/65
+[#67]: https://github.com/ericcornelissen/wordrow/pull/67
