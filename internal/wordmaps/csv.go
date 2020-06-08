@@ -1,6 +1,6 @@
 package wordmaps
 
-import "strings"
+import "github.com/ericcornelissen/wordrow/internal/strings"
 
 // Parse a single row of a CSV file and add it to the WordMap.
 //
@@ -8,17 +8,17 @@ import "strings"
 // incorrect number of columns.
 func parseRow(row string, wm *WordMap) error {
 	rowValues := strings.Split(row, ",")
-	if len(rowValues) != 2 {
+	if len(rowValues) < 2 {
 		return &parseError{"Unexpected row format", row}
 	}
 
-	fromValue := strings.TrimSpace(rowValues[0])
-	toValue := strings.TrimSpace(rowValues[1])
-	if fromValue == "" || toValue == "" {
+	strings.Map(rowValues, strings.TrimSpace)
+	if strings.Any(rowValues, strings.IsEmpty) {
 		return &parseError{"Missing value", row}
 	}
 
-	wm.AddOne(fromValue, toValue)
+	last := len(rowValues) - 1
+	wm.AddMany(rowValues[0:last], rowValues[last])
 	return nil
 }
 

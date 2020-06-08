@@ -17,6 +17,7 @@ In this document you can read about:
   - [Whitespace](#whitespace)
   - [Multiple Words](#multiple-words)
   - [Capitalisation](#capitalisation)
+  - [Many-to-One](#many-to-one)
 - [Prefixes and Suffixes](#prefixes-and-suffixes)
   - [The Preceding and Succeeding Word](#the-preceding-and-succeeding-word)
   - [Omitting Prefixes or Suffixes](#omitting-prefixes-or-suffixes)
@@ -180,6 +181,26 @@ _"So-Called"_ and _"Hey Planet"_ with identical capitalisation:
 ```diff
 - A So Called "Hello World" program is a program that prints "Hello world!".
 + A So-Called "Hey Planet" program is a program that prints "Hey planet!".
+```
+
+### Many-to-One
+
+In some cases you may want to replace multiple words by the same word. Instead
+of defining a mapping for each word individually, you can define all of them in
+a single mapping definition. Simply add all the values that should map to one
+specific word on a single line and they will all be replaced by the last word in
+the definition. For example:
+
+```csv
+cat, dog, horse
+```
+
+This will replace both the word _"dog"_ and _"cat"_ in a text with the word
+_"horse"_.
+
+```diff
+- A cat is an animal and a dog is a mammal.
++ A horse is an animal and a horse is a mammal.
 ```
 
 ---

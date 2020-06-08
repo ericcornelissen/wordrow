@@ -7,7 +7,9 @@ Versioning].
 
 ## [Unreleased]
 
-- _No changes yet_
+### Features
+
+- Add functionality to map many words to one word. ([#65])
 
 ## [0.4.0-beta] - 2020-05-27
 
@@ -84,3 +86,4 @@ Versioning].
 [#57]: https://github.com/ericcornelissen/wordrow/pull/57
 [#58]: https://github.com/ericcornelissen/wordrow/pull/58
 [#61]: https://github.com/ericcornelissen/wordrow/pull/61
+[#65]: https://github.com/ericcornelissen/wordrow/pull/65

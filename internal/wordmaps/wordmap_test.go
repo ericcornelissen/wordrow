@@ -53,6 +53,18 @@ func TestWordMapAddOne(t *testing.T) {
 	checkWordMap(t, wm, expected)
 }
 
+func TestWordMapAddMany(t *testing.T) {
+	var wm WordMap
+	from1, from2, to := "doge", "puppy", "dog"
+
+	wm.AddMany([]string{from1, from2}, to)
+
+	expected := make([][]string, 2)
+	expected[0] = []string{from1, to}
+	expected[1] = []string{from2, to}
+	checkWordMap(t, wm, expected)
+}
+
 func TestWordMapEmptyValues(t *testing.T) {
 	var wm WordMap
 
