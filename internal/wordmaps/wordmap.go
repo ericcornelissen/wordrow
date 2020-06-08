@@ -51,6 +51,16 @@ func (wm *WordMap) AddOne(from, to string) {
 	wm.to = append(wm.to, toValue)
 }
 
+// AddMany adds multiple mappings from multiple words to a single word to the
+// WordMap.
+//
+// This function panics if an empty string is added.
+func (wm *WordMap) AddMany(froms []string, to string) {
+	for _, from := range froms {
+		wm.AddOne(from, to)
+	}
+}
+
 // Contains checks whether the WordMap contains a mapping from a certain string.
 // Note that this only returns `true` if the queried string is in the "from"
 // part of the WordMap.

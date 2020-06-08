@@ -39,6 +39,21 @@ func TestCsvMultipleRows(t *testing.T) {
 	checkWordMap(t, wm, expected)
 }
 
+func TestCsvManyColumns(t *testing.T) {
+	from1, from2, to := "cat", "dog", "horse"
+	csv := fmt.Sprintf("%s,%s,%s", from1, from2, to)
+	wm, err := parseCsvFile(&csv)
+
+	if err != nil {
+		t.Fatalf("Error should be nil for this test (Error: %s)", err)
+	}
+
+	expected := make([][]string, 2)
+	expected[0] = []string{from1, to}
+	expected[1] = []string{from2, to}
+	checkWordMap(t, wm, expected)
+}
+
 func TestCsvEmptyColumnValues(t *testing.T) {
 	t.Run("Empty from value", func(t *testing.T) {
 		csv := `,bar`
@@ -102,19 +117,6 @@ func TestCsvIgnoresWhitespaceInRow(t *testing.T) {
 
 func TestCsvToFewColumns(t *testing.T) {
 	csv := `zebra`
-	_, err := parseCsvFile(&csv)
-
-	if err == nil {
-		t.Fatal("Error should be set for incorrect CSV file")
-	}
-
-	if !strings.Contains(err.Error(), "Unexpected row") {
-		t.Errorf("Incorrect error message for (got '%s')", err)
-	}
-}
-
-func TestCsvToManyColumns(t *testing.T) {
-	csv := `cat,dog,horse`
 	_, err := parseCsvFile(&csv)
 
 	if err == nil {

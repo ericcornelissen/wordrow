@@ -77,12 +77,37 @@ func TestMarkDownTwoTables(t *testing.T) {
 	checkWordMap(t, wm, expected)
 }
 
+func TestMarkDownManyColumns(t *testing.T) {
+	from01, from02, to0 := "cat", "doggy", "cat"
+	from11, from12, to1 := "horse", "donkey", "zebra"
+	markdown := fmt.Sprintf(`
+		| from 1 | from 2 | to  |
+		| ------ | ------ | --- |
+		| %s     | %s     | %s  |
+		| %s     | %s     | %s  |
+	`, from01, from02, to0, from11, from12, to1)
+
+	wm, err := parseMarkDownFile(&markdown)
+	if err != nil {
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
+	}
+
+	expected := make([][]string, 4)
+	expected[0] = []string{from01, to0}
+	expected[1] = []string{from02, to0}
+	expected[2] = []string{from11, to1}
+	expected[3] = []string{from12, to1}
+	checkWordMap(t, wm, expected)
+}
+
 func TestMarkDownEmptyColumnValues(t *testing.T) {
 	t.Run("Empty from value", func(t *testing.T) {
 		markdown := `
 			| from | to  |
 			| ---- | --- |
+			| from | to  |
 			|      | bar |
+			| from | to  |
 		`
 
 		_, err := parseMarkDownFile(&markdown)
@@ -95,7 +120,9 @@ func TestMarkDownEmptyColumnValues(t *testing.T) {
 		markdown := `
 			| from | to |
 			| ---- | -- |
+			| from | to |
 			| foo  |    |
+			| from | to |
 		`
 
 		_, err := parseMarkDownFile(&markdown)
@@ -172,26 +199,6 @@ func TestMarkDownMissingTableBody(t *testing.T) {
 	}
 
 	if !strings.Contains(err.Error(), "Missing table body") {
-		t.Errorf("Incorrect error message for (got '%s')", err)
-	}
-}
-
-func TestMarkDownIncorrectTableRow(t *testing.T) {
-	markdown := `
-		| foo   | bar   |
-		| ----- | ----- |
-		| dog   | cat   |
-		| hello | world | ! |
-		| horse | zebra |
-	`
-
-	_, err := parseMarkDownFile(&markdown)
-
-	if err == nil {
-		t.Fatal("Error should be set for row with incorrect number of columns")
-	}
-
-	if !strings.Contains(err.Error(), "Unexpected table row format") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
