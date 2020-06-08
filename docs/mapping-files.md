@@ -170,8 +170,6 @@ word is maintained. This also goes for, e.g., hyphenated words. For example, if
 you use the following mapping file:
 
 ```csv
-# mapping.csv
-
 hello world, hey planet
 so called, so-called
 ```
