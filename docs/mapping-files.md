@@ -182,6 +182,8 @@ _"So-Called"_ and _"Hey Planet"_ with identical capitalisation:
 + A So-Called "Hey Planet" program is a program that prints "Hey planet!".
 ```
 
+---
+
 ## Prefixes and Suffixes
 
 You can define more advanced mappings by replacing words including a prefix, a
@@ -321,6 +323,7 @@ _"world!"_, but words like _"worlds"_ will not not changed.
 - Hello world- What is life like on other worlds?
 + Hello world! What is life like on other worlds?
 ```
+---
 
 ## Order matters
 
