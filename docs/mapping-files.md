@@ -15,7 +15,7 @@ In this document you can read about:
 - [The Basics](#the-basics)
   - [Direction](#direction)
   - [Whitespace](#whitespace)
-  - [Multiple Words](#multiple-words)
+  - [Phrases](#phrases)
   - [Capitalisation](#capitalisation)
   - [Many-to-One](#many-to-one)
 - [Prefixes and Suffixes](#prefixes-and-suffixes)
@@ -112,7 +112,7 @@ not add the two spaces surrounding _"cat"_ to the output.
 + I have a cat, but you have a small doggy.
 ```
 
-### Multiple Words
+### Phrases
 
 On the other hand, whitespace within a mapping value is not ignored. So, you can
 replace a group of words, a phrase, in one mapping quite easily. For example, to
@@ -344,6 +344,7 @@ _"world!"_, but words like _"worlds"_ will not not changed.
 - Hello world- What is life like on other worlds?
 + Hello world! What is life like on other worlds?
 ```
+
 ---
 
 ## Order matters
