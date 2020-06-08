@@ -1,11 +1,29 @@
-program_main=./cmd/wordrow
-executable_file=wordrow
+program_main:=./cmd/wordrow
+executable_file:=wordrow
 
-test_root=./internal/...
-coverage_file=coverage.out
+test_root:=./internal/...
+coverage_file:=coverage.out
+fuzz_dir:=./_fuzz
 
-fuzz_dir=./_fuzz
+markdown_files:=./*.md ./docs/*.md ./.github/**/*.md
 
+go_nomod:=GO111MODULE=off
+
+
+default: build
+
+install: install-deps install-dev-deps
+
+install-deps:
+	@echo "INSTALLLING DEPENDENCIES"
+	go get -u github.com/yargevad/filepathx
+
+install-dev-deps:
+	@echo "INSTALLLING STATIC ANALYSIS TOOLS"
+	$(go_nomod) go get -u golang.org/x/lint/golint
+	curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b ${GOPATH}/bin v2.3.0
+	@echo "INSTALLLING MANUAL ANALYSIS TOOLS"
+	$(go_nomod) go get -u github.com/dvyukov/go-fuzz/go-fuzz github.com/dvyukov/go-fuzz/go-fuzz-build
 
 build:
 	go build -o $(executable_file) $(program_main)
@@ -22,13 +40,17 @@ coverage:
 	go tool cover -html=$(coverage_file)
 
 fuzz:
-	cd ${PKG}; go-fuzz-build; go-fuzz -func Fuzz${FUNC} -workdir ${fuzz_dir}
+	cd ${PKG}; \
+	go-fuzz-build; \
+	go-fuzz -func Fuzz${FUNC} -workdir ${fuzz_dir}
 
 benchmark:
 	go test $(test_root) -bench=. -run=XXX
 
 analysis:
+	@echo "VETTING"
 	go vet ./...
+	@echo "SECURITY SCAN"
 	gosec -quiet ./...
 
 format:
@@ -40,10 +62,12 @@ lint-go:
 	golint -set_exit_status ./...
 
 lint-md:
-	npx markdownlint-cli -c .markdownlintrc.yml ./*.md ./**/*.md ./.github/**/*.md
+	npx markdownlint-cli -c .markdownlintrc.yml $(markdown_files)
 
 clean:
 	rm -rf $(executable_file)*
 	rm -rf $(coverage_file)
 	rm -rf **/*/*-fuzz.zip
 	rm -rf **/*/_fuzz/
+
+.PHONY: default install build clean format lint analysis test fuzz
