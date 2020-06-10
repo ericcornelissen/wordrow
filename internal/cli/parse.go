@@ -1,10 +1,9 @@
 package cli
 
 import (
-	"strings"
-
 	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // Check if any arguments were provided to the program.

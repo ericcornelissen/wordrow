@@ -3,7 +3,8 @@ package wordmaps
 import (
 	"fmt"
 	"regexp"
-	"strings"
+
+	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // A Regular Expression that matches groups of whitespace characters.

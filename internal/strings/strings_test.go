@@ -39,6 +39,22 @@ func TestAny(t *testing.T) {
 	})
 }
 
+func TestFields(t *testing.T) {
+	result := Fields("foo bar")
+
+	if len(result) != 2 {
+		t.Fatalf("Unexpected length from Fields (got %d)", len(result))
+	}
+
+	if result[0] != "foo" {
+		t.Errorf("Unexpected first value in result (got '%s')", result[0])
+	}
+
+	if result[1] != "bar" {
+		t.Errorf("Unexpected second value in result (got '%s')", result[1])
+	}
+}
+
 func TestHasPrefix(t *testing.T) {
 	result := HasPrefix("foobar", "foo")
 	if result == false {
@@ -102,6 +118,31 @@ func TestMap(t *testing.T) {
 	}
 }
 
+func TestRepeat(t *testing.T) {
+	result := Repeat("foo", 0)
+	if result != "" {
+		t.Errorf("Unexpected result (got '%s')", result)
+	}
+
+	result = Repeat("foo", 1)
+	if result != "foo" {
+		t.Errorf("Unexpected result (got '%s')", result)
+	}
+
+	result = Repeat("foo", 2)
+	if result != "foofoo" {
+		t.Errorf("Unexpected result (got '%s')", result)
+	}
+}
+
+func TestReplaceAll(t *testing.T) {
+	result := ReplaceAll("foobar bar", "bar", "baz")
+
+	if result != "foobaz baz" {
+		t.Errorf("Unexpected result (got '%s')", result)
+	}
+}
+
 func TestSplit(t *testing.T) {
 	result := Split("foo,bar", ",")
 
@@ -118,10 +159,38 @@ func TestSplit(t *testing.T) {
 	}
 }
 
+func TestToLower(t *testing.T) {
+	result := ToLower("FOOBAR")
+
+	if result != "foobar" {
+		t.Fatalf("Unexpected lower value (got '%s')", result)
+	}
+}
+
+func TestToUpper(t *testing.T) {
+	result := ToUpper("foobar")
+
+	if result != "FOOBAR" {
+		t.Fatalf("Unexpected upper value (got '%s')", result)
+	}
+}
+
 func TestTrimSpace(t *testing.T) {
 	result := TrimSpace(" foobar ")
 
 	if result != "foobar" {
+		t.Fatalf("Unexpected trimmed value (got '%s')", result)
+	}
+}
+
+func TestTrimSuffix(t *testing.T) {
+	result := TrimSuffix("foobar", "bar")
+	if result != "foo" {
+		t.Fatalf("Unexpected trimmed value (got '%s')", result)
+	}
+
+	result = TrimSuffix("foobar bar", "bar")
+	if result != "foobar " {
 		t.Fatalf("Unexpected trimmed value (got '%s')", result)
 	}
 }

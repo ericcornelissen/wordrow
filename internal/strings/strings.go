@@ -14,6 +14,11 @@ func Any(v []string, condition func(string) bool) bool {
 	return false
 }
 
+// Fields runs strings.Fields.
+func Fields(s string) []string {
+	return strings.Fields(s)
+}
+
 // HasPrefix runs strings.HasPrefix.
 func HasPrefix(s, prefix string) bool {
 	return strings.HasPrefix(s, prefix)
@@ -42,7 +47,32 @@ func Split(s, sep string) []string {
 	return strings.Split(s, sep)
 }
 
+// Repeat runs strings.Repeat.
+func Repeat(s string, count int) string {
+	return strings.Repeat(s, count)
+}
+
+// ReplaceAll runs strings.ReplaceAll.
+func ReplaceAll(s, old, new string) string {
+	return strings.ReplaceAll(s, old, new)
+}
+
+// ToLower runs strings.ToLower.
+func ToLower(s string) string {
+	return strings.ToLower(s)
+}
+
+// ToUpper runs strings.ToUpper.
+func ToUpper(s string) string {
+	return strings.ToUpper(s)
+}
+
 // TrimSpace runs strings.TrimSpace.
 func TrimSpace(s string) string {
 	return strings.TrimSpace(s)
+}
+
+// TrimSuffix runs strings.TrimSuffix.
+func TrimSuffix(s, suffix string) string {
+	return strings.TrimSuffix(s, suffix)
 }

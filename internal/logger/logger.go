@@ -2,7 +2,8 @@ package logger
 
 import (
 	"fmt"
-	"strings"
+
+	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // The maximum log level that should be logged.
