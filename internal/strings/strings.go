@@ -47,11 +47,6 @@ func Split(s, sep string) []string {
 	return strings.Split(s, sep)
 }
 
-// ToUpper runs strings.ToUpper.
-func ToUpper(s string) string {
-	return strings.ToUpper(s)
-}
-
 // Repeat runs strings.Repeat.
 func Repeat(s string, count int) string {
 	return strings.Repeat(s, count)
@@ -65,6 +60,11 @@ func ReplaceAll(s, old, new string) string {
 // ToLower runs strings.ToLower.
 func ToLower(s string) string {
 	return strings.ToLower(s)
+}
+
+// ToUpper runs strings.ToUpper.
+func ToUpper(s string) string {
+	return strings.ToUpper(s)
 }
 
 // TrimSpace runs strings.TrimSpace.
