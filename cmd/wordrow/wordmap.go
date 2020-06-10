@@ -1,11 +1,10 @@
 package main
 
 import (
-	"strings"
-
 	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/ericcornelissen/wordrow/internal/strings"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 

@@ -2,8 +2,9 @@ package replacer
 
 import (
 	"regexp"
-	"strings"
 	"unicode"
+
+	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // A Regular Expression that matches newlines.

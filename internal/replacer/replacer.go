@@ -1,8 +1,7 @@
 package replacer
 
 import (
-	"strings"
-
+	"github.com/ericcornelissen/wordrow/internal/strings"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 

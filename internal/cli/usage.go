@@ -2,7 +2,8 @@ package cli
 
 import (
 	"fmt"
-	"strings"
+
+	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // The maximum line length for the usage message.

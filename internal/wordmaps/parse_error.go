@@ -2,7 +2,8 @@ package wordmaps
 
 import (
 	"fmt"
-	"strings"
+
+	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // An error representing an issue when parsing a file. The error should be

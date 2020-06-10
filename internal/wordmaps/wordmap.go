@@ -1,10 +1,9 @@
 package wordmaps
 
 import (
-	"strings"
-
 	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // The WordMap type provides a guaranteed mapping from one set of strings to
