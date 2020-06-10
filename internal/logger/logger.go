@@ -1,3 +1,21 @@
+/*
+Package logger is a simple utilities package that provides a singleton logger
+used by wordrow for simple logging operations.
+
+The amount of logging is determined by the log level. The log level can be
+configured as follows:
+
+	SetLogLevel(DEBUG)
+
+This will set the log level to 'debugging'. The following log levels are
+available:
+
+ • `DEBUG`: Log everything.
+ • `INFO`: Log up to informative logs (e.g. status) but not debug logging.
+ • `WARNING`: Log only if the message is a warning or worse.
+ • `ERROR`: Log only if the message is an error or worse.
+ • `FATAL`: Log only if there is a fatal event.
+*/
 package logger
 
 import (

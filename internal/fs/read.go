@@ -1,3 +1,5 @@
+// Package fs is a simple utilities package that provides functions to interact
+// with the file system.
 package fs
 
 import (
@@ -5,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-// ReadFile reads a file given a path and get it as a File instance. Relative
+// ReadFile reads a file given a path and gets it as a File instance. Relative
 // file paths are automatically resolved.
 //
 // The function sets the error if the file couldn't be read.

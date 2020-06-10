@@ -1,3 +1,6 @@
+// Package errors is a simple utilities package that streamlines error creation
+// in Go. Primarily, it combines `errors.New` and `fmt.Errorf` into a single
+// package.
 package errors
 
 import (

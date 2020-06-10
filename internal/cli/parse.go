@@ -1,3 +1,15 @@
+/*
+Package cli provides a single function that can be used to parse the command
+line argument for the wordrow program. This will provide a custom struct
+`Arguments` which specifies the configuration for the program run.
+
+	import "os"
+
+	func main() {
+		shouldRun, args := ParseArgs(os.Args)
+		...
+	}
+*/
 package cli
 
 import (

@@ -1,3 +1,7 @@
+// Package wordmaps provides two structures for mappings and replacement. The
+// first structure, `WordMap`, is a map-like that provides certain guarantees on
+// its contents. The second structure, Mapping, represents an individual mapping
+// from one string to another.
 package wordmaps
 
 import (
