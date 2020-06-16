@@ -25,17 +25,17 @@ func noArgumentsProvided(args []string) bool {
 	return len(args) == 1
 }
 
-// Check if a certain argument is an option.
-func argumentIsOption(arg string) bool {
+// Check if an argument is an option or flag.
+func argumentIsOptionOrFlag(arg string) bool {
 	return strings.HasPrefix(arg, "-")
 }
 
 // Parse an option argument as a (set of) flag(s).
 func parseArgumentAsAlias(
-	option string,
+	alias string,
 	arguments *Arguments,
 ) (newContext argContext, err error) {
-	for _, char := range option[1:] {
+	for _, char := range alias[1:] {
 		option := fmt.Sprintf("-%c", char)
 		newContext, err = parseArgumentAsOption(option, arguments)
 	}
@@ -48,7 +48,7 @@ func parseArgumentAsOption(
 	option string,
 	arguments *Arguments,
 ) (argContext, error) {
-	newContext := contextInputFile
+	newContext := contextDefault
 	switch option {
 	case helpFlag.name:
 		arguments.help = true
@@ -87,7 +87,7 @@ func parseArgumentAsValue(
 	arguments *Arguments,
 ) {
 	switch context {
-	case contextInputFile:
+	case contextDefault:
 		arguments.InputFiles = append(arguments.InputFiles, value)
 	case contextConfigFile:
 		arguments.ConfigFile = value
@@ -98,7 +98,7 @@ func parseArgumentAsValue(
 	}
 }
 
-// Parse a single argument, value or option.
+// Parse a single argument as a value or option/flag.
 //
 // The function sets the error if the argument could not be parsed (in the
 // provided context).
@@ -107,8 +107,8 @@ func doParseOneArgument(
 	context argContext,
 	arguments *Arguments,
 ) (newContext argContext, err error) {
-	if argumentIsOption(arg) {
-		if context != contextInputFile {
+	if argumentIsOptionOrFlag(arg) {
+		if context != contextDefault {
 			return context, errors.Newf("Missing value for %s option", context)
 		}
 
@@ -119,7 +119,7 @@ func doParseOneArgument(
 		}
 	} else {
 		parseArgumentAsValue(arg, context, arguments)
-		newContext = contextInputFile
+		newContext = contextDefault
 	}
 
 	return newContext, err
@@ -132,7 +132,7 @@ func doParseOneArgument(
 func doParseProgramArguments(args []string) (Arguments, error) {
 	var arguments Arguments
 
-	context := contextInputFile
+	context := contextDefault
 	for _, arg := range args {
 		newContext, err := doParseOneArgument(arg, context, &arguments)
 		if err != nil {
@@ -142,7 +142,7 @@ func doParseProgramArguments(args []string) (Arguments, error) {
 		context = newContext
 	}
 
-	if context != contextInputFile {
+	if context != contextDefault {
 		return arguments, errors.New("More arguments expected")
 	}
 
