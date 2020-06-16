@@ -13,6 +13,8 @@ line argument for the wordrow program. This will provide a custom struct
 package cli
 
 import (
+	"fmt"
+
 	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/logger"
 	"github.com/ericcornelissen/wordrow/internal/strings"
@@ -28,6 +30,19 @@ func argumentIsOption(arg string) bool {
 	return strings.HasPrefix(arg, "-")
 }
 
+// Parse an option argument as a (set of) flag(s).
+func parseArgumentAsAlias(
+	option string,
+	arguments *Arguments,
+) (newContext argContext, err error) {
+	for _, char := range option[1:] {
+		option := fmt.Sprintf("-%c", char)
+		newContext, err = parseArgumentAsOption(option, arguments)
+	}
+
+	return newContext, err
+}
+
 // Parse an option argument and get the new argument context.
 func parseArgumentAsOption(
 	option string,
@@ -40,7 +55,7 @@ func parseArgumentAsOption(
 	case versionFlag.name:
 		arguments.Version = true
 
-		// Flags
+	// Flags
 	case dryRunFlag.name:
 		arguments.DryRun = true
 	case invertFlag.name, invertFlag.alias:
@@ -91,22 +106,23 @@ func doParseOneArgument(
 	arg string,
 	context argContext,
 	arguments *Arguments,
-) (argContext, error) {
+) (newContext argContext, err error) {
 	if argumentIsOption(arg) {
 		if context != contextInputFile {
 			return context, errors.Newf("Missing value for %s option", context)
 		}
 
-		newContext, err := parseArgumentAsOption(arg, arguments)
-		if err != nil {
-			return context, err
+		if arg[0:2] == "--" {
+			newContext, err = parseArgumentAsOption(arg, arguments)
+		} else {
+			newContext, err = parseArgumentAsAlias(arg, arguments)
 		}
-
-		return newContext, nil
+	} else {
+		parseArgumentAsValue(arg, context, arguments)
+		newContext = contextInputFile
 	}
 
-	parseArgumentAsValue(arg, context, arguments)
-	return contextInputFile, nil
+	return newContext, err
 }
 
 // Parse a slice of arguments that contains at least one program argument.
