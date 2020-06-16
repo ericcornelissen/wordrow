@@ -25,11 +25,6 @@ func noArgumentsProvided(args []string) bool {
 	return len(args) == 1
 }
 
-// Check if an argument is an option or flag.
-func argumentIsOptionOrFlag(arg string) bool {
-	return strings.HasPrefix(arg, "-")
-}
-
 // Parse an option argument as a (set of) flag(s).
 func parseArgumentAsAlias(
 	alias string,
@@ -107,12 +102,12 @@ func doParseOneArgument(
 	context argContext,
 	arguments *Arguments,
 ) (newContext argContext, err error) {
-	if argumentIsOptionOrFlag(arg) {
+	if strings.HasPrefix(arg, "-") {
 		if context != contextDefault {
 			return context, errors.Newf("Missing value for %s option", context)
 		}
 
-		if arg[0:2] == "--" {
+		if strings.HasPrefix(arg, "--") {
 			newContext, err = parseArgumentAsOption(arg, arguments)
 		} else {
 			newContext, err = parseArgumentAsAlias(arg, arguments)

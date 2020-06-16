@@ -468,3 +468,22 @@ func TestUnknownOption(t *testing.T) {
 		t.Error("The first return value should be false if there is an unknown arg")
 	}
 }
+
+func TestInvalidArguments(t *testing.T) {
+	t.Run("argument '-'", func(t *testing.T) {
+		args := createArgs("-")
+		run, _ := ParseArgs(args)
+
+		if run != false {
+			t.Error("The first return value should be false for this test")
+		}
+	})
+	t.Run("argument '--'", func(t *testing.T) {
+		args := createArgs("--")
+		run, _ := ParseArgs(args)
+
+		if run != false {
+			t.Error("The first return value should be false for this test")
+		}
+	})
+}
