@@ -6,7 +6,7 @@ import (
 )
 
 func ExampleParseArgs() {
-	args := []string{"wordrow", "foo.bar"}
+	args := []string{"wordrow", "--map-file", "mapping.csv", "input.txt"}
 	run, _ := ParseArgs(args)
 	fmt.Print(run)
 	// Output: true

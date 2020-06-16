@@ -1,8 +1,26 @@
 package strings
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 )
+
+func ExampleAny() {
+	s := []string{"Hello", "world", "!"}
+
+	any := Any(s, IsEmpty)
+	fmt.Print(any)
+	// Output: false
+}
+
+func ExampleMap() {
+	s := []string{"Hello", "world", "!"}
+
+	Map(s, strings.ToLower)
+	fmt.Print(s)
+	// Output: [hello world !]
+}
 
 func TestAny(t *testing.T) {
 	condition := func(s string) bool {
