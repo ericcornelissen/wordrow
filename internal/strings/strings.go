@@ -1,3 +1,5 @@
+// Package strings is an extensions of Go's standard strings package with some
+// additional utility functions.
 package strings
 
 import "strings"

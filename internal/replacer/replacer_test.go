@@ -7,6 +7,16 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
+func ExampleReplaceAll() {
+	var wm wordmaps.WordMap
+	wm.AddOne("hello", "hey")
+	wm.AddOne("world", "planet")
+
+	out := ReplaceAll("Hello world!", wm)
+	fmt.Print(out)
+	// Output: Hey planet!
+}
+
 func TestReplaceEmptyString(t *testing.T) {
 	var wm wordmaps.WordMap
 
