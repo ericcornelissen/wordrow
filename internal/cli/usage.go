@@ -72,21 +72,21 @@ func printSectionTitle(title string) {
 func printOptions() {
 	printSectionTitle("Flags")
 	printOption(helpFlag, `Output this help message.`)
-	printOption(versionFlag, `Output the version number of wordrow.`)
+	printOption(versionFlag, `Output the version number of the program.`)
 	printOption(dryRunFlag, `Don't make any changes to the input files.`)
 	printOption(invertFlag, `Invert all specified mappings.`)
-	printOption(silentFlag, `Don't output informative logging.`)
-	printOption(verboseFlag, `Output debug logging.`)
+	printOption(silentFlag, `Disable informative logging.`)
+	printOption(verboseFlag, `Enabled debug logging.`)
 
 	printSectionTitle("Options")
 	printOption(configOption, `Specify a configuration file.`)
 	printOption(mapfileOption, `
-		Specify a dictionary file. To use multiple dictionary files you can use this
-		option multiple times.
+		Specify a file with a mapping. To use multiple mapping files you can use
+		this option multiple times.
 	`)
 	printOption(mappingOption, `
-		Specify a single mapping. Use a comma to separate the words of the mapping.
-		If spaces are required use quotation marks. This option can be used multiple
+		Specify a mapping. Use a comma to separate the words of the mapping. If
+		spaces are required use quotation marks. This option can be used multiple
 		times.
 	`)
 }
