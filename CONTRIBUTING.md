@@ -122,6 +122,8 @@ following shell script as a template.
 ```shell
 #!/bin/sh
 
+set -e
+
 # Stash unstaged changes
 git stash -q --keep-index
 
