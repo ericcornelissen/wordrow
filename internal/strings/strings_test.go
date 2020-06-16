@@ -2,7 +2,6 @@ package strings
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 )
 
@@ -15,11 +14,11 @@ func ExampleAny() {
 }
 
 func ExampleMap() {
-	s := []string{"Hello", "world", "!"}
+	s := []string{" foo  ", "  bar "}
 
-	Map(s, strings.ToLower)
+	Map(s, TrimSpace)
 	fmt.Print(s)
-	// Output: [hello world !]
+	// Output: [foo bar]
 }
 
 func TestAny(t *testing.T) {
