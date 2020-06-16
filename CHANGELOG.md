@@ -14,6 +14,7 @@ Versioning].
 ### Documentation
 
 - Update use of outdated CLI argument name. ([#67])
+- Update use of outdated term in CLI help message. ([#71])
 
 ## [0.4.0-beta] - 2020-05-27
 
@@ -92,3 +93,4 @@ Versioning].
 [#61]: https://github.com/ericcornelissen/wordrow/pull/61
 [#65]: https://github.com/ericcornelissen/wordrow/pull/65
 [#67]: https://github.com/ericcornelissen/wordrow/pull/67
+[#71]: https://github.com/ericcornelissen/wordrow/pull/71
