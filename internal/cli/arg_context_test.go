@@ -3,8 +3,8 @@ package cli
 import "testing"
 
 func TestArgContextToString(t *testing.T) {
-	t.Run("contextInputFile", func(t *testing.T) {
-		result := contextInputFile.String()
+	t.Run("contextDefault", func(t *testing.T) {
+		result := contextDefault.String()
 		if result == "" {
 			t.Error("result should not be an empty string")
 		}

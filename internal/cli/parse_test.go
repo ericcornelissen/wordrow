@@ -177,6 +177,53 @@ func TestVerboseFlag(t *testing.T) {
 	})
 }
 
+func TestCombinedFlags(t *testing.T) {
+	t.Run("Two flags", func(t *testing.T) {
+		flags := fmt.Sprintf("-%s%s", verboseFlag.alias[1:], invertFlag.alias[1:])
+		args := createArgs(flags, "foo.bar")
+		run, arguments := ParseArgs(args)
+
+		if run != true {
+			t.Fatal("The first return value should be true for this test")
+		}
+
+		if arguments.Verbose != true {
+			t.Errorf("The Verbose value should be true if %s is an argument", verboseFlag)
+		}
+
+		if arguments.Invert != true {
+			t.Errorf("The Invert value should be true if %s is an argument", invertFlag)
+		}
+	})
+	t.Run("Three flags", func(t *testing.T) {
+		flags := fmt.Sprintf(
+			"-%s%s%s",
+			verboseFlag.alias[1:],
+			silentFlag.alias[1:],
+			invertFlag.alias[1:],
+		)
+
+		args := createArgs(flags, "foo.bar")
+		run, arguments := ParseArgs(args)
+
+		if run != true {
+			t.Fatal("The first return value should be true for this test")
+		}
+
+		if arguments.Verbose != true {
+			t.Errorf("The Verbose value should be true if %s is an argument", verboseFlag)
+		}
+
+		if arguments.Silent != true {
+			t.Errorf("The Silent value should be true if %s is an argument", silentFlag)
+		}
+
+		if arguments.Invert != true {
+			t.Errorf("The Invert value should be true if %s is an argument", invertFlag)
+		}
+	})
+}
+
 func TestConfigFileOption(t *testing.T) {
 	configFile := "config.json"
 
@@ -420,4 +467,23 @@ func TestUnknownOption(t *testing.T) {
 	if run == true {
 		t.Error("The first return value should be false if there is an unknown arg")
 	}
+}
+
+func TestInvalidArguments(t *testing.T) {
+	t.Run("argument '-'", func(t *testing.T) {
+		args := createArgs("-")
+		run, _ := ParseArgs(args)
+
+		if run != false {
+			t.Error("The first return value should be false for this test")
+		}
+	})
+	t.Run("argument '--'", func(t *testing.T) {
+		args := createArgs("--")
+		run, _ := ParseArgs(args)
+
+		if run != false {
+			t.Error("The first return value should be false for this test")
+		}
+	})
 }

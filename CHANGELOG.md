@@ -10,6 +10,7 @@ Versioning].
 ### Features
 
 - Add functionality to map many words to one word. ([#65])
+- Add option to specify multiple flags at once. ([#72])
 
 ### Documentation
 
@@ -94,3 +95,4 @@ Versioning].
 [#65]: https://github.com/ericcornelissen/wordrow/pull/65
 [#67]: https://github.com/ericcornelissen/wordrow/pull/67
 [#71]: https://github.com/ericcornelissen/wordrow/pull/71
+[#72]: https://github.com/ericcornelissen/wordrow/pull/72
