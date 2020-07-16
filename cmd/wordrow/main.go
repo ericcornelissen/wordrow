@@ -6,7 +6,6 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/cli"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/replacer"
 )
 
 func run(args cli.Arguments) error {
@@ -24,10 +23,9 @@ func run(args cli.Arguments) error {
 		return err
 	}
 
-	for _, file := range inputFiles {
-		logger.Debugf("Processing '%s' as input file", file.Path)
-		fixedFileData := replacer.ReplaceAll(file.Content, wm)
-
+	fixed := doReplace(inputFiles, &wm)
+	for i, file := range inputFiles {
+		fixedFileData := fixed[i]
 		if !args.DryRun {
 			fs.WriteFile(file.Path, fixedFileData)
 		} else {
