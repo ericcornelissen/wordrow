@@ -65,9 +65,11 @@ func getWordMap(
 ) (wordmap wordmaps.WordMap, err error) {
 	logger.Debug("Processing CLI specified map files...")
 	err = processMapFiles(mapFilesArgs, &wordmap)
+	if err != nil {
+		return wordmap, err
+	}
 
 	logger.Debug("Processing CLI specified mappings...")
 	err = processMappings(cliMappings, &wordmap)
-
 	return wordmap, err
 }
