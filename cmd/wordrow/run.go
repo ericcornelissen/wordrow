@@ -19,3 +19,12 @@ func doReplace(
 
 	return result
 }
+
+func doWriteBack(files []fs.File, fixed []string) {
+	for i, file := range files {
+		logger.Debugf("Writing updated content to '%s'", file.Path)
+		fixedFileData := fixed[i]
+
+		fs.WriteFile(file.Path, fixedFileData)
+	}
+}

@@ -24,14 +24,8 @@ func run(args cli.Arguments) error {
 	}
 
 	fixed := doReplace(inputFiles, &wm)
-	for i, file := range inputFiles {
-		fixedFileData := fixed[i]
-		if !args.DryRun {
-			fs.WriteFile(file.Path, fixedFileData)
-		} else {
-			logger.Printf("Before:\n-------\n%s\n", file.Content)
-			logger.Printf("After:\n------\n%s", fixedFileData)
-		}
+	if !args.DryRun {
+		doWriteBack(inputFiles, fixed)
 	}
 
 	return nil
