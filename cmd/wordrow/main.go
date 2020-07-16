@@ -23,9 +23,11 @@ func run(args cli.Arguments) error {
 		return err
 	}
 
-	fixed := doReplace(inputFiles, &wm)
-	if !args.DryRun {
-		doWriteBack(inputFiles, fixed)
+	for _, file := range inputFiles {
+		fixed := doReplace(file, &wm)
+		if !args.DryRun {
+			doWriteBack(file, fixed)
+		}
 	}
 
 	return nil
