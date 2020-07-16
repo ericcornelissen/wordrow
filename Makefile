@@ -1,7 +1,6 @@
 program_main:=./cmd/wordrow
 executable_file:=wordrow
 
-test_root:=./internal/...
 coverage_file:=coverage.out
 fuzz_dir:=./_fuzz
 
@@ -32,11 +31,16 @@ build-all:
 	GOOS=windows GOARCH=amd64 go build -o $(executable_file)_win-amd64.exe $(program_main)
 	GOOS=linux GOARCH=amd64 go build -o $(executable_file)_linux-amd64.o $(program_main)
 
-test:
-	go test $(test_root)
+test: test-unit test-integration
+
+test-unit:
+	go test ./internal/...
+
+test-integration:
+	go test ./cmd/wordrow/...
 
 coverage:
-	go test $(test_root) -coverprofile $(coverage_file)
+	go test ./internal/... -coverprofile $(coverage_file)
 	go tool cover -html=$(coverage_file)
 
 fuzz:
