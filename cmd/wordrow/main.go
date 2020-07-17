@@ -9,28 +9,25 @@ import (
 )
 
 func run(args cli.Arguments) error {
-	wm, err := getWordMap(args.MapFiles, args.Mappings)
+	wordmap, err := getWordMap(args.MapFiles, args.Mappings)
 	if err != nil {
 		return err
 	}
 
 	if args.Invert {
-		wm.Invert()
+		wordmap.Invert()
 	}
 
-	inputFiles, err := fs.ReadFiles(args.InputFiles)
+	files, err := fs.ReadFiles(args.InputFiles)
 	if err != nil {
 		return err
 	}
 
-	for _, file := range inputFiles {
-		fixed := doReplace(file, &wm)
-		if !args.DryRun {
-			doWriteBack(file, fixed)
-		}
+	if !args.DryRun {
+		processFiles(files, &wordmap)
 	}
 
-	return nil
+	return err
 }
 
 func setLogLevel(args cli.Arguments) {

@@ -11,8 +11,3 @@ type File struct {
 	// The file's absolute path.
 	Path string
 }
-
-func (f File) Write(data []byte) (n int, err error) {
-	// TODO: implement
-	return 0, nil
-}
