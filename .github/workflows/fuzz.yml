@@ -25,5 +25,5 @@ jobs:
       run: make fuzz-build PKG=internal/cli
     - name: Push fuzz target
       run: |
-        ./fuzzit create target --skip-if-exists wordrow
-        ./fuzzit create job --engine go-fuzz --type fuzzing ericcornelissen-gh/wordrow ./internal/cli/cli-fuzz.zip
+        ./fuzzit create target --skip-if-exists wordrow --api-key ${{ secrets.FUZZIT_API_KEY }}
+        ./fuzzit create job --engine go-fuzz --type fuzzing ericcornelissen-gh/wordrow ./internal/cli/cli-fuzz.zip --api-key ${{ secrets.FUZZIT_API_KEY }}
