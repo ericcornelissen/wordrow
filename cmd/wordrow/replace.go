@@ -3,9 +3,9 @@ package main
 import (
 	"io"
 	"io/ioutil"
-	"os"
 
 	"github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
 	"github.com/ericcornelissen/wordrow/internal/replacer"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
@@ -58,7 +58,7 @@ func openAndProcessFile(
 	wordmap *wordmaps.WordMap,
 ) error {
 	logger.Debugf("Opening '%s'", filePath)
-	handle, err := os.OpenFile(filePath, os.O_RDWR, 0644)
+	handle, err := fs.OpenFile(filePath, fs.OReadWrite, 0644)
 	if err != nil {
 		return errors.Newf("Could not open '%s'", filePath)
 	}
