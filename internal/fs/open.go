@@ -11,8 +11,7 @@ const (
 func OpenFile(
 	filePath string,
 	flag int,
-	mode os.FileMode,
 ) (handle *Handle, err error) {
-	file, err := os.OpenFile(filePath, flag, mode)
+	file, err := os.OpenFile(filePath, flag, 0644)
 	return &Handle{handle: file}, err
 }

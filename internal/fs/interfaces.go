@@ -25,17 +25,19 @@ type Handle struct {
 	handle *os.File
 }
 
-// Close will close this handle.
+// Close closes this handle.
 func (h Handle) Close() error {
 	return h.handle.Close()
 }
 
-// Read reads into data.
+// Read reads the contents of the file into `data`.
 func (h Handle) Read(data []byte) (n int, err error) {
 	return h.handle.Read(data)
 }
 
-// Write data into the file.
+// Write empties the file and writes `data` into it.
 func (h Handle) Write(data []byte) (n int, err error) {
+	h.handle.Truncate(0)
+	h.handle.Seek(0, 0)
 	return h.handle.Write(data)
 }

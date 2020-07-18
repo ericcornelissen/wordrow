@@ -57,7 +57,7 @@ func openAndProcessFile(
 	wordmap *wordmaps.WordMap,
 ) error {
 	logger.Debugf("Opening '%s'", filePath)
-	handle, err := fs.OpenFile(filePath, fs.OReadWrite, 0644)
+	handle, err := fs.OpenFile(filePath, fs.OReadWrite)
 	if err != nil {
 		return errors.Newf("Could not open '%s'", filePath)
 	}
