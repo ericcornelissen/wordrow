@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io"
 	"io/ioutil"
 
 	"github.com/ericcornelissen/wordrow/internal/errors"
@@ -12,7 +11,7 @@ import (
 )
 
 func doReplace(
-	handle io.Reader,
+	handle fs.Reader,
 	wordmap *wordmaps.WordMap,
 ) (fixed string, err error) {
 	data, err := ioutil.ReadAll(handle)
@@ -25,7 +24,7 @@ func doReplace(
 }
 
 func doWriteBack(
-	handle io.Writer,
+	handle fs.Writer,
 	fixed string,
 ) error {
 	data := []byte(fixed)
@@ -35,7 +34,7 @@ func doWriteBack(
 
 func processFile(
 	filePath string,
-	handle io.ReadWriter,
+	handle fs.ReadWriter,
 	wordmap *wordmaps.WordMap,
 ) error {
 	logger.Debugf("Reading '%s' and replacing words", filePath)
