@@ -37,7 +37,13 @@ func (h Handle) Read(data []byte) (n int, err error) {
 
 // Write empties the file and writes `data` into it.
 func (h Handle) Write(data []byte) (n int, err error) {
-	h.handle.Truncate(0)
-	h.handle.Seek(0, 0)
+	if err := h.handle.Truncate(0); err != nil {
+		return 0, err
+	}
+
+	if _, err := h.handle.Seek(0, 0); err != nil {
+		return 0, err
+	}
+
 	return h.handle.Write(data)
 }
