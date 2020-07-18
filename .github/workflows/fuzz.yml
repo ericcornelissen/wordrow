@@ -1,0 +1,31 @@
+name: Fuzzing
+on:
+  - pull_request
+
+jobs:
+  fuzz:
+    name: Fuzz
+    runs-on: ubuntu-latest
+    steps:
+
+    # Setup
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.13
+    - uses: actions/checkout@v2
+    - name: Get Fuzzit-CLI
+      run: |
+        wget -q -O fuzzit https://github.com/fuzzitdev/fuzzit/releases/latest/download/fuzzit_Linux_x86_64
+        chmod a+x fuzzit
+    - name: Get go-fuzz-build
+      run: go get -u github.com/dvyukov/go-fuzz/go-fuzz-build
+
+    - name: Build fuzz target
+      run: make fuzz-build PKG=internal/cli
+    - name: Push fuzz target
+      run: |
+      ./fuzzit create target --skip-if-exists wordrow
+      ./fuzzit create job --engine go-fuzz --type fuzzing ericcornelissen-gh/wordrow ./internal/cli/cli-fuzz.zip
+
+
