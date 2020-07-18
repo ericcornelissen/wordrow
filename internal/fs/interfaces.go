@@ -20,7 +20,7 @@ type ReadWriter interface {
 	Writer
 }
 
-// Handle is the struct that implements ReadWriter.
+// Handle is a file struct that implements ReadWriter.
 type Handle struct {
 	handle *os.File
 }
