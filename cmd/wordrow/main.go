@@ -24,7 +24,7 @@ func run(args cli.Arguments) error {
 	}
 
 	if !args.DryRun {
-		err = processFiles(filePaths, &wordmap)
+		err = processInputFiles(filePaths, &wordmap)
 	}
 
 	return err

@@ -11,12 +11,12 @@ import (
 )
 
 func doReplace(
-	handle fs.Reader,
+	reader fs.Reader,
 	wordmap *wordmaps.WordMap,
-) (fixed string, err error) {
-	data, err := ioutil.ReadAll(handle)
+) (fixedText string, err error) {
+	data, err := ioutil.ReadAll(reader)
 	if err != nil {
-		return fixed, err
+		return fixedText, err
 	}
 
 	content := string(data)
@@ -24,11 +24,11 @@ func doReplace(
 }
 
 func doWriteBack(
-	handle fs.Writer,
+	writer fs.Writer,
 	fixed string,
 ) error {
 	data := []byte(fixed)
-	_, err := handle.Write(data)
+	_, err := writer.Write(data)
 	return err
 }
 
@@ -38,13 +38,13 @@ func processFile(
 	wordmap *wordmaps.WordMap,
 ) error {
 	logger.Debugf("Reading '%s' and replacing words", filePath)
-	fixed, err := doReplace(handle, wordmap)
+	fixedText, err := doReplace(handle, wordmap)
 	if err != nil {
 		return errors.Newf("Could not read from '%s'", filePath)
 	}
 
 	logger.Debugf("Writing updated contents to '%s'", filePath)
-	err = doWriteBack(handle, fixed)
+	err = doWriteBack(handle, fixedText)
 	if err != nil {
 		return errors.Newf("Could not write to '%s'", filePath)
 	}
@@ -66,7 +66,7 @@ func openAndProcessFile(
 	return processFile(filePath, handle, wordmap)
 }
 
-func processFiles(
+func processInputFiles(
 	filePaths []string,
 	wordmap *wordmaps.WordMap,
 ) error {

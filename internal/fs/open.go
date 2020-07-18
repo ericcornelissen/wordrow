@@ -7,11 +7,12 @@ const (
 	OReadWrite = os.O_RDWR
 )
 
-// OpenFile opens a file to
+// OpenFile opens a handle to interact with the specified file.
 func OpenFile(
 	filePath string,
 	flag int,
 	mode os.FileMode,
-) (file *os.File, err error) {
-	return os.OpenFile(filePath, flag, mode)
+) (handle *Handle, err error) {
+	file, err := os.OpenFile(filePath, flag, mode)
+	return &Handle{handle: file}, err
 }
