@@ -33,7 +33,7 @@ func doWriteBack(
 	return err
 }
 
-func processFile2(
+func processFile(
 	filePath string,
 	handle io.ReadWriter,
 	wordmap *wordmaps.WordMap,
@@ -53,23 +53,18 @@ func processFile2(
 	return nil
 }
 
-func processFile(
+func openAndProcessFile(
 	filePath string,
 	wordmap *wordmaps.WordMap,
 ) error {
-	logger.Debugf("Processing '%s'", filePath)
+	logger.Debugf("Opening '%s'", filePath)
 	handle, err := os.OpenFile(filePath, os.O_RDWR, 0644)
 	if err != nil {
-		return err
+		return errors.Newf("Could not open '%s'", filePath)
 	}
 	defer handle.Close()
 
-	err = processFile2(filePath, handle, wordmap)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return processFile(filePath, handle, wordmap)
 }
 
 func processFiles(
@@ -77,7 +72,8 @@ func processFiles(
 	wordmap *wordmaps.WordMap,
 ) error {
 	for _, filePath := range filePaths {
-		err := processFile(filePath, wordmap)
+		logger.Debugf("Processing '%s'", filePath)
+		err := openAndProcessFile(filePath, wordmap)
 		if err != nil {
 			return err
 		}
