@@ -102,7 +102,7 @@ func doParseOneArgument(
 	context argContext,
 	arguments *Arguments,
 ) (newContext argContext, err error) {
-	if strings.HasPrefix(arg, "-") {
+	if arg[0:1] == "-" {
 		if context != contextDefault {
 			return context, errors.Newf("Missing value for %s option", context)
 		}
