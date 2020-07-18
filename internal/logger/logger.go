@@ -54,7 +54,7 @@ func Debug(msgs ...interface{}) {
 // Debugf formats and prints a message as a debug message.
 func Debugf(msg string, args ...interface{}) {
 	formattedMsg := fmt.Sprintf(msg, args...)
-	Debug(formattedMsg + "\n")
+	Debug(formattedMsg)
 }
 
 // Error prints messages as an error message.
@@ -66,7 +66,7 @@ func Error(msgs ...interface{}) {
 // Errorf formats and prints a message as an error message.
 func Errorf(msg string, args ...interface{}) {
 	formattedMsg := fmt.Sprintf(msg, args...)
-	Error(formattedMsg + "\n")
+	Error(formattedMsg)
 }
 
 // Fatal prints messages as a fatal message.
@@ -78,7 +78,7 @@ func Fatal(msgs ...interface{}) {
 // Fatalf formats and prints a message as a fatal message.
 func Fatalf(msg string, args ...interface{}) {
 	formattedMsg := fmt.Sprintf(msg, args...)
-	Fatal(formattedMsg + "\n")
+	Fatal(formattedMsg)
 }
 
 // Info prints messages as an info message.
@@ -90,7 +90,7 @@ func Info(msgs ...interface{}) {
 // Infof formats and prints a message as an info message.
 func Infof(msg string, args ...interface{}) {
 	formattedMsg := fmt.Sprintf(msg, args...)
-	Info(formattedMsg + "\n")
+	Info(formattedMsg)
 }
 
 // Println prints messages.
@@ -112,5 +112,5 @@ func Warning(msgs ...interface{}) {
 // Warningf formats and prints a message as a warning message.
 func Warningf(msg string, args ...interface{}) {
 	formattedMsg := fmt.Sprintf(msg, args...)
-	Warning(formattedMsg + "\n")
+	Warning(formattedMsg)
 }
