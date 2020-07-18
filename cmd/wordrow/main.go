@@ -18,13 +18,13 @@ func run(args cli.Arguments) error {
 		wordmap.Invert()
 	}
 
-	files, err := fs.ReadFiles(args.InputFiles)
+	filePaths, err := fs.ResolveGlobs(args.InputFiles...)
 	if err != nil {
 		return err
 	}
 
 	if !args.DryRun {
-		processFiles(files, &wordmap)
+		processFiles(filePaths, &wordmap)
 	}
 
 	return err
