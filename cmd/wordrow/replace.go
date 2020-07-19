@@ -10,6 +10,7 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
+// Do change the contents of `reader` based on the `wordmap`.
 func doReplace(
 	reader fs.Reader,
 	wordmap *wordmaps.WordMap,
@@ -23,28 +24,31 @@ func doReplace(
 	return replacer.ReplaceAll(content, *wordmap), nil
 }
 
+// Do write back the `updatedContents` to `writer`.
 func doWriteBack(
 	writer fs.Writer,
-	fixed string,
+	updatedContent string,
 ) error {
-	data := []byte(fixed)
+	data := []byte(updatedContent)
 	_, err := writer.Write(data)
 	return err
 }
 
+// Process `file` by reading its content, changed that based on the `wordmap`,
+// and writing the updated content back.
 func processFile(
 	filePath string,
-	handle fs.ReadWriter,
+	file fs.ReadWriter,
 	wordmap *wordmaps.WordMap,
 ) error {
 	logger.Debugf("Reading '%s' and replacing words", filePath)
-	fixedText, err := doReplace(handle, wordmap)
+	fixedText, err := doReplace(file, wordmap)
 	if err != nil {
 		return errors.Newf("Could not read from '%s'", filePath)
 	}
 
 	logger.Debugf("Writing updated contents to '%s'", filePath)
-	err = doWriteBack(handle, fixedText)
+	err = doWriteBack(file, fixedText)
 	if err != nil {
 		return errors.Newf("Could not write to '%s'", filePath)
 	}
@@ -52,6 +56,7 @@ func processFile(
 	return nil
 }
 
+// Open the specified input file and process it.
 func openAndProcessFile(
 	filePath string,
 	wordmap *wordmaps.WordMap,
@@ -61,11 +66,12 @@ func openAndProcessFile(
 	if err != nil {
 		return errors.Newf("Could not open '%s' in %s mode", filePath, fs.OReadWrite)
 	}
-	defer handle.Close()
 
+	defer handle.Close()
 	return processFile(filePath, handle, wordmap)
 }
 
+// Update the contents of all specified files based on the `wordmap`.
 func processInputFiles(
 	filePaths []string,
 	wordmap *wordmaps.WordMap,
