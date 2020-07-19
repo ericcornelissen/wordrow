@@ -39,9 +39,14 @@ coverage:
 	go test $(test_root) -coverprofile $(coverage_file)
 	go tool cover -html=$(coverage_file)
 
-fuzz:
+fuzz: fuzz-build fuzz-run
+
+fuzz-build:
 	cd ${PKG}; \
-	go-fuzz-build; \
+	go-fuzz-build
+
+fuzz-run:
+	cd ${PKG}; \
 	go-fuzz -func Fuzz${FUNC} -workdir ${fuzz_dir}
 
 benchmark:
