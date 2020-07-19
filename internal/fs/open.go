@@ -2,42 +2,10 @@ package fs
 
 import "os"
 
-// Flag represents the flags with which a file can be opened.
-type Flag int
-
-const (
-	// OReadOnly is a flag to open a file in READ mode.
-	OReadOnly Flag = iota
-
-	// OReadWrite is a flag to open a file in READ and WRITE mode.
-	OReadWrite
-)
-
-func (flag Flag) String() string {
-	names := []string{
-		"ReadOnly",
-		"ReadWrite",
-	}
-
-	return names[flag]
-}
-
-// FlagToFlag converts fs.Flag to os.File flag integers.
-func flagToFlag(flag Flag) (f int) {
-	switch flag {
-	case OReadOnly:
-		f = os.O_RDONLY
-	case OReadWrite:
-		f = os.O_RDWR
-	}
-
-	return f
-}
-
 // OpenFile opens a handle to interact with the specified file.
-func OpenFile(filePath string, flag Flag) (file *Handle, err error) {
+func OpenFile(filePath string, flag Flag) (file *File, err error) {
 	osFile, err := os.OpenFile(filePath, flagToFlag(flag), 0600)
-	return &Handle{
+	return &File{
 		handle: osFile,
 		path:   filePath,
 	}, err
