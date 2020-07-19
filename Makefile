@@ -39,10 +39,16 @@ coverage:
 	go test $(test_root) -coverprofile $(coverage_file)
 	go tool cover -html=$(coverage_file)
 
-fuzz:
+fuzz%: FUNC?=Fuzz  # Set default fuzzing function to "Fuzz"
+fuzz: fuzz-build fuzz-run
+
+fuzz-build:
 	cd ${PKG}; \
-	go-fuzz-build; \
-	go-fuzz -func Fuzz${FUNC} -workdir ${fuzz_dir}
+	go-fuzz-build
+
+fuzz-run:
+	cd ${PKG}; \
+	go-fuzz -func ${FUNC} -workdir ${fuzz_dir}
 
 benchmark:
 	go test $(test_root) -bench=. -run=XXX
