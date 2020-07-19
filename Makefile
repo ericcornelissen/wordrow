@@ -1,6 +1,8 @@
 program_main:=./cmd/wordrow
 executable_file:=wordrow
 
+unit_test_root:=./internal/...
+integration_test_root:=./cmd/wordrow/...
 coverage_file:=coverage.out
 fuzz_dir:=./_fuzz
 
@@ -34,13 +36,13 @@ build-all:
 test: test-unit test-integration
 
 test-unit:
-	go test ./internal/...
+	go test $(unit_test_root)
 
 test-integration:
-	go test ./cmd/wordrow/...
+	go test $(integration_test_root)
 
 coverage:
-	go test ./internal/... -coverprofile $(coverage_file)
+	go test $(unit_test_root) -coverprofile $(coverage_file)
 	go tool cover -html=$(coverage_file)
 
 fuzz:
