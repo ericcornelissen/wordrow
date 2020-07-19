@@ -37,20 +37,19 @@ func doWriteBack(
 // Process `file` by reading its content, changed that based on the `wordmap`,
 // and writing the updated content back.
 func processFile(
-	filePath string,
 	file fs.ReadWriter,
 	wordmap *wordmaps.WordMap,
 ) error {
-	logger.Debugf("Reading '%s' and replacing words", filePath)
+	logger.Debugf("Reading '%s' and replacing words", file)
 	fixedText, err := doReplace(file, wordmap)
 	if err != nil {
-		return errors.Newf("Could not read from '%s'", filePath)
+		return errors.New("Could not read from file")
 	}
 
-	logger.Debugf("Writing updated contents to '%s'", filePath)
+	logger.Debugf("Writing updated contents to '%s'", file)
 	err = doWriteBack(file, fixedText)
 	if err != nil {
-		return errors.Newf("Could not write to '%s'", filePath)
+		return errors.New("Could not write to file")
 	}
 
 	return nil
@@ -68,7 +67,7 @@ func openAndProcessFile(
 	}
 
 	defer handle.Close()
-	return processFile(filePath, handle, wordmap)
+	return processFile(handle, wordmap)
 }
 
 // Update the contents of all specified files based on the `wordmap`.

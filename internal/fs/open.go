@@ -37,5 +37,8 @@ func flagToFlag(flag Flag) (f int) {
 // OpenFile opens a handle to interact with the specified file.
 func OpenFile(filePath string, flag Flag) (file *Handle, err error) {
 	osFile, err := os.OpenFile(filePath, flagToFlag(flag), 0600)
-	return &Handle{handle: osFile}, err
+	return &Handle{
+		handle: osFile,
+		path:   filePath,
+	}, err
 }

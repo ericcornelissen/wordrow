@@ -92,7 +92,7 @@ func TestProcessFile(t *testing.T) {
 		bufferedWriter := bufio.NewWriter(writer)
 		handle := bufio.NewReadWriter(bufferedReader, bufferedWriter)
 
-		err := processFile("file.txt", handle, &wordmap)
+		err := processFile(handle, &wordmap)
 		if err != nil {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
@@ -112,7 +112,7 @@ func TestProcessFile(t *testing.T) {
 		bufferedWriter := bufio.NewWriter(writer)
 		handle := bufio.NewReadWriter(bufferedReader, bufferedWriter)
 
-		err := processFile("file.txt", handle, &wordmap)
+		err := processFile(handle, &wordmap)
 		if err != nil {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
@@ -132,7 +132,7 @@ func TestProcessFile(t *testing.T) {
 		bufferedWriter := bufio.NewWriter(writer)
 		handle := bufio.NewReadWriter(bufferedReader, bufferedWriter)
 
-		err := processFile("file.txt", handle, &wordmap)
+		err := processFile(handle, &wordmap)
 		if err == nil {
 			t.Fatal("Expected an error but got none")
 		}
@@ -155,7 +155,7 @@ func TestProcessFile(t *testing.T) {
 		bufferedWriter := bufio.NewWriterSize(writer, 1)
 		handle := bufio.NewReadWriter(bufferedReader, bufferedWriter)
 
-		err := processFile("file.txt", handle, &wordmap)
+		err := processFile(handle, &wordmap)
 		if err == nil {
 			t.Fatal("Expected an error but got none")
 		}

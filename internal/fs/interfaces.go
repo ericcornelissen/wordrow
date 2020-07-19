@@ -23,6 +23,7 @@ type ReadWriter interface {
 // Handle is a file struct that implements ReadWriter.
 type Handle struct {
 	handle *os.File
+	path   string
 }
 
 // Close closes this handle.
@@ -33,6 +34,11 @@ func (h Handle) Close() error {
 // Read reads the contents of the file into `data`.
 func (h Handle) Read(data []byte) (n int, err error) {
 	return h.handle.Read(data)
+}
+
+// String returns the path of the file in the handle.
+func (h Handle) String() string {
+	return h.path
 }
 
 // Write empties the file and writes `data` into it.
