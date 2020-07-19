@@ -14,7 +14,7 @@ import (
 func doReplace(
 	reader fs.Reader,
 	wordmap *wordmaps.WordMap,
-) (fixedText string, err error) {
+) (fixedText string, er error) {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return fixedText, err
@@ -25,10 +25,7 @@ func doReplace(
 }
 
 // Do write back the `updatedContents` to `writer`.
-func doWriteBack(
-	writer fs.Writer,
-	updatedContent string,
-) error {
+func doWriteBack(writer fs.Writer, updatedContent string) error {
 	data := []byte(updatedContent)
 	_, err := writer.Write(data)
 	return err
@@ -36,10 +33,7 @@ func doWriteBack(
 
 // Process `file` by reading its content, changed that based on the `wordmap`,
 // and writing the updated content back.
-func processFile(
-	file fs.ReadWriter,
-	wordmap *wordmaps.WordMap,
-) error {
+func processFile(file fs.ReadWriter, wordmap *wordmaps.WordMap) error {
 	logger.Debugf("Reading '%s' and replacing words", file)
 	fixedText, err := doReplace(file, wordmap)
 	if err != nil {
@@ -56,10 +50,7 @@ func processFile(
 }
 
 // Open the specified input file and process it.
-func openAndProcessFile(
-	filePath string,
-	wordmap *wordmaps.WordMap,
-) error {
+func openAndProcessFile(filePath string, wordmap *wordmaps.WordMap) error {
 	logger.Debugf("Opening '%s'", filePath)
 	handle, err := fs.OpenFile(filePath, fs.OReadWrite)
 	if err != nil {
@@ -71,10 +62,7 @@ func openAndProcessFile(
 }
 
 // Update the contents of all specified files based on the `wordmap`.
-func processInputFiles(
-	filePaths []string,
-	wordmap *wordmaps.WordMap,
-) error {
+func processInputFiles(filePaths []string, wordmap *wordmaps.WordMap) error {
 	for _, filePath := range filePaths {
 		logger.Debugf("Processing '%s'", filePath)
 		err := openAndProcessFile(filePath, wordmap)

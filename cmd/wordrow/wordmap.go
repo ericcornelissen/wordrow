@@ -81,19 +81,25 @@ func openAndProcessMapFiles(
 	return nil
 }
 
-// Add the CLI defined mappings to the `wordmap`.
-func processInlineMappings(
-	mappings []string,
-	wm *wordmaps.WordMap,
-) error {
-	for _, mapping := range mappings {
-		logger.Debugf("Processing the CLI defined mapping '%s'", mapping)
-		values := strings.Split(mapping, ",")
-		if len(values) != 2 {
-			return errors.Newf("Invalid CLI defined mapping '%s'", mapping)
-		}
+// Add a CLI defined mapping to the `wordmap`.
+func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
+	logger.Debugf("Processing the CLI defined mapping '%s'", mapping)
+	values := strings.Split(mapping, ",")
+	if len(values) != 2 {
+		return errors.Newf("Invalid CLI defined mapping '%s'", mapping)
+	}
 
-		wm.AddOne(values[0], values[1])
+	wordmap.AddOne(values[0], values[1])
+	return nil
+}
+
+// Add the CLI defined mappings to the `wordmap`.
+func processInlineMappings(mappings []string, wordmap *wordmaps.WordMap) error {
+	for _, mapping := range mappings {
+		err := processInlineMapping(mapping, wordmap)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
