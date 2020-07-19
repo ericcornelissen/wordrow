@@ -12,6 +12,10 @@ Versioning].
 - Add functionality to map many words to one word. ([#65])
 - Add option to specify multiple flags at once. ([#72])
 
+### Bug Fixes
+
+- Remove double newline in program logs. ([#78])
+
 ### Documentation
 
 - Update use of outdated CLI argument name. ([#67])
@@ -96,3 +100,4 @@ Versioning].
 [#67]: https://github.com/ericcornelissen/wordrow/pull/67
 [#71]: https://github.com/ericcornelissen/wordrow/pull/71
 [#72]: https://github.com/ericcornelissen/wordrow/pull/72
+[#78]: https://github.com/ericcornelissen/wordrow/pull/78
