@@ -59,7 +59,7 @@ func openAndProcessFile(
 	logger.Debugf("Opening '%s'", filePath)
 	handle, err := fs.OpenFile(filePath, fs.OReadWrite)
 	if err != nil {
-		return errors.Newf("Could not open '%s'", filePath)
+		return errors.Newf("Could not open '%s' in %s mode", filePath, fs.OReadWrite)
 	}
 	defer handle.Close()
 
