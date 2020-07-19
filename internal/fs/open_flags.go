@@ -13,6 +13,7 @@ const (
 	OReadWrite
 )
 
+// String returns the flag as a string.
 func (flag Flag) String() string {
 	names := []string{
 		"ReadOnly",
@@ -22,7 +23,7 @@ func (flag Flag) String() string {
 	return names[flag]
 }
 
-// FlagToFlag converts fs.Flag to os.File flag integers.
+// Convert a fs.Flag instance to an os.File flag integer.
 func flagToFlag(flag Flag) (f int) {
 	switch flag {
 	case OReadOnly:
@@ -30,7 +31,7 @@ func flagToFlag(flag Flag) (f int) {
 	case OReadWrite:
 		f = os.O_RDWR
 	default:
-		panic(1)
+		panic("unknown flag")
 	}
 
 	return f
