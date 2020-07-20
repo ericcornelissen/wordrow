@@ -8,7 +8,7 @@ type argContext int
 // The Enum used to keep track of the argument context.
 const (
 	// The context where arguments are interpreted as input files.
-	contextInputFile argContext = iota
+	contextDefault argContext = iota
 
 	// The context where arguments are interpreted as a configuration file.
 	contextConfigFile
@@ -24,9 +24,9 @@ const (
 func (context argContext) String() string {
 	names := []string{
 		"Unknown",
-		fmt.Sprintf("%s/%s", configOption, configOptionAlias),
-		fmt.Sprintf("%s/%s", mapfileOption, mapfileOptionAlias),
-		fmt.Sprintf("%s/%s", mappingOption, mappingOptionAlias),
+		fmt.Sprintf("%s/%s", configOption.name, configOption.alias),
+		fmt.Sprintf("%s/%s", mapfileOption.name, mapfileOption.alias),
+		fmt.Sprintf("%s/%s", mappingOption.name, mappingOption.alias),
 	}
 
 	return names[context]

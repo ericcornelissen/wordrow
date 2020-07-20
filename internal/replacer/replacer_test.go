@@ -1,16 +1,20 @@
 package replacer
 
-import "fmt"
-import "testing"
+import (
+	"fmt"
+	"testing"
 
-import "github.com/ericcornelissen/wordrow/internal/wordmaps"
+	"github.com/ericcornelissen/wordrow/internal/wordmaps"
+)
 
-func reportIncorrectReplacement(t *testing.T, expected, actual string) {
-	t.Helper()
-	t.Errorf(`Replacement did not work as intended
-    expected : '%s'
-    got      : '%s'
-  `, expected, actual)
+func ExampleReplaceAll() {
+	var wm wordmaps.WordMap
+	wm.AddOne("hello", "hey")
+	wm.AddOne("world", "planet")
+
+	out := ReplaceAll("Hello world!", wm)
+	fmt.Print(out)
+	// Output: Hey planet!
 }
 
 func TestReplaceEmptyString(t *testing.T) {
@@ -69,10 +73,10 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
 	})
 	t.Run("Multiple lines", func(t *testing.T) {
 		template := `
-      This is a %s. And this is
-      an %s as well. And, ow,
-      over there, another %s one!
-    `
+			This is a %s. And this is
+			an %s as well. And, ow,
+			over there, another %s one!
+		`
 		source := fmt.Sprintf(template, from, from, from)
 		result := ReplaceAll(source, wm)
 
@@ -229,7 +233,7 @@ func TestReplaceWordWithPrefixes(t *testing.T) {
 			reportIncorrectReplacement(t, expected, result)
 		}
 	})
-	t.Run("replace only if preceeded by another word", func(t *testing.T) {
+	t.Run("replace only if preceded by another word", func(t *testing.T) {
 		var wm wordmaps.WordMap
 		wm.AddOne("- dogs", "- cats")
 
@@ -520,6 +524,56 @@ func TestReplacePhraseNewlineInSource(t *testing.T) {
 		result = ReplaceAll(source, wm)
 
 		expected = "lorem ipsum hey planet\ndolor sit amet."
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+}
+
+func TestReplaceEscapeHyphen(t *testing.T) {
+	var wm wordmaps.WordMap
+	wm.AddOne(`\-foobar`, `foobar`)
+	wm.AddOne(`world\-`, `world!`)
+
+	t.Run("prefix", func(t *testing.T) {
+		source := `-foobar`
+		result := ReplaceAll(source, wm)
+
+		expected := `foobar`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("suffix", func(t *testing.T) {
+		source := `Hello world-`
+		result := ReplaceAll(source, wm)
+
+		expected := `Hello world!`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+}
+
+func TestReplaceEscapeEscapeCharacter(t *testing.T) {
+	var wm wordmaps.WordMap
+	wm.AddOne(`\\bar`, `bar`)
+	wm.AddOne(`foo\\`, `foo`)
+
+	t.Run("prefix", func(t *testing.T) {
+		source := `foo \bar`
+		result := ReplaceAll(source, wm)
+
+		expected := `foo bar`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("suffix", func(t *testing.T) {
+		source := `foo\ bar`
+		result := ReplaceAll(source, wm)
+
+		expected := `foo bar`
 		if result != expected {
 			reportIncorrectReplacement(t, expected, result)
 		}

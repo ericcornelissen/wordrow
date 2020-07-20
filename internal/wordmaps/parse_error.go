@@ -1,10 +1,13 @@
 package wordmaps
 
-import "fmt"
-import "strings"
+import (
+	"fmt"
+
+	"github.com/ericcornelissen/wordrow/internal/strings"
+)
 
 // An error representing an issue when parsing a file. The error should be
-// provided, first, an error message describing why parsing failed, and second,
+// provided, first, an error message describing why parsing failed and, second,
 // the string causing the error.
 type parseError struct {
 	msg string

@@ -1,50 +1,41 @@
+/*
+Package cli provides a single function that can be used to parse the command
+line argument for the wordrow program. This will provide a custom struct
+`Arguments` which specifies the configuration for the program run.
+
+	import "os"
+
+	func main() {
+		shouldRun, args := ParseArgs(os.Args)
+		...
+	}
+*/
 package cli
 
-import "github.com/ericcornelissen/wordrow/internal/errors"
-import "github.com/ericcornelissen/wordrow/internal/logger"
+import (
+	"fmt"
 
-// The Arguments type represents the configuration of the program from the
-// Command-Line Interface (CLI).
-type Arguments struct {
-	// Flag indicating if the program usage should be displayed.
-	help bool
-
-	// Flag indicating if the program version should be displayed.
-	version bool
-
-	// Flag indicating if this is a dry run.
-	DryRun bool
-
-	// Flag indicating if the mapping should be inverted.
-	Invert bool
-
-	// Flag indicating if the program should be silent.
-	Silent bool
-
-	// Flag indicating if the program should be verbose.
-	Verbose bool
-
-	// The config file.
-	ConfigFile string
-
-	// List of files to be processed.
-	InputFiles []string
-
-	// List of files that specify a mapping.
-	MapFiles []string
-
-	// List of mappings defined in the CLI.
-	Mappings []string
-}
+	"github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/ericcornelissen/wordrow/internal/strings"
+)
 
 // Check if any arguments were provided to the program.
 func noArgumentsProvided(args []string) bool {
 	return len(args) == 1
 }
 
-// Check if a certain argument is an option.
-func argumentIsOption(arg string) bool {
-	return "-" == arg[:1]
+// Parse an option argument as a (set of) flag(s).
+func parseArgumentAsAlias(
+	alias string,
+	arguments *Arguments,
+) (newContext argContext, err error) {
+	for _, char := range alias[1:] {
+		option := fmt.Sprintf("-%c", char)
+		newContext, err = parseArgumentAsOption(option, arguments)
+	}
+
+	return newContext, err
 }
 
 // Parse an option argument and get the new argument context.
@@ -52,30 +43,30 @@ func parseArgumentAsOption(
 	option string,
 	arguments *Arguments,
 ) (argContext, error) {
-	newContext := contextInputFile
+	newContext := contextDefault
 	switch option {
-	case helpFlag:
+	case helpFlag.name:
 		arguments.help = true
-	case versionFlag:
-		arguments.version = true
+	case versionFlag.name:
+		arguments.Version = true
 
 	// Flags
-	case dryRunFlag:
+	case dryRunFlag.name:
 		arguments.DryRun = true
-	case invertFlag, invertFlagAlias:
+	case invertFlag.name, invertFlag.alias:
 		arguments.Invert = true
-	case silentFlag, silentFlagAlias:
+	case silentFlag.name, silentFlag.alias:
 		arguments.Silent = true
-	case verboseFlag, verboseFlagAlias:
+	case verboseFlag.name, verboseFlag.alias:
 		arguments.Verbose = true
 
 	// Options
-	case configOption, configOptionAlias:
+	case configOption.name, configOption.alias:
 		newContext = contextConfigFile
 		logger.Warningf("The %s argument is not yet supported", option)
-	case mapfileOption, mapfileOptionAlias:
+	case mapfileOption.name, mapfileOption.alias:
 		newContext = contextMapFile
-	case mappingOption, mappingOptionAlias:
+	case mappingOption.name, mappingOption.alias:
 		newContext = contextMapping
 	default:
 		return newContext, errors.Newf("Unknown option '%s'. Use %s for help", option, helpFlag)
@@ -91,7 +82,7 @@ func parseArgumentAsValue(
 	arguments *Arguments,
 ) {
 	switch context {
-	case contextInputFile:
+	case contextDefault:
 		arguments.InputFiles = append(arguments.InputFiles, value)
 	case contextConfigFile:
 		arguments.ConfigFile = value
@@ -102,7 +93,7 @@ func parseArgumentAsValue(
 	}
 }
 
-// Parse a single argument, value or option.
+// Parse a single argument as a value or option/flag.
 //
 // The function sets the error if the argument could not be parsed (in the
 // provided context).
@@ -110,22 +101,23 @@ func doParseOneArgument(
 	arg string,
 	context argContext,
 	arguments *Arguments,
-) (argContext, error) {
-	if argumentIsOption(arg) {
-		if context != contextInputFile {
+) (newContext argContext, err error) {
+	if strings.HasPrefix(arg, "-") {
+		if context != contextDefault {
 			return context, errors.Newf("Missing value for %s option", context)
 		}
 
-		newContext, err := parseArgumentAsOption(arg, arguments)
-		if err != nil {
-			return context, err
+		if strings.HasPrefix(arg, "--") {
+			newContext, err = parseArgumentAsOption(arg, arguments)
+		} else {
+			newContext, err = parseArgumentAsAlias(arg, arguments)
 		}
-
-		return newContext, nil
+	} else {
+		parseArgumentAsValue(arg, context, arguments)
+		newContext = contextDefault
 	}
 
-	parseArgumentAsValue(arg, context, arguments)
-	return contextInputFile, nil
+	return newContext, err
 }
 
 // Parse a slice of arguments that contains at least one program argument.
@@ -135,7 +127,7 @@ func doParseOneArgument(
 func doParseProgramArguments(args []string) (Arguments, error) {
 	var arguments Arguments
 
-	context := contextInputFile
+	context := contextDefault
 	for _, arg := range args {
 		newContext, err := doParseOneArgument(arg, context, &arguments)
 		if err != nil {
@@ -145,17 +137,16 @@ func doParseProgramArguments(args []string) (Arguments, error) {
 		context = newContext
 	}
 
-	if context != contextInputFile {
+	if context != contextDefault {
 		return arguments, errors.New("More arguments expected")
 	}
 
 	return arguments, nil
 }
 
-// ParseArgs parses a slice of arguments (e.g. `os.Args`) into an Arguments
+// ParseArgs parses a list of arguments (e.g. `os.Args`) into an Arguments
 // instance.
-func ParseArgs(args []string) (bool, Arguments) {
-	var arguments Arguments
+func ParseArgs(args []string) (run bool, arguments Arguments) {
 	if noArgumentsProvided(args) {
 		printUsage()
 		return false, arguments
@@ -170,10 +161,6 @@ func ParseArgs(args []string) (bool, Arguments) {
 	if arguments.help {
 		printUsage()
 		return false, arguments
-	}
-
-	if arguments.version {
-		printVersion()
 	}
 
 	return len(arguments.InputFiles) > 0, arguments

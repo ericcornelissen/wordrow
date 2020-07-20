@@ -1,8 +1,24 @@
+/*
+Package replacer provides a function to smart replace strings in plaintext. To
+this end it provides one function that accepts a string and a mapping and
+returns the string with all words of the mapping replaced.
+
+	var s string
+	var m WordMap
+	ReplaceAll(s, m)
+
+The replacement will do some clever things to maintain the formatting of the
+original text. Namely:
+
+ • Maintain capitalization of words.
+ • Maintain newline characters.
+*/
 package replacer
 
-import "strings"
-
-import "github.com/ericcornelissen/wordrow/internal/wordmaps"
+import (
+	"github.com/ericcornelissen/wordrow/internal/strings"
+	"github.com/ericcornelissen/wordrow/internal/wordmaps"
+)
 
 // Replace all instances of `from` by `to` in `s`.
 func replaceOne(s string, mapping wordmaps.Mapping) string {

@@ -15,11 +15,13 @@ In this document you can read about:
 - [The Basics](#the-basics)
   - [Direction](#direction)
   - [Whitespace](#whitespace)
-  - [Multiple Words](#multiple-words)
+  - [Phrases](#phrases)
   - [Capitalisation](#capitalisation)
+  - [Many-to-One](#many-to-one)
 - [Prefixes and Suffixes](#prefixes-and-suffixes)
   - [The Preceding and Succeeding Word](#the-preceding-and-succeeding-word)
   - [Omitting Prefixes or Suffixes](#omitting-prefixes-or-suffixes)
+  - [Escaping a Prefix or Suffix Dash](#escaping-a-prefix-or-suffix-dash)
 - [Order Matters](#order-matters)
   - [Using Ordering to Your Advantage](#using-ordering-to-your-advantage)
 
@@ -81,7 +83,7 @@ only the word _"dog"_ is replaced by _"cat"_. For example:
 A mapping can be inverted using the [*wordrow* CLI] as shown here.
 
 ```shell
-$ wordrow input.txt --mapping mapping.csv --invert
+$ wordrow input.txt --map-file mapping.csv --invert
 ```
 
 Then, in the example before, only the word _"cat"_ will be replaced by _"dog"_:
@@ -110,7 +112,7 @@ not add the two spaces surrounding _"cat"_ to the output.
 + I have a cat, but you have a small doggy.
 ```
 
-### Multiple Words
+### Phrases
 
 On the other hand, whitespace within a mapping value is not ignored. So, you can
 replace a group of words, a phrase, in one mapping quite easily. For example, to
@@ -169,19 +171,39 @@ word is maintained. This also goes for, e.g., hyphenated words. For example, if
 you use the following mapping file:
 
 ```csv
-# mapping.csv
-
 hello world, hey planet
 so called, so-called
 ```
 
 Then, a text containing _"So Called"_ or _"Hello World"_ will be updated to use
-_"So-Called"_ and _"Hey Planet"_ with identical capitalisiation:
+_"So-Called"_ and _"Hey Planet"_ with identical capitalisation:
 
 ```diff
 - A So Called "Hello World" program is a program that prints "Hello world!".
 + A So-Called "Hey Planet" program is a program that prints "Hey planet!".
 ```
+
+### Many-to-One
+
+In some cases you may want to replace multiple words by the same word. Instead
+of defining a mapping for each word individually, you can define all of them in
+a single mapping definition. Simply add all the values that should map to one
+specific word on a single line and they will all be replaced by the last word in
+the definition. For example:
+
+```csv
+cat, dog, horse
+```
+
+This will replace both the word _"dog"_ and _"cat"_ in a text with the word
+_"horse"_.
+
+```diff
+- A cat is an animal and a dog is a mammal.
++ A horse is an animal and a horse is a mammal.
+```
+
+---
 
 ## Prefixes and Suffixes
 
@@ -305,6 +327,25 @@ before _"dog"_, as illustrated by this text:
 
 Again, it is necessary to specify the dash in both words. Otherwise the word
 before or after the matched word is omitted from the result.
+
+### Escaping a Prefix or Suffix Dash
+
+Occasionally, you may need to replace a dash at the start or end of a word. In
+this scenario you can escape the dash using a backslash (`\`).
+
+```csv
+world\-, world!
+```
+
+Given this mapping, any instance of the string _"world-"_ will be replaced by
+_"world!"_, but words like _"worlds"_ will not not changed.
+
+```diff
+- Hello world- What is life like on other worlds?
++ Hello world! What is life like on other worlds?
+```
+
+---
 
 ## Order matters
 

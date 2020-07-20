@@ -36,7 +36,7 @@ that you want to change on the CLI. To do this you can use the `--map` option as
 follows:
 
 ```shell
-$ wordow input.txt --map dog,cat
+$ wordrow input.txt --map dog,cat
 ```
 
 Then, `input.txt` will be updated as follows:
@@ -65,7 +65,7 @@ tells *wordrow* that you want to replace words in `input.txt` using the
 `--map-file` file `animals.csv`
 
 ```shell
-$ wordow input.txt --map-file animals.csv
+$ wordrow input.txt --map-file animals.csv
 ```
 
 Then, `input.txt` will be updated as follows:
@@ -75,6 +75,14 @@ Then, `input.txt` will be updated as follows:
 - Proton, and a canary named Atom.
 + I have a cat named Quark, a donkey named
 + Proton, and a parrot named Atom.
+```
+
+If you require a file extension for the mapping file that is not recognised by
+*wordrow* you can make it explicit by appending `:format` to the argument that
+specifies the map file. For example:
+
+```shell
+$ wordrow input.txt --map-file animals.ext:csv
 ```
 
 ## Converting Multiple Files
@@ -114,7 +122,7 @@ I have a cat, a donkey, and a parrot.
 And you run *wordrow* using the `--invert` argument as:
 
 ```shell
-$ wordow input-alt.txt --map-file animals.csv --invert
+$ wordrow input-alt.txt --map-file animals.csv --invert
 ```
 
 Then, `input-alt.txt` will be updated as follows:

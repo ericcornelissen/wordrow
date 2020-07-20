@@ -1,10 +1,14 @@
+// Package wordmaps provides two structures for mappings and replacement. The
+// first structure, `WordMap`, is a map-like that provides certain guarantees on
+// its contents. The second structure, Mapping, represents an individual mapping
+// from one string to another.
 package wordmaps
 
-import "strings"
-
-import "github.com/ericcornelissen/wordrow/internal/errors"
-import "github.com/ericcornelissen/wordrow/internal/fs"
-import "github.com/ericcornelissen/wordrow/internal/logger"
+import (
+	"github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/ericcornelissen/wordrow/internal/strings"
+)
 
 // The WordMap type provides a guaranteed mapping from one set of strings to
 // another set of strings.
@@ -18,13 +22,13 @@ func (wm *WordMap) inRange(i int) bool {
 	return i < 0 || i >= wm.Size()
 }
 
-// AddFile parses a File and add its mapping to the WordMap.
+// AddFile parses a file and adds its mapping to the WordMap.
 //
-// The function sets the error if an error occurs when parsing the File.
-func (wm *WordMap) AddFile(file fs.File) error {
-	err := parseFile(&file, wm)
+// The function sets the error if an error occurs when parsing the file.
+func (wm *WordMap) AddFile(content *string, format string) error {
+	err := parseFile(content, format, wm)
 	if err != nil {
-		return errors.Newf("Error when parsing %s: %s", file.Path, err)
+		return errors.Newf("Error when parsing file: %s", err)
 	}
 
 	return nil
@@ -38,8 +42,7 @@ func (wm *WordMap) AddFrom(other WordMap) {
 
 // AddOne adds a single mapping from one word to another to the WordMap.
 //
-// This function panics if an empty string is provided as first or second
-// argument.
+// This function panics if an empty string is provided.
 func (wm *WordMap) AddOne(from, to string) {
 	fromValue := strings.TrimSpace(strings.ToLower(from))
 	toValue := strings.TrimSpace(strings.ToLower(to))
@@ -51,12 +54,22 @@ func (wm *WordMap) AddOne(from, to string) {
 	wm.to = append(wm.to, toValue)
 }
 
+// AddMany adds multiple mappings from multiple words to a single word to the
+// WordMap.
+//
+// This function panics if an empty string is added.
+func (wm *WordMap) AddMany(froms []string, to string) {
+	for _, from := range froms {
+		wm.AddOne(from, to)
+	}
+}
+
 // Contains checks whether the WordMap contains a mapping from a certain string.
 // Note that this only returns `true` if the queried string is in the "from"
 // part of the WordMap.
-func (wm *WordMap) Contains(x string) bool {
-	for _, y := range wm.from {
-		if x == y {
+func (wm *WordMap) Contains(query string) bool {
+	for _, from := range wm.from {
+		if query == from {
 			return true
 		}
 	}
@@ -87,22 +100,22 @@ func (wm *WordMap) GetTo(i int) string {
 	return wm.to[i]
 }
 
-// Invert changes the direction of the WordMap. I.e. invert the `to` and `from`
-// values.
+// Invert changes the direction of the WordMap. I.e. it inverts the `to` and
+// `from` values in the WordMap.
 func (wm *WordMap) Invert() {
 	tmp := wm.from
 	wm.from = wm.to
 	wm.to = tmp
 }
 
-// Iter gives the contents of the WordMap as an iterable slice.
+// Iter returns the contents of the WordMap as an iterable.
 func (wm *WordMap) Iter() chan Mapping {
-	ch := make(chan Mapping)
+	ch := make(chan Mapping, wm.Size())
 
 	go func() {
 		defer close(ch)
 
-		for i := 0; i < len(wm.from); i++ {
+		for i := 0; i < wm.Size(); i++ {
 			from, to := wm.from[i], wm.to[i]
 			ch <- Mapping{from, to}
 		}
@@ -115,19 +128,4 @@ func (wm *WordMap) Iter() chan Mapping {
 // some value a to some value b.
 func (wm *WordMap) Size() int {
 	return len(wm.from)
-}
-
-// Get the WordMap as a human readable string.
-func (wm *WordMap) String() string {
-	var sb strings.Builder
-	for i := 0; i < len(wm.from); i++ {
-		from, to := wm.from[i], wm.to[i]
-		sb.WriteString("[")
-		sb.WriteString(from)
-		sb.WriteString("->")
-		sb.WriteString(to)
-		sb.WriteString("]")
-	}
-
-	return "{" + sb.String() + "}"
 }

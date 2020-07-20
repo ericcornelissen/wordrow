@@ -1,160 +1,144 @@
 package wordmaps
 
-import "strings"
-import "testing"
+import (
+	"fmt"
+	"strings"
+	"testing"
+)
 
 func TestMarkDownTableOnly(t *testing.T) {
-	markdown := `
-    | foo | bar |
-    | --- | --- |
-    | cat | dog |
-  `
+	from, to := "cat", "dog"
+	markdown := fmt.Sprintf(`
+		| from | to  |
+		| ---- | --- |
+		| %s   | %s  |
+	`, from, to)
 
 	wm, err := parseMarkDownFile(&markdown)
-
 	if err != nil {
-		t.Fatalf("Error should be nil for this test (Error: %s)", err)
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
-	if wm.Size() != 1 {
-		t.Fatalf("The WordMap size should be 1 (was %d)", wm.Size())
-	}
-
-	actual, expected := wm.GetFrom(0), "cat"
-	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
-	}
+	expected := make([][]string, 1)
+	expected[0] = []string{from, to}
+	checkWordMap(t, wm, expected)
 }
 
 func TestMarkDownTextAndTable(t *testing.T) {
-	markdown := `
-    # Translation table
+	from0, to0 := "cat", "dog"
+	from1, to1 := "horse", "zebra"
+	markdown := fmt.Sprintf(`
+		# Translation table
 
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quam
-    mauris, sollicitudin et mauris quis, luctus bibendum risus. Vestibulum
-    vitae ligula et ex semper ullamcorper at eu massa.
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quam
+		mauris, sollicitudin et mauris quis, luctus bibendum risus. Vestibulum
+		vitae ligula et ex semper ullamcorper at eu massa.
 
-    | foo   | bar   |
-    | ----- | ----- |
-    | cat   | dog   |
-    | horse | zebra |
+		| from | to  |
+		| ---- | --- |
+		| %s   | %s  |
+		| %s   | %s  |
 
-    Suspendisse ante ante, interdum id felis vel, posuere.
-  `
+		Suspendisse ante ante, interdum id felis vel, posuere.
+	`, from0, to0, from1, to1)
 
 	wm, err := parseMarkDownFile(&markdown)
-
 	if err != nil {
-		t.Fatalf("Error should be nil for this test (Error: %s)", err)
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
-	if wm.Size() != 2 {
-		t.Fatalf("The WordMap size should be 2 (was %d)", wm.Size())
-	}
-
-	actual, expected := wm.GetFrom(0), "cat"
-	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetTo(0), "dog"
-	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetFrom(1), "horse"
-	if actual != expected {
-		t.Errorf("Incorrect from-value at index 1 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetTo(1), "zebra"
-	if actual != expected {
-		t.Errorf("Incorrect to-value at index 1 (actual %s)", actual)
-	}
+	expected := make([][]string, 2)
+	expected[0] = []string{from0, to0}
+	expected[1] = []string{from1, to1}
+	checkWordMap(t, wm, expected)
 }
 
 func TestMarkDownTwoTables(t *testing.T) {
-	markdown := `
-    | foo   | bar   |
-    | ----- | ----- |
-    | zebra | horse |
+	from0, to0 := "horse", "zebra"
+	from1, to1 := "cat", "dog"
+	markdown := fmt.Sprintf(`
+		| from | to  |
+		| ---- | --- |
+		| %s   | %s  |
 
-    | foo | bar |
-    | --- | --- |
-    | dog | cat |
-  `
+		| from | to  |
+		| ---- | --- |
+		| %s   | %s  |
+	`, from0, to0, from1, to1)
 
 	wm, err := parseMarkDownFile(&markdown)
-
 	if err != nil {
-		t.Fatalf("Error should be nil for this test (Error: %s)", err)
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
-	if wm.Size() != 2 {
-		t.Fatalf("The WordMap size should be 2 (was %d)", wm.Size())
+	expected := make([][]string, 2)
+	expected[0] = []string{from0, to0}
+	expected[1] = []string{from1, to1}
+	checkWordMap(t, wm, expected)
+}
+
+func TestMarkDownManyColumns(t *testing.T) {
+	from01, from02, to0 := "cat", "doggy", "cat"
+	from11, from12, to1 := "horse", "donkey", "zebra"
+	markdown := fmt.Sprintf(`
+		| from 1 | from 2 | to  |
+		| ------ | ------ | --- |
+		| %s     | %s     | %s  |
+		| %s     | %s     | %s  |
+	`, from01, from02, to0, from11, from12, to1)
+
+	wm, err := parseMarkDownFile(&markdown)
+	if err != nil {
+		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
-	actual, expected := wm.GetFrom(0), "zebra"
-	if actual != expected {
-		t.Errorf("Incorrect from-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetTo(0), "horse"
-	if actual != expected {
-		t.Errorf("Incorrect to-value at index 0 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetFrom(1), "dog"
-	if actual != expected {
-		t.Errorf("Incorrect from-value at index 1 (actual %s)", actual)
-	}
-
-	actual, expected = wm.GetTo(1), "cat"
-	if actual != expected {
-		t.Errorf("Incorrect to-value at index 1 (actual %s)", actual)
-	}
+	expected := make([][]string, 4)
+	expected[0] = []string{from01, to0}
+	expected[1] = []string{from02, to0}
+	expected[2] = []string{from11, to1}
+	expected[3] = []string{from12, to1}
+	checkWordMap(t, wm, expected)
 }
 
 func TestMarkDownEmptyColumnValues(t *testing.T) {
 	t.Run("Empty from value", func(t *testing.T) {
 		markdown := `
-      | from | to  |
-      | ---- | --- |
-      |      | bar |
-    `
+			| from | to  |
+			| ---- | --- |
+			| from | to  |
+			|      | bar |
+			| from | to  |
+		`
 
 		_, err := parseMarkDownFile(&markdown)
 
 		if err == nil {
-			t.Errorf("Error should be set if the from value is empty")
+			t.Fatalf("Error should be set if the from value is empty")
 		}
 	})
 	t.Run("Empty to value", func(t *testing.T) {
 		markdown := `
-      | from | to |
-      | ---- | -- |
-      | foo  |    |
-    `
+			| from | to |
+			| ---- | -- |
+			| from | to |
+			| foo  |    |
+			| from | to |
+		`
 
 		_, err := parseMarkDownFile(&markdown)
 
 		if err == nil {
-			t.Errorf("Error should be set if the to value is empty")
+			t.Fatalf("Error should be set if the to value is empty")
 		}
 	})
 }
 
 func TestMarkDownIncorrectHeader(t *testing.T) {
 	markdown := `
-    | foo |
-    | --- | --- |
-    | cat | dog |
-  `
+		| foo |
+		| --- | --- |
+		| cat | dog |
+	`
 
 	_, err := parseMarkDownFile(&markdown)
 
@@ -163,15 +147,15 @@ func TestMarkDownIncorrectHeader(t *testing.T) {
 	}
 
 	if !strings.Contains(err.Error(), "Incorrect table header") {
-		t.Errorf("Incorrect error message for (actual '%s')", err)
+		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
 
 func TestMarkDownMissingDivider(t *testing.T) {
 	markdown := `
-    | foo | bar |
-    | cat | dog |
-  `
+		| foo | bar |
+		| cat | dog |
+	`
 
 	_, err := parseMarkDownFile(&markdown)
 
@@ -180,16 +164,16 @@ func TestMarkDownMissingDivider(t *testing.T) {
 	}
 
 	if !strings.Contains(err.Error(), "Missing table header divider") {
-		t.Errorf("Incorrect error message for (actual '%s')", err)
+		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
 
 func TestMarkDownIncorrectDivider(t *testing.T) {
 	markdown := `
-    | foo | bar |
-    | --- |
-    | cat | dog |
-  `
+		| foo | bar |
+		| --- |
+		| cat | dog |
+	`
 
 	_, err := parseMarkDownFile(&markdown)
 
@@ -198,15 +182,15 @@ func TestMarkDownIncorrectDivider(t *testing.T) {
 	}
 
 	if !strings.Contains(err.Error(), "Missing table header divider") {
-		t.Errorf("Incorrect error message for (actual '%s')", err)
+		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
 
 func TestMarkDownMissingTableBody(t *testing.T) {
 	markdown := `
-    | foo | bar |
-    | --- | --- |
-  `
+		| foo | bar |
+		| --- | --- |
+	`
 
 	_, err := parseMarkDownFile(&markdown)
 
@@ -215,26 +199,20 @@ func TestMarkDownMissingTableBody(t *testing.T) {
 	}
 
 	if !strings.Contains(err.Error(), "Missing table body") {
-		t.Errorf("Incorrect error message for (actual '%s')", err)
+		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
 
-func TestMarkDownIncorrectTableRow(t *testing.T) {
+func TestMarkdownIncompleteTableEndOfFile(t *testing.T) {
 	markdown := `
-    | foo   | bar   |
-    | ----- | ----- |
-    | dog   | cat   |
-    | hello | world | ! |
-    | horse | zebra |
-  `
+		# Foobar
+
+		| foo | bar |
+	`
 
 	_, err := parseMarkDownFile(&markdown)
 
 	if err == nil {
-		t.Fatal("Error should be set for table row with incorrect number of columns")
-	}
-
-	if !strings.Contains(err.Error(), "Unexpected table row format") {
-		t.Errorf("Incorrect error message for (actual '%s')", err)
+		t.Fatal("Error should be set for incomplete table at the end of the file")
 	}
 }

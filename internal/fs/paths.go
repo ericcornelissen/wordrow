@@ -1,14 +1,14 @@
 package fs
 
-import "os"
-import "path"
-import "path/filepath"
-import "regexp"
+import (
+	"os"
+	"path/filepath"
+	"regexp"
 
-import "github.com/ericcornelissen/wordrow/internal/errors"
-import "github.com/ericcornelissen/wordrow/internal/logger"
-
-import "github.com/yargevad/filepathx"
+	"github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/yargevad/filepathx"
+)
 
 // Regular expression for glob strings.
 var globExpr = regexp.MustCompile(`[\*\?\[\]]`)
@@ -26,8 +26,8 @@ func getCwd() string {
 	return cwd
 }
 
-// Get the extension of a file give the file path.
-func getExt(path string) string {
+// GetExt returns the extension of a given file path.
+func GetExt(path string) string {
 	return filepath.Ext(path)
 }
 
@@ -52,32 +52,4 @@ func ResolveGlobs(patterns ...string) (paths []string, rerr error) {
 	}
 
 	return paths, rerr
-}
-
-// ResolvePath resolves a single absolute or relative path to an absolute path.
-//
-// The function panics if the (current) working directory is needed but could
-// not be found.
-func ResolvePath(inputPath string) string {
-	if filepath.IsAbs(inputPath) {
-		return inputPath
-	}
-
-	outputPath := path.Join(getCwd(), inputPath)
-	return outputPath
-}
-
-// ResolvePaths resolves any number of absolute or relative paths to absolute
-// paths only.
-//
-// The function panics if the (current) working directory is needed but could
-// not be found.
-func ResolvePaths(inputPaths ...string) []string {
-	var paths []string
-	for _, inputPath := range inputPaths {
-		outputPath := ResolvePath(inputPath)
-		paths = append(paths, outputPath)
-	}
-
-	return paths
 }

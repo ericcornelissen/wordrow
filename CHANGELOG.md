@@ -7,6 +7,36 @@ Versioning].
 
 ## [Unreleased]
 
+### Features
+
+- Add functionality to map many words to one word. ([#65])
+- Add option to specify multiple flags at once. ([#72])
+
+### Bug Fixes
+
+- Remove double newline in program logs. ([#78])
+
+### Documentation
+
+- Update use of outdated CLI argument name. ([#67])
+- Update use of outdated term in CLI help message. ([#71])
+
+## [0.4.0-beta] - 2020-05-27
+
+### Features
+
+- Add option to explicitly state map file format. ([#46], [#57])
+- Add support for more extensions as MarkDown map file. ([#50])
+- Allow file extension of map files to be upper or mixed case. ([#55])
+- Allow for replacing hyphens through escaping with backslash. ([#61])
+
+### Bug Fixes
+
+- Fix program crash due to empty CLI argument. ([#42])
+- Fix program crash because of an incomplete MarkDown file. ([#58])
+
+## [0.3.0-beta] - 2020-05-03
+
 ### Breaking Changes
 
 - Rename `--map` and `-m` to `--map-file` and `-M` respectively. ([#30])
@@ -59,3 +89,15 @@ Versioning].
 [#30]: https://github.com/ericcornelissen/wordrow/pull/30
 [#31]: https://github.com/ericcornelissen/wordrow/pull/31
 [#37]: https://github.com/ericcornelissen/wordrow/pull/37
+[#42]: https://github.com/ericcornelissen/wordrow/pull/42
+[#46]: https://github.com/ericcornelissen/wordrow/pull/46
+[#50]: https://github.com/ericcornelissen/wordrow/pull/50
+[#55]: https://github.com/ericcornelissen/wordrow/pull/55
+[#57]: https://github.com/ericcornelissen/wordrow/pull/57
+[#58]: https://github.com/ericcornelissen/wordrow/pull/58
+[#61]: https://github.com/ericcornelissen/wordrow/pull/61
+[#65]: https://github.com/ericcornelissen/wordrow/pull/65
+[#67]: https://github.com/ericcornelissen/wordrow/pull/67
+[#71]: https://github.com/ericcornelissen/wordrow/pull/71
+[#72]: https://github.com/ericcornelissen/wordrow/pull/72
+[#78]: https://github.com/ericcornelissen/wordrow/pull/78

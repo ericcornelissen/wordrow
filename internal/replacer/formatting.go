@@ -1,8 +1,11 @@
 package replacer
 
-import "regexp"
-import "strings"
-import "unicode"
+import (
+	"regexp"
+	"unicode"
+
+	"github.com/ericcornelissen/wordrow/internal/strings"
+)
 
 // A Regular Expression that matches newlines.
 var newlineExpr = regexp.MustCompile(`\r|\n|\r\n`)

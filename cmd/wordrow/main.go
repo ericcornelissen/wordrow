@@ -1,15 +1,15 @@
 package main
 
-import "bufio"
-import "os"
-import "strings"
+import (
+	"bufio"
+	"os"
+	"strings"
 
-import "github.com/ericcornelissen/wordrow/internal/cli"
-import "github.com/ericcornelissen/wordrow/internal/errors"
-import "github.com/ericcornelissen/wordrow/internal/fs"
-import "github.com/ericcornelissen/wordrow/internal/logger"
-import "github.com/ericcornelissen/wordrow/internal/replacer"
-import "github.com/ericcornelissen/wordrow/internal/wordmaps"
+	"github.com/ericcornelissen/wordrow/internal/cli"
+	"github.com/ericcornelissen/wordrow/internal/fs"
+	"github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/ericcornelissen/wordrow/internal/replacer"
+)
 
 // Check if the program received input from STDIN.
 //
@@ -23,67 +23,26 @@ func hasStdin() bool {
 	return (fi.Mode() & os.ModeNamedPipe) != 0
 }
 
-func getWordMap(
-	mapFilesPaths []string,
-	cliMappings []string,
-) (wm wordmaps.WordMap, err error) {
-	logger.Debug("Reading specified mapping files")
-	mapFiles, err := fs.ReadFiles(mapFilesPaths)
-	if err != nil {
-		return wm, err
-	}
-
-	for _, mapFile := range mapFiles {
-		logger.Debugf("Processing '%s' as mapping file", mapFile.Path)
-		err := wm.AddFile(mapFile)
-		if err != nil {
-			return wm, err
-		}
-	}
-
-	logger.Debug("Processing CLI specified mappings")
-	for _, mapping := range cliMappings {
-		logger.Debugf("Processing CLI specified mapping: '%s'", mapping)
-
-		values := strings.Split(mapping, ",")
-		if len(values) != 2 {
-			return wm, errors.Newf("Incorrect mapping from CLI: '%s'", mapping)
-		}
-
-		wm.AddOne(values[0], values[1])
-	}
-
-	return wm, err
-}
-
 func run(args cli.Arguments) error {
-	wm, err := getWordMap(args.MapFiles, args.Mappings)
+	wordmap, err := getWordMap(args.MapFiles, args.Mappings)
 	if err != nil {
 		return err
 	}
 
 	if args.Invert {
-		wm.Invert()
+		wordmap.Invert()
 	}
 
-	inputFiles, err := fs.ReadFiles(args.InputFiles)
+	filePaths, err := fs.ResolveGlobs(args.InputFiles...)
 	if err != nil {
 		return err
 	}
 
-	for _, file := range inputFiles {
-		logger.Debugf("Processing '%s' as input file", file.Path)
-		fixedFileData := replacer.ReplaceAll(file.Content, wm)
-
-		if !args.DryRun {
-			fs.WriteFile(file.Path, fixedFileData)
-		} else {
-			logger.Printf("Before:\n-------\n%s\n", file.Content)
-			logger.Printf("After:\n------\n%s", fixedFileData)
-		}
+	if !args.DryRun {
+		err = processInputFiles(filePaths, &wordmap)
 	}
 
-	return nil
+	return err
 }
 
 func runOnStdin(args cli.Arguments, input string) error {
@@ -112,6 +71,10 @@ func setLogLevel(args cli.Arguments) {
 
 func main() {
 	shouldRun, args := cli.ParseArgs(os.Args)
+
+	if args.Version {
+		printVersion()
+	}
 
 	if hasStdin() {
 		logger.SetLogLevel(logger.FATAL)

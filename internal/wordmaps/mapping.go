@@ -1,14 +1,18 @@
 package wordmaps
 
-import "fmt"
-import "regexp"
+import (
+	"fmt"
+	"regexp"
+
+	"github.com/ericcornelissen/wordrow/internal/strings"
+)
 
 // A Regular Expression that matches groups of whitespace characters.
 var whitespaceExpr = regexp.MustCompile(`(\s+)`)
 
 // Check if a string ends with the suffix symbol.
 func endsWithSuffixSymbol(s string) bool {
-	return s[len(s)-1:] == "-"
+	return strings.HasSuffix(s, `-`) && !strings.HasSuffix(s, `\-`)
 }
 
 // Remove the prefix and suffix symbols from a string. If the symbols are not
@@ -29,7 +33,7 @@ func removePrefixAndSuffixSymbols(s string) string {
 
 // Check if a string starts with the prefix symbol.
 func startsWithPrefixSymbol(s string) bool {
-	return s[0:1] == "-"
+	return strings.HasPrefix(s, `-`) && !strings.HasPrefix(s, `\-`)
 }
 
 // The Match type represents a matching substring in a larger string of a
@@ -41,7 +45,7 @@ type Match struct {
 	// The matched word as it appears in the original string.
 	Word string
 
-	// The replacement of the Word based on the mapping that created the Match.
+	// The replacement of the Word based on the WordMap that created the Match.
 	Replacement string
 
 	// The prefix of the matched Word.
@@ -50,10 +54,10 @@ type Match struct {
 	// The suffix of the matched Word.
 	Suffix string
 
-	// The starting index of the (full) match in the original string.
+	// The starting index of the (Full) match in the original string.
 	Start int
 
-	// The ending index of the (full) match in the original string.
+	// The ending index of the (Full) match in the original string.
 	End int
 }
 
@@ -66,6 +70,7 @@ func getAllMatches(s, substr string) chan Match {
 		defer close(ch)
 
 		strToMatch := whitespaceExpr.ReplaceAllString(substr, `\s+`)
+
 		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, strToMatch)
 		expr := regexp.MustCompile(rawExpr)
 
@@ -90,19 +95,19 @@ func getAllMatches(s, substr string) chan Match {
 }
 
 // The Mapping type provides a guaranteed mapping from one string to another. As
-// well as functionality to find matches in a string.
+// well as functionality to find matches in a target string.
 type Mapping struct {
 	// The Mapping's "from" value. I.e. the value it wants to replace.
 	from string
 
-	// The Mapping's "to" value. I.e. he value it wants to repace "from" with.
+	// The Mapping's "to" value. I.e. the value it wants to repace "from" with.
 	to string
 }
 
 // Get the replacement value, given a prefix and suffix. The return value will
 // be the "to" value including, if necessary, the prefix and suffix.
 //
-// The prefix and suffix can always be an empty string.
+// The prefix and suffix can be an empty string.
 func (mapping *Mapping) getReplacement(prefix, suffix string) string {
 	replacement := mapping.GetTo()
 
@@ -131,22 +136,22 @@ func (mapping *Mapping) isValid(match Match) bool {
 	return true
 }
 
-// Check if the mapping wants to keep the suffix in the replacement value.
+// Check if the Mapping wants to keep the suffix in the replacement value.
 func (mapping *Mapping) keepPrefix() bool {
 	return startsWithPrefixSymbol(mapping.to)
 }
 
-// Check if the mapping wants to keep the suffix in the replacement value.
+// Check if the Mapping wants to keep the suffix in the replacement value.
 func (mapping *Mapping) keepSuffix() bool {
 	return endsWithSuffixSymbol(mapping.to)
 }
 
-// Check if the mapping includes matches if they have a prefix.
+// Check if the Mapping includes matches if they have a prefix.
 func (mapping *Mapping) mayIncludePrefix() bool {
 	return startsWithPrefixSymbol(mapping.from)
 }
 
-// Check if the mapping includes matches if they have a suffix.
+// Check if the Mapping includes matches if they have a suffix.
 func (mapping *Mapping) mayIncludeSuffix() bool {
 	return endsWithSuffixSymbol(mapping.from)
 }
@@ -161,7 +166,8 @@ func (mapping *Mapping) GetTo() string {
 	return removePrefixAndSuffixSymbols(mapping.to)
 }
 
-// Match finds matches of the "from" value of the Mapping in a string.
+// Match finds matches of the "from" value of the Mapping in a target string and
+// returns an iterable of all matches found.
 func (mapping *Mapping) Match(s string) chan Match {
 	ch := make(chan Match)
 

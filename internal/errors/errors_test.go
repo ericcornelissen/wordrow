@@ -1,7 +1,9 @@
 package errors
 
-import "fmt"
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func ExampleNew() {
 	err := New("foobar")
@@ -19,7 +21,7 @@ func TestNew(t *testing.T) {
 	err := New("foobar")
 
 	if err == nil {
-		t.Error("Error should not be nil")
+		t.Fatal("Error should not be nil")
 	}
 
 	if err.Error() != "foobar" {
@@ -31,7 +33,7 @@ func TestNewf(t *testing.T) {
 	err := Newf("foo%s", "bar")
 
 	if err == nil {
-		t.Error("Error should not be nil")
+		t.Fatal("Error should not be nil")
 	}
 
 	if err.Error() != "foobar" {
