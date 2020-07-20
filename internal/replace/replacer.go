@@ -40,9 +40,9 @@ func replaceOne(s string, mapping wordmaps.Mapping) string {
 	return sb.String()
 }
 
-// All replaces substrings of `s` according to the mapping in `wm`.
-func All(s string, wp wordmaps.WordMap) string {
-	for mapping := range wp.Iter() {
+// All replaces substrings of `s` according to the mapping in `wordmap`.
+func All(s string, wordmap wordmaps.WordMap) string {
+	for mapping := range wordmap.Iter() {
 		s = replaceOne(s, mapping)
 	}
 
