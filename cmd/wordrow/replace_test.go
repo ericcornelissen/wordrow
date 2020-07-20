@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	ostrings "strings"
 	"testing"
 	"testing/iotest"
 
@@ -128,7 +127,7 @@ func TestProcessFile(t *testing.T) {
 	})
 	t.Run("Replace nothing", func(t *testing.T) {
 		content := "foobar"
-		if ostrings.Contains(content, from0) || ostrings.Contains(content, from1) {
+		if strings.Contains(content, from0) || strings.Contains(content, from1) {
 			t.Fatal("Content cannot contain a string that may be replaced")
 		}
 
