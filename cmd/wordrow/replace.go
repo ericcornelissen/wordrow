@@ -10,58 +10,64 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
-// Do change the contents of `reader` based on the `wordmap`.
+// Reads the contents from the `reader` and updates the content based on the
+// `wordmap`.
 func doReplace(
 	reader fs.Reader,
 	wordmap *wordmaps.WordMap,
-) (fixedText string, er error) {
+) (updatedContent string, er error) {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
-		return fixedText, err
+		return updatedContent, err
 	}
 
 	content := string(data)
 	return replacer.ReplaceAll(content, *wordmap), nil
 }
 
-// Do write back the `updatedContents` to `writer`.
+// Writes the `updatedContents` to the `writer`.
 func doWriteBack(writer fs.Writer, updatedContent string) error {
 	data := []byte(updatedContent)
 	_, err := writer.Write(data)
 	return err
 }
 
-// Process `file` by reading its content, changed that based on the `wordmap`,
-// and writing the updated content back.
+// Process `file` by reading its content, changing that based on the `wordmap`,
+// and writing the updated content back to `file`.If a reading or writing error
+// occurs this function returns an error.
 func processFile(file fs.ReadWriter, wordmap *wordmaps.WordMap) error {
 	logger.Debugf("Reading '%s' and replacing words", file)
-	fixedText, err := doReplace(file, wordmap)
+	updatedContent, err := doReplace(file, wordmap)
 	if err != nil {
-		return errors.New("Could not read from file")
+		return errors.Newf("Could not read from file '%s'", file)
 	}
 
 	logger.Debugf("Writing updated contents to '%s'", file)
-	err = doWriteBack(file, fixedText)
+	err = doWriteBack(file, updatedContent)
 	if err != nil {
-		return errors.New("Could not write to file")
+		return errors.Newf("Could not write to file '%s'", file)
 	}
 
 	return nil
 }
 
-// Open the specified input file and process it.
+// Open the file specified by `filePath` and process it using the `wordmap`. If
+// opening the file fails or a reading or writing error occurs this function
+// returns an error.
 func openAndProcessFile(filePath string, wordmap *wordmaps.WordMap) error {
 	logger.Debugf("Opening '%s'", filePath)
 	handle, err := fs.OpenFile(filePath, fs.OReadWrite)
 	if err != nil {
-		return errors.Newf("Could not open '%s' in %s mode", filePath, fs.OReadWrite)
+		return errors.Newf("Could not open '%s' (%s mode)", filePath, fs.OReadWrite)
 	}
 
 	defer handle.Close()
 	return processFile(handle, wordmap)
 }
 
-// Update the contents of all specified files based on the `wordmap`.
+// Update the contents of all files specified by `filePaths` based on the
+// `wordmap`. If any reading or writing error occurs this function will return
+// an error immediately.
 func processInputFiles(filePaths []string, wordmap *wordmaps.WordMap) error {
 	for _, filePath := range filePaths {
 		logger.Debugf("Processing '%s'", filePath)

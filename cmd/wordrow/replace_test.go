@@ -3,7 +3,9 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"os"
+	ostrings "strings"
 	"testing"
 	"testing/iotest"
 
@@ -50,6 +52,18 @@ func TestDoReplace(t *testing.T) {
 			t.Error("Expected an error but didn't get one")
 		}
 	})
+	t.Run("Empty reader", func(t *testing.T) {
+		handle := strings.NewReader("")
+
+		fixed, err := doReplace(handle, &wordmap)
+		if err != nil {
+			t.Fatalf("Unexpected error for reader (%s)", err)
+		}
+
+		if fixed != "" {
+			t.Errorf("Updated content should have been empty (got '%s')", fixed)
+		}
+	})
 }
 
 func TestDoWriteBack(t *testing.T) {
@@ -69,6 +83,10 @@ func TestDoWriteBack(t *testing.T) {
 		}
 	})
 	t.Run("Writing error", func(t *testing.T) {
+		if len(content) < 2 {
+			t.Fatal("Content must be at least 2 bytes to ensure the writer errors")
+		}
+
 		handle := iotest.TruncateWriter(os.Stdin, 1)
 
 		err := doWriteBack(handle, content)
@@ -80,11 +98,16 @@ func TestDoWriteBack(t *testing.T) {
 
 func TestProcessFile(t *testing.T) {
 	var wordmap wordmaps.WordMap
-	wordmap.AddOne("hello", "hey")
-	wordmap.AddOne("world", "planet")
+
+	from0, to0 := "hello", "hey"
+	wordmap.AddOne(from0, to0)
+
+	from1, to1 := "world", "planet"
+	wordmap.AddOne(from1, to1)
 
 	t.Run("Replace something", func(t *testing.T) {
-		content := "Hello world!"
+		content := fmt.Sprintf("%s %s", from0, from1)
+		expectedWritten := fmt.Sprintf("%s %s", to0, to1)
 
 		reader := strings.NewReader(content)
 		writer := new(bytes.Buffer)
@@ -99,12 +122,15 @@ func TestProcessFile(t *testing.T) {
 
 		bufferedWriter.Flush()
 		written := writer.Bytes()
-		if string(written) != "Hey planet!" {
+		if string(written) != expectedWritten {
 			t.Errorf("Unexpected value written (got '%s')", written)
 		}
 	})
 	t.Run("Replace nothing", func(t *testing.T) {
 		content := "foobar"
+		if ostrings.Contains(content, from0) || ostrings.Contains(content, from1) {
+			t.Fatal("Content cannot contain a string that may be replaced")
+		}
 
 		reader := strings.NewReader(content)
 		writer := new(bytes.Buffer)
@@ -139,7 +165,7 @@ func TestProcessFile(t *testing.T) {
 
 		bufferedWriter.Flush()
 		written := writer.Bytes()
-		if !strings.IsEmpty(string(written)) {
+		if string(written) != "" {
 			t.Errorf("Unexpected value written (got '%s')", written)
 		}
 	})

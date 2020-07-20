@@ -23,9 +23,9 @@ import (
 func parseMapFileArgument(argument string) (filePath string, format string) {
 	fileExtension := fs.GetExt(argument)
 
-	tmp := strings.Split(fileExtension, ":")
-	if len(tmp) > 1 {
-		explicitFormat := tmp[len(tmp)-1]
+	fileExtensionSplit := strings.Split(fileExtension, ":")
+	if len(fileExtensionSplit) > 1 {
+		explicitFormat := fileExtensionSplit[len(fileExtensionSplit)-1]
 		filePath := strings.TrimSuffix(argument, ":"+explicitFormat)
 		return filePath, explicitFormat
 	}
@@ -33,8 +33,9 @@ func parseMapFileArgument(argument string) (filePath string, format string) {
 	return argument, fileExtension
 }
 
-// Add the mapping of a map file to the `wordmap`. The `format` argument
-// determines how the contents of the file are parsed.
+// Add the mapping of `reader` to the `wordmap`. The `format` argument
+// determines how the contents of the file are parsed. This function returns an
+// error if either the reading or parsing fails.
 func processMapFile(
 	reader fs.Reader,
 	format string,
@@ -49,7 +50,9 @@ func processMapFile(
 	return wordmap.AddFile(&content, format)
 }
 
-// Open a map file and add its mapping to the `wordmap`.
+// Open the map file specified by `fileArgument` and add its mapping to the
+// `wordmap`. If the file cannot be opened or processing failed the function
+// returns an error.
 func openAndProcessMapFile(
 	fileArgument string,
 	wordmap *wordmaps.WordMap,
@@ -59,19 +62,22 @@ func openAndProcessMapFile(
 	logger.Debugf("Opening '%s' as a '%s' formatted map file", filePath, format)
 	handle, err := fs.OpenFile(filePath, fs.OReadOnly)
 	if err != nil {
-		return errors.Newf("Could not open '%s' in %s mode", filePath, fs.OReadOnly)
+		return errors.Newf("Could not open '%s' (%s mode)", filePath, fs.OReadOnly)
 	}
 
 	defer handle.Close()
 	return processMapFile(handle, format, wordmap)
 }
 
-// Open the specified map files and add their mapping to the `wordmap`.
+// Open the map files specified by `filePaths` and add their mapping to the
+// `wordmap`. If any map file is invalid this function will return an error
+// immediately (with a partially updated `wordmap`).
 func openAndProcessMapFiles(
 	filePaths []string,
 	wordmap *wordmaps.WordMap,
 ) error {
 	for _, filePath := range filePaths {
+		logger.Debugf("Processing '%s' as a map file", filePath)
 		err := openAndProcessMapFile(filePath, wordmap)
 		if err != nil {
 			return err
@@ -81,9 +87,9 @@ func openAndProcessMapFiles(
 	return nil
 }
 
-// Add a CLI defined mapping to the `wordmap`.
+// Add a CLI defined mapping to the `wordmap`. If the mapping is invalid this
+// function returns an error (and leave `wordmap` unchanged).
 func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
-	logger.Debugf("Processing the CLI defined mapping '%s'", mapping)
 	values := strings.Split(mapping, ",")
 	if len(values) != 2 {
 		return errors.Newf("Invalid CLI defined mapping '%s'", mapping)
@@ -93,9 +99,12 @@ func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
 	return nil
 }
 
-// Add the CLI defined mappings to the `wordmap`.
+// Add all CLI defined mappings to the `wordmap`. If any mapping is invalid this
+// function will return an error immediately (with a partially updated
+// `wordmap`).
 func processInlineMappings(mappings []string, wordmap *wordmaps.WordMap) error {
 	for _, mapping := range mappings {
+		logger.Debugf("Processing '%s' as a CLI specified mapping", mapping)
 		err := processInlineMapping(mapping, wordmap)
 		if err != nil {
 			return err
@@ -105,7 +114,8 @@ func processInlineMappings(mappings []string, wordmap *wordmaps.WordMap) error {
 	return nil
 }
 
-// Get a WordMap for the specified map files and inline mappings.
+// Get a WordMap for the specified `mapFiles` and `inlineMappings`. If either
+// contains an invalid mapping this function will return an error immediately.
 func getWordMap(
 	mapFiles []string,
 	inlineMappings []string,
