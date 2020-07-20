@@ -6,37 +6,28 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/cli"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/replacer"
 )
 
 func run(args cli.Arguments) error {
-	wm, err := getWordMap(args.MapFiles, args.Mappings)
+	wordmap, err := getWordMap(args.MapFiles, args.Mappings)
 	if err != nil {
 		return err
 	}
 
 	if args.Invert {
-		wm.Invert()
+		wordmap.Invert()
 	}
 
-	inputFiles, err := fs.ReadFiles(args.InputFiles)
+	filePaths, err := fs.ResolveGlobs(args.InputFiles...)
 	if err != nil {
 		return err
 	}
 
-	for _, file := range inputFiles {
-		logger.Debugf("Processing '%s' as input file", file.Path)
-		fixedFileData := replacer.ReplaceAll(file.Content, wm)
-
-		if !args.DryRun {
-			fs.WriteFile(file.Path, fixedFileData)
-		} else {
-			logger.Printf("Before:\n-------\n%s\n", file.Content)
-			logger.Printf("After:\n------\n%s", fixedFileData)
-		}
+	if !args.DryRun {
+		err = processInputFiles(filePaths, &wordmap)
 	}
 
-	return nil
+	return err
 }
 
 func setLogLevel(args cli.Arguments) {
