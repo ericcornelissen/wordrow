@@ -56,6 +56,46 @@ func TestAny(t *testing.T) {
 	})
 }
 
+func TestContains(t *testing.T) {
+	t.Run("String contains substring", func(t *testing.T) {
+		substr := "foo"
+		s := fmt.Sprintf("%sbar", substr)
+
+		result := Contains(s, substr)
+		if result != true {
+			t.Error("Expected result to be true")
+		}
+	})
+	//Add "Contains" function to package strings
+	t.Run("String does not contain substring", func(t *testing.T) {
+		substr := "foo"
+		s := "bar"
+
+		result := Contains(s, substr)
+		if result != false {
+			t.Error("Expected result to be false")
+		}
+	})
+	t.Run("Empty input string", func(t *testing.T) {
+		substr := "bar"
+		s := ""
+
+		result := Contains(s, substr)
+		if result != false {
+			t.Error("Expected result to be false")
+		}
+	})
+	t.Run("Empty query string", func(t *testing.T) {
+		substr := ""
+		s := "If you see a rat the size of a car, you're playing the wrong game"
+
+		result := Contains(s, substr)
+		if result != true {
+			t.Error("Expected result to be true")
+		}
+	})
+}
+
 func TestFields(t *testing.T) {
 	result := Fields("foo bar")
 
