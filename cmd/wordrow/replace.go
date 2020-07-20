@@ -22,7 +22,7 @@ func doReplace(
 	}
 
 	content := string(data)
-	return replace.ReplaceAll(content, *wordmap), nil
+	return replace.All(content, *wordmap), nil
 }
 
 // Writes the `updatedContents` to the `writer`.
