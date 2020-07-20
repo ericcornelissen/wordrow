@@ -1,5 +1,5 @@
 /*
-Package replacer provides a function to smart replace strings in plaintext. To
+Package replace provides a function to smart replace strings in plaintext. To
 this end it provides one function that accepts a string and a mapping and
 returns the string with all words of the mapping replaced.
 
@@ -13,7 +13,7 @@ original text. Namely:
  • Maintain capitalization of words.
  • Maintain newline characters.
 */
-package replacer
+package replace
 
 import (
 	"github.com/ericcornelissen/wordrow/internal/strings"
@@ -40,9 +40,9 @@ func replaceOne(s string, mapping wordmaps.Mapping) string {
 	return sb.String()
 }
 
-// ReplaceAll replaces substrings of `s` according to the mapping in `wm`.
-func ReplaceAll(s string, wp wordmaps.WordMap) string {
-	for mapping := range wp.Iter() {
+// All replaces substrings of `s` according to the mapping in `wordmap`.
+func All(s string, wordmap wordmaps.WordMap) string {
+	for mapping := range wordmap.Iter() {
 		s = replaceOne(s, mapping)
 	}
 
