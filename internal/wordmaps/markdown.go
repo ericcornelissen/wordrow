@@ -3,6 +3,7 @@ package wordmaps
 import (
 	"regexp"
 
+	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
@@ -22,14 +23,14 @@ func isTableRow(row string) bool {
 func parseTableRow(row string) ([]string, error) {
 	rowValues := strings.Split(row, "|")
 	if len(rowValues) < 4 {
-		return nil, &parseError{"Unexpected table row format", row}
+		return nil, errors.Newf("Unexpected table row format (in '%s')", row)
 	}
 
 	rowValues = rowValues[1 : len(rowValues)-1]
 
 	strings.Map(rowValues, strings.TrimSpace)
 	if strings.Any(rowValues, strings.IsEmpty) {
-		return nil, &parseError{"Missing value", row}
+		return nil, errors.Newf("Missing value (in '%s')", row)
 	}
 
 	return rowValues, nil
@@ -45,13 +46,13 @@ func parseTableHeader(tableLines []string) (rerr error) {
 	firstTableRow := tableLines[2]
 
 	if _, err := parseTableRow(headerLine); err != nil {
-		rerr = &parseError{"Incorrect table header", headerLine}
+		rerr = errors.Newf("Incorrect table header (in '%s')", headerLine)
 	} else if _, err = parseTableRow(dividerLine); err != nil {
-		rerr = &parseError{"Missing table header divider", dividerLine}
+		rerr = errors.Newf("Missing table divider (in '%s')", dividerLine)
 	} else if tableDividerExpr.MatchString(dividerLine) == false {
-		rerr = &parseError{"Missing table header divider", dividerLine}
+		rerr = errors.Newf("Missing table divider (in '%s')", dividerLine)
 	} else if _, err = parseTableRow(firstTableRow); err != nil {
-		rerr = &parseError{"Missing table body", firstTableRow}
+		rerr = errors.Newf("Missing table body (in '%s')", firstTableRow)
 	}
 
 	return rerr
@@ -63,7 +64,7 @@ func parseTableHeader(tableLines []string) (rerr error) {
 // format.
 func parseTable(tableLines []string, wm *WordMap) (int, error) {
 	if len(tableLines) < 3 {
-		return 0, &parseError{"Incomplete table", tableLines[0]}
+		return 0, errors.Newf("Incomplete table (starting at '%s')", tableLines[0])
 	}
 
 	if err := parseTableHeader(tableLines); err != nil {
