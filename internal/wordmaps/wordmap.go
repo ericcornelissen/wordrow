@@ -107,7 +107,8 @@ func (wm *WordMap) Invert() {
 	wm.to = tmp
 }
 
-// Iter returns the contents of the WordMap as an iterable.
+// Iter returns the contents of the WordMap as an iterable. Note that the order
+// of the iterable is not fixed.
 func (wm *WordMap) Iter() map[string]string {
 	m := make(map[string]string, wm.Size())
 
