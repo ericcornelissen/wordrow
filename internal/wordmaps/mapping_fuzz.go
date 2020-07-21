@@ -2,7 +2,10 @@
 
 package wordmaps
 
-import "strings"
+import (
+	"strings"
+	"unicode/utf8"
+)
 
 func FuzzMapping(_data []byte) int {
 	data := string(_data)
@@ -10,6 +13,10 @@ func FuzzMapping(_data []byte) int {
 
 	substr := tmp[0]
 	s := strings.Join(tmp[1:], "\n")
+
+	if !utf8.ValidString(substr) {
+		return -1 // Ignore substrings that contain non-UTF8 characters for now
+	}
 
 	if substr == "" || s == "" {
 		return -1
