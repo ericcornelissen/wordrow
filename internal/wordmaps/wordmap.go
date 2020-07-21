@@ -109,19 +109,15 @@ func (wm *WordMap) Invert() {
 }
 
 // Iter returns the contents of the WordMap as an iterable.
-func (wm *WordMap) Iter() chan Mapping {
-	ch := make(chan Mapping, wm.Size())
+func (wm *WordMap) Iter() map[string]string {
+	m := make(map[string]string, wm.Size())
 
-	go func() {
-		defer close(ch)
+	for i := 0; i < wm.Size(); i++ {
+		from, to := wm.from[i], wm.to[i]
+		m[from] = to
+	}
 
-		for i := 0; i < wm.Size(); i++ {
-			from, to := wm.from[i], wm.to[i]
-			ch <- Mapping{from, to}
-		}
-	}()
-
-	return ch
+	return m
 }
 
 // Size returns the size of the WordMap. I.e. the number of words mapped from

@@ -21,8 +21,9 @@ import (
 )
 
 // Replace all instances of `from` by `to` in `s`.
-func replaceOne(s string, mapping wordmaps.Mapping) string {
+func replaceOne(s, from, to string) string {
 	var sb strings.Builder
+	mapping := Mapping{from, to}
 
 	lastIndex := 0
 	for match := range mapping.Match(s) {
@@ -42,8 +43,8 @@ func replaceOne(s string, mapping wordmaps.Mapping) string {
 
 // All replaces substrings of `s` according to the mapping in `wordmap`.
 func All(s string, wordmap wordmaps.WordMap) string {
-	for mapping := range wordmap.Iter() {
-		s = replaceOne(s, mapping)
+	for from, to := range wordmap.Iter() {
+		s = replaceOne(s, from, to)
 	}
 
 	return s

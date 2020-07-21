@@ -197,12 +197,12 @@ func TestWordMapIter(t *testing.T) {
 	expectedTo := []string{to0, to1}
 
 	i := 0
-	for mapping := range wm.Iter() {
-		if mapping.from != expectedFrom[i] {
-			t.Errorf("Incorrect from-value at index %d (got '%s')", i, mapping.from)
+	for from, to := range wm.Iter() {
+		if from != expectedFrom[i] {
+			t.Errorf("Incorrect from-value at index %d (got '%s')", i, from)
 		}
-		if mapping.to != expectedTo[i] {
-			t.Errorf("Incorrect to-value at index %d (got '%s')", i, mapping.to)
+		if to != expectedTo[i] {
+			t.Errorf("Incorrect to-value at index %d (got '%s')", i, to)
 		}
 
 		i++
