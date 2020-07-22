@@ -79,7 +79,7 @@ lint-md:
 clean:
 	rm -rf $(executable_file)*
 	rm -rf $(coverage_file)
-	rm -rf **/*/*-fuzz.zip
-	rm -rf **/*/_fuzz/
+	rm `find ./ -name '_fuzz'` -rf
+	rm `find ./ -name '*-fuzz.zip'` -rf
 
 .PHONY: default install build clean format lint analysis test fuzz
