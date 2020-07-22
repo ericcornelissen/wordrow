@@ -51,7 +51,7 @@ type Mapping struct {
 //
 // The prefix and suffix can be an empty string.
 func (mapping *Mapping) getReplacement(prefix, suffix string) string {
-	replacement := mapping.GetTo()
+	replacement := mapping.To()
 
 	if mapping.keepPrefix() {
 		replacement = prefix + replacement
@@ -98,13 +98,13 @@ func (mapping *Mapping) mayIncludeSuffix() bool {
 	return endsWithSuffixSymbol(mapping.from)
 }
 
-// GetFrom returns the Mapping's "from" value.
-func (mapping *Mapping) GetFrom() string {
+// From returns the Mapping's "from" value.
+func (mapping *Mapping) From() string {
 	return removePrefixAndSuffixSymbols(mapping.from)
 }
 
-// GetTo returns the Mapping's "to" value.
-func (mapping *Mapping) GetTo() string {
+// To returns the Mapping's "to" value.
+func (mapping *Mapping) To() string {
 	return removePrefixAndSuffixSymbols(mapping.to)
 }
 
@@ -116,7 +116,7 @@ func (mapping *Mapping) Match(s string) chan Match {
 	go func() {
 		defer close(ch)
 
-		matches := getAllMatches(s, mapping.GetFrom())
+		matches := getAllMatches(s, mapping.From())
 		for match := range matches {
 			if mapping.isValid(match) {
 				match.Replacement = mapping.getReplacement(match.Prefix, match.Suffix)
