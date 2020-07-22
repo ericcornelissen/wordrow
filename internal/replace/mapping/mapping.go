@@ -1,3 +1,32 @@
+/*
+Package mapping provides a struct that represents a smart mapping from one
+string to another string. The mapping is based on a custom syntax. This syntax
+can be used to maintain part of a matched string in the target string.
+
+A simple mapping from string `from` to string `to` can be obtained as follows.
+
+	m := New("from string", "to string")
+
+This returns a Mapping instance. This mapping instance can be used to match a
+target string using:
+
+	matches := m.Match(targetString)
+
+Where `matches` is all instances of that match the `from` string of the Mapping.
+
+In addition, the custom syntax that is supported can be used to match prefixes
+and suffixes. To map any string with a prefix or suffix simply add a hyphen
+("-") at the beginning or end of the `from` string. To maintain the prefix or
+suffix in the replacement string another hyphen is needed. For example:
+
+	m := New("foo-", "bar-")
+
+Defines a mapping that maps any instance of the word "for" followed by a suffix
+by the string "bar" followed by the same suffix.
+
+To map the string "foo-" (i.e. only "foo" followed by an actual hyphen) you need
+to escape the hyphen a "foo\-".
+*/
 package mapping
 
 import (
