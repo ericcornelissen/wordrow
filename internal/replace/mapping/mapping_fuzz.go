@@ -1,13 +1,13 @@
 // +build gofuzz
 
-package wordmaps
+package mapping
 
 import (
 	"strings"
 	"unicode/utf8"
 )
 
-func FuzzMapping(_data []byte) int {
+func Fuzz(_data []byte) int {
 	data := string(_data)
 	tmp := strings.Split(data, "\n")
 
