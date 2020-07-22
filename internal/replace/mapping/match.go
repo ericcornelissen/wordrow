@@ -3,6 +3,8 @@ package mapping
 import (
 	"fmt"
 	"regexp"
+
+	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // The Match type represents a matching substring in a larger string of a
@@ -38,7 +40,10 @@ func getAllMatches(s, substr string) chan Match {
 	go func() {
 		defer close(ch)
 
-		strToMatch := whitespaceExpr.ReplaceAllString(substr, `\s+`)
+		strToMatch := strings.ReplaceAll(substr, `\\`, `\`)
+		strToMatch = strings.ReplaceAll(strToMatch, `\-`, `-`)
+		strToMatch = regexp.QuoteMeta(strToMatch)
+		strToMatch = whitespaceExpr.ReplaceAllString(strToMatch, `\s+`)
 
 		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, strToMatch)
 		expr := regexp.MustCompile(rawExpr)
