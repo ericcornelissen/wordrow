@@ -1,4 +1,4 @@
-package replace
+package mapping
 
 import (
 	"fmt"
@@ -6,6 +6,9 @@ import (
 
 	"github.com/ericcornelissen/wordrow/internal/strings"
 )
+
+// A Regular Expression that matches groups of whitespace characters.
+var whitespaceExpr = regexp.MustCompile(`(\s+)`)
 
 // Check if a string ends with the suffix symbol.
 func endsWithSuffixSymbol(s string) bool {
@@ -189,4 +192,9 @@ func (mapping *Mapping) String() string {
 		mapping.from,
 		mapping.to,
 	)
+}
+
+// New returns a new Mapping instance.
+func New(from, to string) Mapping {
+	return Mapping{from, to}
 }

@@ -1,4 +1,4 @@
-package replace
+package mapping
 
 import (
 	"fmt"

@@ -16,16 +16,17 @@ original text. Namely:
 package replace
 
 import (
+	"github.com/ericcornelissen/wordrow/internal/replace/mapping"
 	"github.com/ericcornelissen/wordrow/internal/strings"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
 // Replace all instances of `from` by `to` in `s`.
-func replaceOne(s string, mapping Mapping) string {
+func replaceOne(s string, m mapping.Mapping) string {
 	var sb strings.Builder
 
 	lastIndex := 0
-	for match := range mapping.Match(s) {
+	for match := range m.Match(s) {
 		replacement, offset := maintainFormatting(match.Full, match.Replacement)
 
 		sb.WriteString(s[lastIndex:match.Start])
@@ -43,8 +44,8 @@ func replaceOne(s string, mapping Mapping) string {
 // All replaces substrings of `s` according to the mapping in `wordmap`.
 func All(s string, wordmap wordmaps.WordMap) string {
 	for from, to := range wordmap.Iter() {
-		mapping := Mapping{from, to}
-		s = replaceOne(s, mapping)
+		m := mapping.New(from, to)
+		s = replaceOne(s, m)
 	}
 
 	return s
