@@ -62,7 +62,7 @@ func removePrefixAndSuffixSymbols(s string) string {
 
 // Check if a string starts with the prefix symbol.
 func startsWithPrefixSymbol(s string) bool {
-	return strings.HasPrefix(s, `-`) && !strings.HasPrefix(s, `\-`)
+	return strings.HasPrefix(s, `-`)
 }
 
 // The Mapping type provides a guaranteed mapping from one string to another. As
