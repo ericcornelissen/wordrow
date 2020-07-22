@@ -4,6 +4,48 @@ import (
 	"testing"
 )
 
+func TestEndsWithSuffixSymbol(t *testing.T) {
+	t.Run("No suffix symbol", func(t *testing.T) {
+		result := endsWithSuffixSymbol(`foobar`)
+		if result == true {
+			t.Error("Expected result to be false, was true")
+		}
+	})
+	t.Run("A suffix symbol", func(t *testing.T) {
+		result := endsWithSuffixSymbol(`foo-`)
+		if result == false {
+			t.Error("Expected result to be true, was false")
+		}
+	})
+	t.Run("Escaped suffix symbol", func(t *testing.T) {
+		result := endsWithSuffixSymbol(`foo\-`)
+		if result == true {
+			t.Error("Expected result to be false, was true")
+		}
+	})
+}
+
+func TestStartsWithPrefixSymbol(t *testing.T) {
+	t.Run("No prefix symbol", func(t *testing.T) {
+		result := startsWithPrefixSymbol(`foobar`)
+		if result == true {
+			t.Error("Expected result to be false, was true")
+		}
+	})
+	t.Run("A prefix symbol", func(t *testing.T) {
+		result := startsWithPrefixSymbol(`-foo`)
+		if result == false {
+			t.Error("Expected result to be true, was false")
+		}
+	})
+	t.Run("Escaped prefix symbol", func(t *testing.T) {
+		result := startsWithPrefixSymbol(`\-foo`)
+		if result == true {
+			t.Error("Expected result to be false, was true")
+		}
+	})
+}
+
 func TestMappingFrom(t *testing.T) {
 	from, to := "hello", "hey"
 
