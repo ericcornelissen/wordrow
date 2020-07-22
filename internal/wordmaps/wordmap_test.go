@@ -2,6 +2,7 @@ package wordmaps
 
 import (
 	"fmt"
+	"sort"
 	"testing"
 )
 
@@ -193,18 +194,22 @@ func TestWordMapIter(t *testing.T) {
 		t.Fatalf("The size of the WordMap must be 2 (got %d)", wm.Size())
 	}
 
-	expectedFrom := []string{from0, from1}
-	expectedTo := []string{to0, to1}
+	expectedFroms := []string{from0, from1}
+	expectedTos := []string{to0, to1}
 
 	i := 0
-	for mapping := range wm.Iter() {
-		if mapping.from != expectedFrom[i] {
-			t.Errorf("Incorrect from-value at index %d (got '%s')", i, mapping.from)
-		}
-		if mapping.to != expectedTo[i] {
-			t.Errorf("Incorrect to-value at index %d (got '%s')", i, mapping.to)
+	for actualFrom, actualTo := range wm.Iter() {
+		fromI := sort.SearchStrings(expectedFroms, actualFrom)
+		if fromI == len(expectedFroms) {
+			t.Errorf("Unknown from-value (got '%s')", actualFrom)
+		} else if actualTo != expectedTos[fromI] {
+			t.Errorf("Wrong to-value (got '%s')", actualTo)
 		}
 
 		i++
+
+		// Remove the values used in this iteration
+		expectedFroms = append(expectedFroms[:fromI], expectedFroms[fromI+1:]...)
+		expectedTos = append(expectedTos[:fromI], expectedTos[fromI+1:]...)
 	}
 }
