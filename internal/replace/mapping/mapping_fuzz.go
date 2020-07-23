@@ -2,28 +2,27 @@
 
 package mapping
 
-import (
-	"strings"
-	"unicode/utf8"
-)
+import "unicode/utf8"
 
-func Fuzz(_data []byte) int {
-	data := string(_data)
-	tmp := strings.Split(data, "\n")
-
-	substr := tmp[0]
-	s := strings.Join(tmp[1:], "\n")
-
-	if !utf8.ValidString(substr) {
-		return -1 // Ignore substrings that contain non-UTF8 characters for now
-	}
-
-	if substr == "" || s == "" {
+func Fuzz(data []byte) int {
+	if len(data) < 10 {
 		return -1
 	}
 
+	mappingData := data[0 : len(data)/2]
+	stringData := string(data[len(data)/2:])
+
+	m := New(
+		string(mappingData[0:len(mappingData)/2]),
+		string(mappingData[len(mappingData)/2:]),
+	)
+
+	if !utf8.ValidString(m.from) {
+		return -1 // Ignore substrings that contain non-UTF8 characters for now
+	}
+
 	i := 0
-	for _ = range getAllMatches(s, substr) {
+	for _ = range m.Match(stringData) {
 		i++
 	}
 
