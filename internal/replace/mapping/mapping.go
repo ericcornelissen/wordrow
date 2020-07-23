@@ -137,12 +137,6 @@ func (mapping *Mapping) To() string {
 	return removePrefixAndSuffixSymbols(mapping.to)
 }
 
-// ChangesFormatting returns whether to and from are the same except for their
-// formatting, e.g. different capitalization.
-func (mapping *Mapping) ChangesFormatting() bool {
-	return strings.ToLower(mapping.to) == strings.ToLower(mapping.from)
-}
-
 // Match finds matches of the "from" value of the Mapping in a target string and
 // returns an iterable of all matches found.
 func (mapping *Mapping) Match(s string) chan Match {

@@ -228,21 +228,6 @@ func TestGetReplacement(t *testing.T) {
 	})
 }
 
-func TestChangesFormatting(t *testing.T) {
-	t.Run("Mapping only changes formatting", func(t *testing.T) {
-		mapping := Mapping{"foo", "Foo"}
-		if mapping.ChangesFormatting() == false {
-			t.Errorf("The mapping does change formatting")
-		}
-	})
-	t.Run("Mapping changes words", func(t *testing.T) {
-		mapping := Mapping{"foo", "foobar"}
-		if mapping.ChangesFormatting() == true {
-			t.Errorf("The mapping doesn't change formatting")
-		}
-	})
-}
-
 func TestMatch(t *testing.T) {
 	t.Run("no prefix, no suffix", func(t *testing.T) {
 		from, to := "hello", "hey"
