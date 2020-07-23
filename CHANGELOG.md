@@ -11,6 +11,7 @@ Versioning].
 
 - Add functionality to map many words to one word. ([#65])
 - Add option to specify multiple flags at once. ([#72])
+- Allow mappings that change capitalization. ([#98])
 
 ### Bug Fixes
 
@@ -101,3 +102,4 @@ Versioning].
 [#71]: https://github.com/ericcornelissen/wordrow/pull/71
 [#72]: https://github.com/ericcornelissen/wordrow/pull/72
 [#78]: https://github.com/ericcornelissen/wordrow/pull/78
+[#98]: https://github.com/ericcornelissen/wordrow/pull/98
