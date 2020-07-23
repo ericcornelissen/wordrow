@@ -223,14 +223,46 @@ func TestReplaceWordAllCaps(t *testing.T) {
 func TestReplaceToChangeCapitalization(t *testing.T) {
 	var wm wordmaps.WordMap
 	wm.AddOne(`foo`, `Foo`)
+	wm.AddOne(`bar`, `bar`)
+	wm.AddOne(`r2-d2`, `R2-D2`)
+	wm.AddOne(`hello world`, `Hello World`)
 
-	s := `foo FOO Foo fOO FOo`
-	actual := All(s, wm)
+	t.Run("To title", func(t *testing.T) {
+		s := `foo FOO Foo fOO FOo`
+		actual := All(s, wm)
 
-	expected := `Foo Foo Foo Foo Foo`
-	if actual != expected {
-		reportIncorrectReplacement(t, expected, actual)
-	}
+		expected := `Foo Foo Foo Foo Foo`
+		if actual != expected {
+			reportIncorrectReplacement(t, expected, actual)
+		}
+	})
+	t.Run("To lower", func(t *testing.T) {
+		s := `bar BAR Bar bAR BAr`
+		actual := All(s, wm)
+
+		expected := `bar bar bar bar bar`
+		if actual != expected {
+			reportIncorrectReplacement(t, expected, actual)
+		}
+	})
+	t.Run("To all-caps", func(t *testing.T) {
+		s := `r2-d2 R2-d2 r2-D2`
+		actual := All(s, wm)
+
+		expected := `R2-D2 R2-D2 R2-D2`
+		if actual != expected {
+			reportIncorrectReplacement(t, expected, actual)
+		}
+	})
+	t.Run("Multiple words", func(t *testing.T) {
+		s := `hello world HELLO WORLD hElLo WoRlD HeLlO wOrLd`
+		actual := All(s, wm)
+
+		expected := `Hello World Hello World Hello World Hello World`
+		if actual != expected {
+			reportIncorrectReplacement(t, expected, actual)
+		}
+	})
 }
 
 func TestReplaceWordWithPrefixes(t *testing.T) {
