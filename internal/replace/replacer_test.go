@@ -263,6 +263,23 @@ func TestReplaceToChangeCapitalization(t *testing.T) {
 			reportIncorrectReplacement(t, expected, actual)
 		}
 	})
+	t.Run("With newline", func(t *testing.T) {
+		s := `
+			hello world
+			hello
+			world
+		`
+		actual := All(s, wm)
+
+		expected := `
+			Hello World
+			Hello
+			World
+		`
+		if actual != expected {
+			reportIncorrectReplacement(t, expected, actual)
+		}
+	})
 }
 
 func TestReplaceWordWithPrefixes(t *testing.T) {
