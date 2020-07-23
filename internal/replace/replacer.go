@@ -29,6 +29,10 @@ func replaceOne(s string, m mapping.Mapping) string {
 	for match := range m.Match(s) {
 		replacement, offset := maintainFormatting(match.Full, match.Replacement)
 
+		if m.ChangesFormatting() {
+			replacement = m.To()
+		}
+
 		sb.WriteString(s[lastIndex:match.Start])
 		sb.WriteString(replacement)
 		lastIndex = match.End + offset

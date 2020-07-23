@@ -90,7 +90,7 @@ func (mapping *Mapping) getReplacement(prefix, suffix string) string {
 		replacement = replacement + suffix
 	}
 
-	return replacement
+	return strings.ToLower(replacement)
 }
 
 // Check if a Match is valid for this Mapping. I.e. check if the Match has a
@@ -135,6 +135,12 @@ func (mapping *Mapping) From() string {
 // To returns the Mapping's "to" value.
 func (mapping *Mapping) To() string {
 	return removePrefixAndSuffixSymbols(mapping.to)
+}
+
+// ChangesFormatting returns whether to and from are the same except for their
+// formatting, e.g. different capitalization.
+func (mapping *Mapping) ChangesFormatting() bool {
+	return strings.ToLower(mapping.to) == strings.ToLower(mapping.from)
 }
 
 // Match finds matches of the "from" value of the Mapping in a target string and
