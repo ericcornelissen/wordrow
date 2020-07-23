@@ -90,7 +90,7 @@ func (mapping *Mapping) getReplacement(prefix, suffix string) string {
 		replacement = replacement + suffix
 	}
 
-	return strings.ToLower(replacement)
+	return replacement
 }
 
 // Check if a Match is valid for this Mapping. I.e. check if the Match has a
