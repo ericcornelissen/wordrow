@@ -220,6 +220,19 @@ func TestReplaceWordAllCaps(t *testing.T) {
 	}
 }
 
+func TestReplaceToChangeCapitalization(t *testing.T) {
+	var wm wordmaps.WordMap
+	wm.AddOne(`foo`, `Foo`)
+
+	s := `foo FOO Foo fOO FOo`
+	actual := All(s, wm)
+
+	expected := `Foo Foo Foo Foo Foo`
+	if actual != expected {
+		reportIncorrectReplacement(t, expected, actual)
+	}
+}
+
 func TestReplaceWordWithPrefixes(t *testing.T) {
 	t.Run("maintain prefix", func(t *testing.T) {
 		var wm wordmaps.WordMap
