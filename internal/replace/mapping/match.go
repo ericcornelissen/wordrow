@@ -3,6 +3,9 @@ package mapping
 import (
 	"fmt"
 	"regexp"
+
+	"github.com/ericcornelissen/wordrow/internal/logger"
+	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // The Match type represents a matching substring in a larger string of a
@@ -30,6 +33,15 @@ type Match struct {
 	End int
 }
 
+// Given a query string to find Matches for, clean it so as to avoid any
+// problems when using it to match against a target string.
+func cleanStringToMatch(s string) string {
+	s = strings.ReplaceAll(s, `\\`, `\`)
+	s = strings.ReplaceAll(s, `\-`, `-`)
+	s = regexp.QuoteMeta(s)
+	return whitespaceExpr.ReplaceAllString(s, `\s+`)
+}
+
 // Find matches of some substring in a larger string, potentially with a prefix
 // and/or suffix.
 func getAllMatches(s, substr string) chan Match {
@@ -38,8 +50,12 @@ func getAllMatches(s, substr string) chan Match {
 	go func() {
 		defer close(ch)
 
-		strToMatch := whitespaceExpr.ReplaceAllString(substr, `\s+`)
+		if !strings.IsValidUTF8(substr) {
+			logger.Warningf("Invalid mapping value '%s'", substr)
+			return
+		}
 
+		strToMatch := cleanStringToMatch(substr)
 		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, strToMatch)
 		expr := regexp.MustCompile(rawExpr)
 
