@@ -2,7 +2,10 @@
 // additional utility functions.
 package strings
 
-import "strings"
+import (
+	"strings"
+	"unicode/utf8"
+)
 
 // Any returns true if at least one item in the list fulfills the condition and
 // false otherwise.
@@ -39,6 +42,11 @@ func HasSuffix(s, suffix string) bool {
 // IsEmpty returns true if the string is empty and false otherwise.
 func IsEmpty(s string) bool {
 	return s == ""
+}
+
+// IsValidUTF8 runs utf8.ValidString.
+func IsValidUTF8(s string) bool {
+	return utf8.ValidString(s)
 }
 
 // Map maps every string in a list using the specified function. Note that this

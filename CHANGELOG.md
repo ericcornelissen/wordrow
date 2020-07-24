@@ -15,6 +15,8 @@ Versioning].
 ### Bug Fixes
 
 - Remove double newline in program logs. ([#78])
+- Fix bug for mappings with Regular Expression syntax. ([#96])
+- Avoid crash due to non UTF-8 characters in mappings. ([#96])
 
 ### Documentation
 
@@ -105,4 +107,5 @@ Versioning].
 [#71]: https://github.com/ericcornelissen/wordrow/pull/71
 [#72]: https://github.com/ericcornelissen/wordrow/pull/72
 [#78]: https://github.com/ericcornelissen/wordrow/pull/78
+[#96]: https://github.com/ericcornelissen/wordrow/pull/96
 [#99]: https://github.com/ericcornelissen/wordrow/pull/99

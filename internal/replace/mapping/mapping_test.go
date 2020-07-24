@@ -967,6 +967,56 @@ func TestMatch(t *testing.T) {
 	})
 }
 
+func TestUnconventionalMappings(t *testing.T) {
+	t.Run("non UTF-8 characters", func(t *testing.T) {
+		mapping := Mapping{"\xbf", "a"}
+
+		for match := range mapping.Match("Hello world!") {
+			t.Errorf("Expected no matches (matched '%s')", match.Full)
+		}
+
+		for match := range mapping.Match("Hello \xbf!") {
+			t.Errorf("Expected no matches (matched '%s')", match.Full)
+		}
+	})
+	t.Run("Invalid Regular Expression", func(t *testing.T) {
+		from, to := "(foo", "(bar"
+		mapping := Mapping{from, to}
+
+		rawSource := "Foo bar %s bar)"
+		source := fmt.Sprintf(rawSource, from)
+
+		expectedMatches := []Match{
+			{
+				Full:        from,
+				Word:        from,
+				Replacement: to,
+				Prefix:      "",
+				Suffix:      "",
+				Start:       8,
+				End:         8 + len(from),
+			},
+		}
+
+		i := 0
+		for match := range mapping.Match(source) {
+			if i >= len(expectedMatches) {
+				t.Fatal("Too many matches found")
+			}
+
+			if match != expectedMatches[i] {
+				t.Errorf("Unexpected match at index %d (was %+v)", i, match)
+			}
+
+			i++
+		}
+
+		if i != len(expectedMatches) {
+			t.Errorf("not enough matches (got %d)", i)
+		}
+	})
+}
+
 func TestString(t *testing.T) {
 	from, to := "hello", "hey"
 
