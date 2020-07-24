@@ -1,4 +1,33 @@
-package wordmaps
+/*
+Package mapping provides a struct that represents a smart mapping from one
+string to another string. The mapping is based on a custom syntax. This syntax
+can be used to maintain part of a matched string in the target string.
+
+A simple mapping from string `from` to string `to` can be obtained as follows.
+
+	m := New("from string", "to string")
+
+This returns a Mapping instance. This mapping instance can be used to match a
+target string using:
+
+	matches := m.Match(targetString)
+
+Where `matches` is all instances of that match the `from` string of the Mapping.
+
+In addition, the custom syntax that is supported can be used to match prefixes
+and suffixes. To map any string with a prefix or suffix simply add a hyphen
+("-") at the beginning or end of the `from` string. To maintain the prefix or
+suffix in the replacement string another hyphen is needed. For example:
+
+	m := New("foo-", "bar-")
+
+Defines a mapping that maps any instance of the word "for" followed by a suffix
+by the string "bar" followed by the same suffix.
+
+To map the string "foo-" (i.e. only "foo" followed by an actual hyphen) you need
+to escape the hyphen a "foo\-".
+*/
+package mapping
 
 import (
 	"fmt"
@@ -33,65 +62,7 @@ func removePrefixAndSuffixSymbols(s string) string {
 
 // Check if a string starts with the prefix symbol.
 func startsWithPrefixSymbol(s string) bool {
-	return strings.HasPrefix(s, `-`) && !strings.HasPrefix(s, `\-`)
-}
-
-// The Match type represents a matching substring in a larger string of a
-// Mapping, possibly including a prefix and/or suffix.
-type Match struct {
-	// The full match, i.e. the Word including prefix and suffix.
-	Full string
-
-	// The matched word as it appears in the original string.
-	Word string
-
-	// The replacement of the Word based on the WordMap that created the Match.
-	Replacement string
-
-	// The prefix of the matched Word.
-	Prefix string
-
-	// The suffix of the matched Word.
-	Suffix string
-
-	// The starting index of the (Full) match in the original string.
-	Start int
-
-	// The ending index of the (Full) match in the original string.
-	End int
-}
-
-// Find matches of some substring in a larger string, potentially with a prefix
-// and/or suffix.
-func getAllMatches(s, substr string) chan Match {
-	ch := make(chan Match)
-
-	go func() {
-		defer close(ch)
-
-		strToMatch := whitespaceExpr.ReplaceAllString(substr, `\s+`)
-
-		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, strToMatch)
-		expr := regexp.MustCompile(rawExpr)
-
-		for _, indices := range expr.FindAllStringSubmatchIndex(s, -1) {
-			matchStart, matchEnd := indices[0], indices[1]
-			prefixStart, prefixEnd := indices[2], indices[3]
-			wordStart, wordEnd := indices[4], indices[5]
-			suffixStart, suffixEnd := indices[6], indices[7]
-
-			ch <- Match{
-				Full:   s[matchStart:matchEnd],
-				Word:   s[wordStart:wordEnd],
-				Prefix: s[prefixStart:prefixEnd],
-				Suffix: s[suffixStart:suffixEnd],
-				Start:  matchStart,
-				End:    matchEnd,
-			}
-		}
-	}()
-
-	return ch
+	return strings.HasPrefix(s, `-`)
 }
 
 // The Mapping type provides a guaranteed mapping from one string to another. As
@@ -109,7 +80,7 @@ type Mapping struct {
 //
 // The prefix and suffix can be an empty string.
 func (mapping *Mapping) getReplacement(prefix, suffix string) string {
-	replacement := mapping.GetTo()
+	replacement := mapping.To()
 
 	if mapping.keepPrefix() {
 		replacement = prefix + replacement
@@ -156,13 +127,13 @@ func (mapping *Mapping) mayIncludeSuffix() bool {
 	return endsWithSuffixSymbol(mapping.from)
 }
 
-// GetFrom returns the Mapping's "from" value.
-func (mapping *Mapping) GetFrom() string {
+// From returns the Mapping's "from" value.
+func (mapping *Mapping) From() string {
 	return removePrefixAndSuffixSymbols(mapping.from)
 }
 
-// GetTo returns the Mapping's "to" value.
-func (mapping *Mapping) GetTo() string {
+// To returns the Mapping's "to" value.
+func (mapping *Mapping) To() string {
 	return removePrefixAndSuffixSymbols(mapping.to)
 }
 
@@ -174,7 +145,7 @@ func (mapping *Mapping) Match(s string) chan Match {
 	go func() {
 		defer close(ch)
 
-		matches := getAllMatches(s, mapping.GetFrom())
+		matches := getAllMatches(s, mapping.From())
 		for match := range matches {
 			if mapping.isValid(match) {
 				match.Replacement = mapping.getReplacement(match.Prefix, match.Suffix)
@@ -192,4 +163,9 @@ func (mapping *Mapping) String() string {
 		mapping.from,
 		mapping.to,
 	)
+}
+
+// New returns a new Mapping instance.
+func New(from, to string) Mapping {
+	return Mapping{from, to}
 }

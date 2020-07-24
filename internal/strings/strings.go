@@ -16,6 +16,11 @@ func Any(v []string, condition func(string) bool) bool {
 	return false
 }
 
+// Contains reports whether `substr` is within `s`.
+func Contains(s, substr string) bool {
+	return strings.Contains(s, substr)
+}
+
 // Fields runs strings.Fields.
 func Fields(s string) []string {
 	return strings.Fields(s)

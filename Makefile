@@ -1,7 +1,8 @@
 program_main:=./cmd/wordrow
 executable_file:=wordrow
 
-test_root:=./internal/...
+unit_test_root:=./internal/...
+integration_test_root:=./cmd/wordrow/...
 coverage_file:=coverage.out
 fuzz_dir:=./_fuzz
 
@@ -32,11 +33,16 @@ build-all:
 	GOOS=windows GOARCH=amd64 go build -o $(executable_file)_win-amd64.exe $(program_main)
 	GOOS=linux GOARCH=amd64 go build -o $(executable_file)_linux-amd64.o $(program_main)
 
-test:
-	go test $(test_root)
+test: test-unit test-integration
+
+test-unit:
+	go test $(unit_test_root)
+
+test-integration:
+	go test $(integration_test_root)
 
 coverage:
-	go test $(test_root) -coverprofile $(coverage_file)
+	go test $(unit_test_root) -coverprofile $(coverage_file)
 	go tool cover -html=$(coverage_file)
 
 fuzz%: FUNC?=Fuzz  # Set default fuzzing function to "Fuzz"
@@ -73,7 +79,7 @@ lint-md:
 clean:
 	rm -rf $(executable_file)*
 	rm -rf $(coverage_file)
-	rm -rf **/*/*-fuzz.zip
-	rm -rf **/*/_fuzz/
+	rm `find ./ -name '_fuzz'` -rf
+	rm `find ./ -name '*-fuzz.zip'` -rf
 
 .PHONY: default install build clean format lint analysis test fuzz
