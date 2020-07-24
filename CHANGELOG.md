@@ -7,26 +7,30 @@ Versioning].
 
 ## [Unreleased]
 
+- _No changes yet_
+
+## [0.5.0-beta] - 2020-07-24
+
 ### Features
 
 - Add functionality to map many words to one word. ([#65])
-- Add option to specify multiple flags at once. ([#72])
+- Add support for multiple flags in one CLI argument. ([#72])
 - Allow mappings that change capitalization. ([#98])
 
 ### Bug Fixes
 
-- Remove double newline in program logs. ([#78])
+- Fix double newline in program logs. ([#78])
 - Fix bug for mappings with Regular Expression syntax. ([#96])
 - Avoid crash due to non UTF-8 characters in mappings. ([#96])
+
+### Security
+
+- Clean provided file paths before opening. ([#99])
 
 ### Documentation
 
 - Update use of outdated CLI argument name. ([#67])
 - Update use of outdated term in CLI help message. ([#71])
-
-### Security
-
-- Clean provided file paths before opening ([#99])
 
 ## [0.4.0-beta] - 2020-05-27
 
