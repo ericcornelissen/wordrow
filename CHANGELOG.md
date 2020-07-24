@@ -21,6 +21,10 @@ Versioning].
 - Update use of outdated CLI argument name. ([#67])
 - Update use of outdated term in CLI help message. ([#71])
 
+### Security
+
+- Clean provided file paths before opening ([#99])
+
 ## [0.4.0-beta] - 2020-05-27
 
 ### Features
@@ -101,3 +105,4 @@ Versioning].
 [#71]: https://github.com/ericcornelissen/wordrow/pull/71
 [#72]: https://github.com/ericcornelissen/wordrow/pull/72
 [#78]: https://github.com/ericcornelissen/wordrow/pull/78
+[#99]: https://github.com/ericcornelissen/wordrow/pull/99
