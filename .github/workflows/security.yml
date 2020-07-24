@@ -40,11 +40,3 @@ jobs:
       run: |
         ./fuzzit create target --skip-if-exists wordrow-cli --api-key ${{ secrets.FUZZIT_API_KEY }}
         ./fuzzit create job --engine go-fuzz --type fuzzing ericcornelissen-gh/wordrow-cli ./internal/cli/cli-fuzz.zip --api-key ${{ secrets.FUZZIT_API_KEY }}
-
-    # Fuzzing the CSV parser
-    - name: Build fuzz target for CSV parser
-      run: make fuzz-build PKG=internal/wordmaps FUNC=Csv
-    - name: Push fuzz target
-      run: |
-        ./fuzzit create target --skip-if-exists wordrow-parse-csv --api-key ${{ secrets.FUZZIT_API_KEY }}
-        ./fuzzit create job --engine go-fuzz --type fuzzing ericcornelissen-gh/wordrow-parse-csv ./internal/cli/cli-fuzz.zip --api-key ${{ secrets.FUZZIT_API_KEY }}
