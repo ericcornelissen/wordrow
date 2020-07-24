@@ -121,9 +121,9 @@ func maintainWhitespace(from, to string) (string, int) {
 // changesFormattingOnly checks whether the from and to values are the same
 // except for their formatting, e.g. different capitalization and whitespace.
 func changesFormattingOnly(from, to string) bool {
-	x := whitespaceExpr.ReplaceAllString(from, " ")
-	y := whitespaceExpr.ReplaceAllString(to, " ")
-	return strings.ToLower(x) != strings.ToLower(y)
+	normalizedFrom := whitespaceExpr.ReplaceAllString(from, " ")
+	normalizedTo := whitespaceExpr.ReplaceAllString(to, " ")
+	return strings.ToLower(normalizedFrom) == strings.ToLower(normalizedTo)
 }
 
 // Format the `to` string based on the format of the `from` string.
@@ -133,7 +133,7 @@ func changesFormattingOnly(from, to string) bool {
 //  - Maintain first letter capitalization.
 //  - Maintain newlines, tabs, etc.
 func maintainFormatting(from, to string) (string, int) {
-	if changesFormattingOnly(from, to) {
+	if !changesFormattingOnly(from, to) {
 		to = strings.ToLower(to)
 		to = maintainAllCaps(from, to)
 		to = maintainCapitalization(from, to)

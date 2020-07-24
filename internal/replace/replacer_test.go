@@ -227,7 +227,7 @@ func TestReplaceToChangeCapitalization(t *testing.T) {
 	wm.AddOne(`r2-d2`, `R2-D2`)
 	wm.AddOne(`hello world`, `Hello World`)
 
-	t.Run("To title", func(t *testing.T) {
+	t.Run("To titlecase", func(t *testing.T) {
 		s := `foo FOO Foo fOO FOo`
 		actual := All(s, wm)
 
@@ -236,7 +236,7 @@ func TestReplaceToChangeCapitalization(t *testing.T) {
 			reportIncorrectReplacement(t, expected, actual)
 		}
 	})
-	t.Run("To lower", func(t *testing.T) {
+	t.Run("To lowercase", func(t *testing.T) {
 		s := `bar BAR Bar bAR BAr`
 		actual := All(s, wm)
 
