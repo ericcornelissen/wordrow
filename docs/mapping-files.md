@@ -154,10 +154,15 @@ elephant"_ while preserving the line break.
 
 ### Capitalisation
 
-The capitalisation of values in mappings are ignored and instead the
-capitalisation of the words as they appear in the text is maintained. Capital
-letters are maintained at the start of a word and also if the original word
-appears in all capitals in the text.
+The capitalisation present in a mapping is generally ignored, except when the
+textual value (ignoring casing) is equal before and after.
+
+#### Context-aware Capitalisation
+
+For most mappings, _wordrow_ will try to maintain the capitalisation of the
+words in the mapping as they appear in the text. Capital letters are maintained
+at the start of a word and also if the original word appears in all capitals in
+the text.
 
 For example, if you have a mapping to change _"dog"_ into _"horse"_, the
 capitalisation will be maintained as follows.
@@ -182,6 +187,21 @@ _"So-Called"_ and _"Hey Planet"_ with identical capitalisation:
 ```diff
 - A So Called "Hello World" program is a program that prints "Hello world!".
 + A So-Called "Hey Planet" program is a program that prints "Hey planet!".
+```
+
+#### Explicit Capitalisation Mapping
+
+If the mapping you define does not change the textual value of the phrase (i.e.
+ignoring casing the values of the mapping are the same), then the provided
+capitalisation is always used. This can be used, for example, to enforce the
+correct capitalisation of proper names.
+
+For example, if you have a mapping to change the name _"max"_ into _"Max"_, the
+capitalisation will be changed as follows.
+
+```diff
+- My dog is called max and MAX is an awesome dog.
++ My dog is called Max and Max is an awesome dog.
 ```
 
 ### Many-to-One
