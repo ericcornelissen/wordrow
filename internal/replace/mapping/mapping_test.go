@@ -1157,3 +1157,16 @@ func TestString(t *testing.T) {
 		})
 	})
 }
+
+func TestNew(t *testing.T) {
+	from, to := "foo", "bar"
+	m := New(from, to)
+
+	if m.from != from {
+		t.Errorf("Unexpected from value in mapping (got '%s')", m.from)
+	}
+
+	if m.to != to {
+		t.Errorf("Unexpected from value in mapping (got '%s')", m.from)
+	}
+}
