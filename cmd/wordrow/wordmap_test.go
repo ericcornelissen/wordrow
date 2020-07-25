@@ -10,7 +10,7 @@ import (
 )
 
 func TestParseMapFileArgument(t *testing.T) {
-	t.Run("Just a file", func(t *testing.T) {
+	t.Run("File with extension, no explicit format", func(t *testing.T) {
 		extension := ".txt"
 		input := fmt.Sprintf("/foo/bar/test%s", extension)
 
@@ -23,10 +23,36 @@ func TestParseMapFileArgument(t *testing.T) {
 			t.Errorf("Unexpected format (got '%s')", format)
 		}
 	})
-	t.Run("File with explicit format", func(t *testing.T) {
+	t.Run("File with extension, with explicit format", func(t *testing.T) {
 		extension := ".txt"
 		explicitFormat := "csv"
 		inputPath := fmt.Sprintf("/hello/world%s", extension)
+		input := fmt.Sprintf("%s:%s", inputPath, explicitFormat)
+
+		filePath, format := parseMapFileArgument(input)
+		if filePath != inputPath {
+			t.Errorf("Unexpected filepath (got '%s')", filePath)
+		}
+
+		if format != explicitFormat {
+			t.Errorf("Unexpected format (got '%s')", format)
+		}
+	})
+	t.Run("File without extension, no explicit format", func(t *testing.T) {
+		input := "/path/to/file/without/extension"
+
+		filePath, format := parseMapFileArgument(input)
+		if filePath != input {
+			t.Errorf("Unexpected filepath (got '%s')", filePath)
+		}
+
+		if format != "" {
+			t.Errorf("Unexpected format (got '%s')", format)
+		}
+	})
+	t.Run("File without extension, with explicit format", func(t *testing.T) {
+		explicitFormat := "csv"
+		inputPath := "/path/to/file/without/extension"
 		input := fmt.Sprintf("%s:%s", inputPath, explicitFormat)
 
 		filePath, format := parseMapFileArgument(input)

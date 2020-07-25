@@ -12,20 +12,29 @@ import (
 
 // Parse a --map-file argument into its component parts.
 //
-// A --map-file argument can either be just a file path, or a file path with
-// ":format" appended to it. For example:
+// A --map-file argument can either be just a file path, or a file path with an
+// explicit ":format" appended to it. For example:
 //
 //   /path/to/file.csv
 //   /path/to/file.txt:csv
 //
 // In the former the file extension is returned as format, in the latter the
 // explicitly stated format is returned as format.
+//
+// If the file does not have an extension it is expected to have an explicit
+// ":format" appended to it. For example:
+//
+//   /path/to/file:csv
+//   /path/to/file
+//
+// In the former the file explicitly stated format, in the latter no format is
+// returned.
 func parseMapFileArgument(argument string) (filePath string, format string) {
 	fileExtension := fs.GetExt(argument)
 
-	fileExtensionSplit := strings.Split(fileExtension, ":")
-	if len(fileExtensionSplit) > 1 {
-		explicitFormat := fileExtensionSplit[len(fileExtensionSplit)-1]
+	explicitFormatSplit := strings.Split(argument, ":")
+	if len(explicitFormatSplit) > 1 {
+		explicitFormat := explicitFormatSplit[len(explicitFormatSplit)-1]
 		filePath := strings.TrimSuffix(argument, ":"+explicitFormat)
 		return filePath, explicitFormat
 	}

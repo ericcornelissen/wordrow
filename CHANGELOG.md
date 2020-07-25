@@ -7,7 +7,9 @@ Versioning].
 
 ## [Unreleased]
 
-- _No changes yet_
+### Bug Fixes
+
+- Fix bug preventing the usage of map files without file extension. ([#101])
 
 ## [0.5.0-beta] - 2020-07-24
 
@@ -115,3 +117,4 @@ Versioning].
 [#96]: https://github.com/ericcornelissen/wordrow/pull/96
 [#98]: https://github.com/ericcornelissen/wordrow/pull/98
 [#99]: https://github.com/ericcornelissen/wordrow/pull/99
+[#101]: https://github.com/ericcornelissen/wordrow/pull/101
