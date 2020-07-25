@@ -148,6 +148,19 @@ func TestIsEmpty(t *testing.T) {
 	}
 }
 
+func TestIsValidUTF8(t *testing.T) {
+	t.Run("Valid UTF-8", func(t *testing.T) {
+		if IsValidUTF8("foobar") == false {
+			t.Error("Unexpected result, string is valid UTF-8")
+		}
+	})
+	t.Run("Invalid UTF-8", func(t *testing.T) {
+		if IsValidUTF8("\xbf") == true {
+			t.Error("Unexpected result, string is invalid UTF-8")
+		}
+	})
+}
+
 func TestMap(t *testing.T) {
 	subject := []string{
 		"a",

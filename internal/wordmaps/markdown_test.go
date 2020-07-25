@@ -160,10 +160,10 @@ func TestMarkDownMissingDivider(t *testing.T) {
 	_, err := parseMarkDownFile(&markdown)
 
 	if err == nil {
-		t.Fatal("Error should be set for missing table header divider")
+		t.Fatal("Error should be set for missing table divider")
 	}
 
-	if !strings.Contains(err.Error(), "Missing table header divider") {
+	if !strings.Contains(err.Error(), "Missing table divider") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
@@ -178,10 +178,10 @@ func TestMarkDownIncorrectDivider(t *testing.T) {
 	_, err := parseMarkDownFile(&markdown)
 
 	if err == nil {
-		t.Fatal("Error should be set for incorrect header divider")
+		t.Fatal("Error should be set for incorrect table divider")
 	}
 
-	if !strings.Contains(err.Error(), "Missing table header divider") {
+	if !strings.Contains(err.Error(), "Missing table divider") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }

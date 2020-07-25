@@ -6,7 +6,7 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/replacer"
+	"github.com/ericcornelissen/wordrow/internal/replace"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
@@ -22,7 +22,7 @@ func doReplace(
 	}
 
 	content := string(data)
-	return replacer.ReplaceAll(content, *wordmap), nil
+	return replace.All(content, *wordmap), nil
 }
 
 // Writes the `updatedContents` to the `writer`.

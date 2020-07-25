@@ -1,4 +1,4 @@
-package replacer
+package replace
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ func ExampleReplaceAll() {
 	wm.AddOne("hello", "hey")
 	wm.AddOne("world", "planet")
 
-	out := ReplaceAll("Hello world!", wm)
+	out := All("Hello world!", wm)
 	fmt.Print(out)
 	// Output: Hey planet!
 }
@@ -21,7 +21,7 @@ func TestReplaceEmptyString(t *testing.T) {
 	var wm wordmaps.WordMap
 
 	source := ""
-	result := ReplaceAll(source, wm)
+	result := All(source, wm)
 
 	if result != source {
 		t.Errorf("Result was not en empty string but: '%s'", result)
@@ -32,7 +32,7 @@ func TestReplaceEmptyWordmap(t *testing.T) {
 	var wm wordmaps.WordMap
 
 	source := "Hello world!"
-	result := ReplaceAll(source, wm)
+	result := All(source, wm)
 
 	if result != source {
 		reportIncorrectReplacement(t, source, result)
@@ -47,7 +47,7 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
 
 	t.Run("source is 'from' in the WordMap", func(t *testing.T) {
 		source := from
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		if result != to {
 			reportIncorrectReplacement(t, to, result)
@@ -55,7 +55,7 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
 	})
 	t.Run("source is 'to' in the WordMap", func(t *testing.T) {
 		source := to
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		if result != source {
 			reportIncorrectReplacement(t, to, result)
@@ -64,7 +64,7 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
 	t.Run("One line", func(t *testing.T) {
 		template := "This is a %s."
 		source := fmt.Sprintf(template, from)
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := fmt.Sprintf(template, to)
 		if result != expected {
@@ -78,7 +78,7 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
 			over there, another %s one!
 		`
 		source := fmt.Sprintf(template, from, from, from)
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := fmt.Sprintf(template, to, to, to)
 		if result != expected {
@@ -94,7 +94,7 @@ func TestReplaceMultipleWordsInWordMap(t *testing.T) {
 
 	t.Run("All words", func(t *testing.T) {
 		source := "A foo is a creature in this world. It can change its color."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "A bar is a creature in this world. It can change its colour."
 		if result != expected {
@@ -103,7 +103,7 @@ func TestReplaceMultipleWordsInWordMap(t *testing.T) {
 	})
 	t.Run("Only one word", func(t *testing.T) {
 		source := "A foo is a creature in this world."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "A bar is a creature in this world."
 		if result != expected {
@@ -120,13 +120,13 @@ func TestReplaceWhitespaceInPhrase(t *testing.T) {
 		wm.AddOne(from, to)
 
 		source := from
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 		if result != to {
 			reportIncorrectReplacement(t, to, result)
 		}
 
 		source = "foo  bar"
-		result = ReplaceAll(source, wm)
+		result = All(source, wm)
 		if result != to {
 			reportIncorrectReplacement(t, to, result)
 		}
@@ -138,13 +138,13 @@ func TestReplaceWhitespaceInPhrase(t *testing.T) {
 		wm.AddOne(from, to)
 
 		source := from
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 		if result != "an  amazing dog" {
 			reportIncorrectReplacement(t, to, result)
 		}
 
 		source = "a dog"
-		result = ReplaceAll(source, wm)
+		result = All(source, wm)
 		if result != to {
 			reportIncorrectReplacement(t, to, result)
 		}
@@ -156,7 +156,7 @@ func TestReplaceIgnoreCapitalizationInMapping(t *testing.T) {
 	wm.AddOne("Foo", "Bar")
 
 	source := "There once was a foo in the world."
-	result := ReplaceAll(source, wm)
+	result := All(source, wm)
 
 	expected := "There once was a bar in the world."
 	if result != expected {
@@ -172,7 +172,7 @@ func TestReplaceMaintainCapitalization(t *testing.T) {
 
 	t.Run("single word mapping", func(t *testing.T) {
 		source := "There once was a foo in the world. Foo did things."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "There once was a bar in the world. Bar did things."
 		if result != expected {
@@ -181,7 +181,7 @@ func TestReplaceMaintainCapitalization(t *testing.T) {
 	})
 	t.Run("two word mapping", func(t *testing.T) {
 		source := "Hello World!"
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "Hey Planet!"
 		if result != expected {
@@ -190,7 +190,7 @@ func TestReplaceMaintainCapitalization(t *testing.T) {
 	})
 	t.Run("two word to hyphenated word mapping", func(t *testing.T) {
 		source := "A So called 'hypnotoad'"
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "A So-called 'hypnotoad'"
 		if result != expected {
@@ -198,7 +198,7 @@ func TestReplaceMaintainCapitalization(t *testing.T) {
 		}
 
 		source = "A So Called 'hypnotoad'"
-		result = ReplaceAll(source, wm)
+		result = All(source, wm)
 
 		expected = "A So-Called 'hypnotoad'"
 		if result != expected {
@@ -212,12 +212,74 @@ func TestReplaceWordAllCaps(t *testing.T) {
 	wm.AddOne("foo", "bar")
 
 	source := "This is the FOO."
-	result := ReplaceAll(source, wm)
+	result := All(source, wm)
 
 	expected := "This is the BAR."
 	if result != expected {
 		reportIncorrectReplacement(t, expected, result)
 	}
+}
+
+func TestReplaceToChangeCapitalization(t *testing.T) {
+	var wm wordmaps.WordMap
+	wm.AddOne(`foo`, `Foo`)
+	wm.AddOne(`bar`, `bar`)
+	wm.AddOne(`r2-d2`, `R2-D2`)
+	wm.AddOne(`hello world`, `Hello World`)
+
+	t.Run("To titlecase", func(t *testing.T) {
+		s := `foo FOO Foo fOO FOo`
+		actual := All(s, wm)
+
+		expected := `Foo Foo Foo Foo Foo`
+		if actual != expected {
+			reportIncorrectReplacement(t, expected, actual)
+		}
+	})
+	t.Run("To lowercase", func(t *testing.T) {
+		s := `bar BAR Bar bAR BAr`
+		actual := All(s, wm)
+
+		expected := `bar bar bar bar bar`
+		if actual != expected {
+			reportIncorrectReplacement(t, expected, actual)
+		}
+	})
+	t.Run("To all-caps", func(t *testing.T) {
+		s := `r2-d2 R2-d2 r2-D2`
+		actual := All(s, wm)
+
+		expected := `R2-D2 R2-D2 R2-D2`
+		if actual != expected {
+			reportIncorrectReplacement(t, expected, actual)
+		}
+	})
+	t.Run("Multiple words", func(t *testing.T) {
+		s := `hello world HELLO WORLD hElLo WoRlD HeLlO wOrLd`
+		actual := All(s, wm)
+
+		expected := `Hello World Hello World Hello World Hello World`
+		if actual != expected {
+			reportIncorrectReplacement(t, expected, actual)
+		}
+	})
+	t.Run("With newline", func(t *testing.T) {
+		s := `
+			hello world
+			hello
+			world
+		`
+		actual := All(s, wm)
+
+		expected := `
+			Hello World
+			Hello
+			World
+		`
+		if actual != expected {
+			reportIncorrectReplacement(t, expected, actual)
+		}
+	})
 }
 
 func TestReplaceWordWithPrefixes(t *testing.T) {
@@ -226,7 +288,7 @@ func TestReplaceWordWithPrefixes(t *testing.T) {
 		wm.AddOne("-ize", "-ise")
 
 		source := "They Realize that they should not idealize."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "They Realise that they should not idealise."
 		if result != expected {
@@ -238,7 +300,7 @@ func TestReplaceWordWithPrefixes(t *testing.T) {
 		wm.AddOne("- dogs", "- cats")
 
 		source := "Dogs are nice and dogs are cool."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "Dogs are nice and cats are cool."
 		if result != expected {
@@ -250,7 +312,7 @@ func TestReplaceWordWithPrefixes(t *testing.T) {
 		wm.AddOne("-phone", "phone")
 
 		source := "That cat has a telephone."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "That cat has a phone."
 		if result != expected {
@@ -262,7 +324,7 @@ func TestReplaceWordWithPrefixes(t *testing.T) {
 		wm.AddOne("- people", "people")
 
 		source := "Cool people are nice and nice people are cool."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "People are nice and people are cool."
 		if result != expected {
@@ -277,7 +339,7 @@ func TestReplaceWordWithSuffixes(t *testing.T) {
 		wm.AddOne("color-", "colour-")
 
 		source := "The colors on this colorful painting are amazing."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "The colours on this colourful painting are amazing."
 		if result != expected {
@@ -289,7 +351,7 @@ func TestReplaceWordWithSuffixes(t *testing.T) {
 		wm.AddOne("dog -", "cat -")
 
 		source := "I have a dog and you have a dog."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "I have a cat and you have a dog."
 		if result != expected {
@@ -301,7 +363,7 @@ func TestReplaceWordWithSuffixes(t *testing.T) {
 		wm.AddOne("very -", "super -")
 
 		source := "This is a very special day."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "This is a super special day."
 		if result != expected {
@@ -313,7 +375,7 @@ func TestReplaceWordWithSuffixes(t *testing.T) {
 		wm.AddOne("dog-", "dog")
 
 		source := "I have a dog, but you have a small doggy."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "I have a dog, but you have a small dog."
 		if result != expected {
@@ -325,7 +387,7 @@ func TestReplaceWordWithSuffixes(t *testing.T) {
 		wm.AddOne("a -", "a")
 
 		source := "I have a particularly cool dog."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "I have a cool dog."
 		if result != expected {
@@ -340,7 +402,7 @@ func TestReplaceWordWithPrefixesAndSuffixes(t *testing.T) {
 		wm.AddOne("-bloody-", "-freaking-")
 
 		source := "It is a fanbloodytastic movie."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "It is a fanfreakingtastic movie."
 		if result != expected {
@@ -352,7 +414,7 @@ func TestReplaceWordWithPrefixesAndSuffixes(t *testing.T) {
 		wm.AddOne("-b-", "b-")
 
 		source := "abc"
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "bc"
 		if result != expected {
@@ -364,7 +426,7 @@ func TestReplaceWordWithPrefixesAndSuffixes(t *testing.T) {
 		wm.AddOne("-b-", "-b")
 
 		source := "abc"
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "ab"
 		if result != expected {
@@ -376,7 +438,7 @@ func TestReplaceWordWithPrefixesAndSuffixes(t *testing.T) {
 		wm.AddOne("-b-", "b")
 
 		source := "abc"
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "b"
 		if result != expected {
@@ -390,7 +452,7 @@ func TestReplaceWordWithoutPrefixes(t *testing.T) {
 	wm.AddOne("mail", "email")
 
 	source := "I send them a mail. And later another email."
-	result := ReplaceAll(source, wm)
+	result := All(source, wm)
 
 	expected := "I send them a email. And later another email."
 	if result != expected {
@@ -403,7 +465,7 @@ func TestReplaceWordWithoutSuffixes(t *testing.T) {
 	wm.AddOne("commen", "common")
 
 	source := "He game a comment that that is quite commen"
-	result := ReplaceAll(source, wm)
+	result := All(source, wm)
 
 	expected := "He game a comment that that is quite common"
 	if result != expected {
@@ -417,7 +479,7 @@ func TestReplaceByShorterString(t *testing.T) {
 
 	t.Run("one instance of word", func(t *testing.T) {
 		source := "This is a fooo."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "This is a foo."
 		if result != expected {
@@ -426,7 +488,7 @@ func TestReplaceByShorterString(t *testing.T) {
 	})
 	t.Run("multiple instances of word", func(t *testing.T) {
 		source := "This is a FOOO and this is a fooo as well."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "This is a FOO and this is a foo as well."
 		if result != expected {
@@ -441,7 +503,7 @@ func TestReplaceByLongerString(t *testing.T) {
 
 	t.Run("one instance of word", func(t *testing.T) {
 		source := "This is a fo."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "This is a foo."
 		if result != expected {
@@ -450,7 +512,7 @@ func TestReplaceByLongerString(t *testing.T) {
 	})
 	t.Run("multiple instances of word", func(t *testing.T) {
 		source := "This is a FO and this is a fo as well."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "This is a FOO and this is a foo as well."
 		if result != expected {
@@ -468,7 +530,7 @@ func TestReplacePhraseNewlineInSource(t *testing.T) {
 
 	t.Run("newline without indentation", func(t *testing.T) {
 		source := "lorem ipsum hello\nworld dolor sit amet."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "lorem ipsum hey\nplanet dolor sit amet."
 		if result != expected {
@@ -477,7 +539,7 @@ func TestReplacePhraseNewlineInSource(t *testing.T) {
 	})
 	t.Run("newline with indentation", func(t *testing.T) {
 		source := "lorem ipsum hello\n  world dolor sit amet."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "lorem ipsum hey\n  planet dolor sit amet."
 		if result != expected {
@@ -486,7 +548,7 @@ func TestReplacePhraseNewlineInSource(t *testing.T) {
 	})
 	t.Run("space in from but not in to", func(t *testing.T) {
 		source := "lorem ipsum foo\nbar dolor sit amet."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "lorem ipsum foobar\ndolor sit amet."
 		if result != expected {
@@ -495,7 +557,7 @@ func TestReplacePhraseNewlineInSource(t *testing.T) {
 	})
 	t.Run("space in from but not in to, with indentation", func(t *testing.T) {
 		source := "lorem ipsum foo\n  bar dolor sit amet."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "lorem ipsum foobar\n  dolor sit amet."
 		if result != expected {
@@ -504,7 +566,7 @@ func TestReplacePhraseNewlineInSource(t *testing.T) {
 	})
 	t.Run("less spaces in from than in to", func(t *testing.T) {
 		source := "lorem ipsum a\ndog dolor sit amet."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "lorem ipsum an\namazing dog dolor sit amet."
 		if result != expected {
@@ -513,7 +575,7 @@ func TestReplacePhraseNewlineInSource(t *testing.T) {
 	})
 	t.Run("more spaces in from than in to", func(t *testing.T) {
 		source := "lorem ipsum hello\nbeautiful world dolor sit amet."
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := "lorem ipsum hey\nplanet dolor sit amet."
 		if result != expected {
@@ -521,7 +583,7 @@ func TestReplacePhraseNewlineInSource(t *testing.T) {
 		}
 
 		source = "lorem ipsum hello beautiful\nworld dolor sit amet."
-		result = ReplaceAll(source, wm)
+		result = All(source, wm)
 
 		expected = "lorem ipsum hey planet\ndolor sit amet."
 		if result != expected {
@@ -537,7 +599,7 @@ func TestReplaceEscapeHyphen(t *testing.T) {
 
 	t.Run("prefix", func(t *testing.T) {
 		source := `-foobar`
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := `foobar`
 		if result != expected {
@@ -546,7 +608,7 @@ func TestReplaceEscapeHyphen(t *testing.T) {
 	})
 	t.Run("suffix", func(t *testing.T) {
 		source := `Hello world-`
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := `Hello world!`
 		if result != expected {
@@ -562,7 +624,7 @@ func TestReplaceEscapeEscapeCharacter(t *testing.T) {
 
 	t.Run("prefix", func(t *testing.T) {
 		source := `foo \bar`
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := `foo bar`
 		if result != expected {
@@ -571,7 +633,7 @@ func TestReplaceEscapeEscapeCharacter(t *testing.T) {
 	})
 	t.Run("suffix", func(t *testing.T) {
 		source := `foo\ bar`
-		result := ReplaceAll(source, wm)
+		result := All(source, wm)
 
 		expected := `foo bar`
 		if result != expected {

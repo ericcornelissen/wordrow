@@ -49,12 +49,12 @@ fuzz%: FUNC?=Fuzz  # Set default fuzzing function to "Fuzz"
 fuzz: fuzz-build fuzz-run
 
 fuzz-build:
-	cd ${PKG}; \
-	go-fuzz-build
+	@echo BUILDING FUZZING BINARY FOR ${PKG}...
+	@cd ${PKG}; go-fuzz-build
 
 fuzz-run:
-	cd ${PKG}; \
-	go-fuzz -func ${FUNC} -workdir ${fuzz_dir}
+	@echo FUZZING ${PKG}::${FUNC}...
+	@cd ${PKG}; go-fuzz -func ${FUNC} -workdir ${fuzz_dir}
 
 benchmark:
 	go test $(test_root) -bench=. -run=XXX
@@ -79,7 +79,7 @@ lint-md:
 clean:
 	rm -rf $(executable_file)*
 	rm -rf $(coverage_file)
-	rm -rf **/*/*-fuzz.zip
-	rm -rf **/*/_fuzz/
+	rm `find ./ -name '_fuzz'` -rf
+	rm `find ./ -name '*-fuzz.zip'` -rf
 
 .PHONY: default install build clean format lint analysis test fuzz
