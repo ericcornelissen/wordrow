@@ -34,9 +34,11 @@ jobs:
       run: go get -u github.com/dvyukov/go-fuzz/go-fuzz-build
 
     # Fuzzing the CLI
+    - name: Rename package main
+      run: sed -i "s|package main|package _main|g" ./cmd/wordrow/*.go
     - name: Build fuzz target for CLI
-      run: make fuzz-build PKG=internal/cli
+      run: make fuzz-build PKG=cmd/wordrow
     - name: Push fuzz target
       run: |
-        ./fuzzit create target --skip-if-exists wordrow-cli --api-key ${{ secrets.FUZZIT_API_KEY }}
-        ./fuzzit create job --engine go-fuzz --type fuzzing ericcornelissen-gh/wordrow-cli ./internal/cli/cli-fuzz.zip --api-key ${{ secrets.FUZZIT_API_KEY }}
+        ./fuzzit create target --skip-if-exists wordrow --api-key ${{ secrets.FUZZIT_API_KEY }}
+        ./fuzzit create job --engine go-fuzz --type fuzzing ericcornelissen-gh/wordrow ./cmd/wordrow/_main-fuzz.zip --api-key ${{ secrets.FUZZIT_API_KEY }}
