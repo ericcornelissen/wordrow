@@ -15,9 +15,9 @@ package cli
 import (
 	"fmt"
 
+	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // Check if any arguments were provided to the program.
@@ -102,12 +102,12 @@ func doParseOneArgument(
 	context argContext,
 	arguments *Arguments,
 ) (newContext argContext, err error) {
-	if strings.HasPrefix(arg, "-") {
+	if stringsx.HasPrefix(arg, "-") {
 		if context != contextDefault {
 			return context, errors.Newf("Missing value for %s option", context)
 		}
 
-		if strings.HasPrefix(arg, "--") {
+		if stringsx.HasPrefix(arg, "--") {
 			newContext, err = parseArgumentAsOption(arg, arguments)
 		} else {
 			newContext, err = parseArgumentAsAlias(arg, arguments)

@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"unicode"
 
-	"github.com/ericcornelissen/wordrow/internal/strings"
+	"github.com/ericcornelissen/stringsx"
 )
 
 // A Regular Expression that matches newlines.
@@ -27,14 +27,14 @@ func startsWithCapital(s string) bool {
 // Convert a string to sentence case. I.e. make the first letter in the string
 // uppercase.
 func toSentenceCase(s string) string {
-	return strings.ToUpper(s[:1]) + s[1:]
+	return stringsx.ToUpper(s[:1]) + s[1:]
 }
 
 // If the `from` string is all caps, it will return `to` as all caps as well.
 // Otherwise, the `to` string is returned unchanged.
 func maintainAllCaps(from, to string) string {
-	if strings.ToUpper(from) == from {
-		return strings.ToUpper(to)
+	if stringsx.ToUpper(from) == from {
+		return stringsx.ToUpper(to)
 	}
 
 	return to
@@ -47,7 +47,7 @@ func maintainAllCaps(from, to string) string {
 // If the `from` string consists of multiple words, the capitalization will be
 // maintained for every word in the string.
 func maintainCapitalization(fromPhrase, toPhrase string) string {
-	var sb strings.Builder
+	var sb stringsx.Builder
 
 	fromWords := phraseToWordsExpr.FindAllStringSubmatch(fromPhrase, -1)
 	toWords := phraseToWordsExpr.FindAllStringSubmatch(toPhrase, -1)
@@ -123,7 +123,7 @@ func maintainWhitespace(from, to string) (string, int) {
 func changesFormattingOnly(from, to string) bool {
 	normalizedFrom := whitespaceExpr.ReplaceAllString(from, " ")
 	normalizedTo := whitespaceExpr.ReplaceAllString(to, " ")
-	return strings.ToLower(normalizedFrom) == strings.ToLower(normalizedTo)
+	return stringsx.ToLower(normalizedFrom) == stringsx.ToLower(normalizedTo)
 }
 
 // Format the `to` string based on the format of the `from` string.
@@ -134,7 +134,7 @@ func changesFormattingOnly(from, to string) bool {
 //  - Maintain newlines, tabs, etc.
 func maintainFormatting(from, to string) (string, int) {
 	if !changesFormattingOnly(from, to) {
-		to = strings.ToLower(to)
+		to = stringsx.ToLower(to)
 		to = maintainAllCaps(from, to)
 		to = maintainCapitalization(from, to)
 	}
