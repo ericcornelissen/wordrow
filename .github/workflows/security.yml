@@ -3,8 +3,8 @@ on:
   - pull_request
 
 jobs:
-  test:
-    name: Security
+  gosec:
+    name: Gosec
     runs-on: ubuntu-latest
     env:
       GO111MODULE: on
@@ -13,19 +13,35 @@ jobs:
     - name: Run gosec Security Scanner
       uses: securego/gosec@master
       with:
-        args: ./...
+        args: -conf .gosecrc.json ./...
+
+  snyk:
+    name: Snyk
+    runs-on: ubuntu-latest
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_API_KEY }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up NodeJS  # NodeJS required for snyk-CLI
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install the Snyk CLI
+      run: npm install -g snyk
+    - name: Run Snyk analysis
+      run: snyk test
 
   fuzz:
     name: Fuzz
     runs-on: ubuntu-latest
+    env:
+      FUZZIT_API_KEY: ${{ secrets.FUZZIT_API_KEY }}
     steps:
-
-    # Setup
+    - uses: actions/checkout@v2
     - name: Set up Go 1.13
       uses: actions/setup-go@v2
       with:
         go-version: 1.13
-    - uses: actions/checkout@v2
     - name: Get Fuzzit-CLI
       run: |
         wget -q -O fuzzit https://github.com/fuzzitdev/fuzzit/releases/latest/download/fuzzit_Linux_x86_64
@@ -40,5 +56,5 @@ jobs:
       run: make fuzz-build PKG=cmd/wordrow
     - name: Push fuzz target
       run: |
-        ./fuzzit create target --skip-if-exists wordrow --api-key ${{ secrets.FUZZIT_API_KEY }}
-        ./fuzzit create job --engine go-fuzz --type fuzzing ericcornelissen-gh/wordrow ./cmd/wordrow/_main-fuzz.zip --api-key ${{ secrets.FUZZIT_API_KEY }}
+        ./fuzzit create target --skip-if-exists wordrow
+        ./fuzzit create job --engine go-fuzz --type fuzzing ericcornelissen-gh/wordrow ./cmd/wordrow/_main-fuzz.zip

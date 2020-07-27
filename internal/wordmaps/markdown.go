@@ -3,8 +3,8 @@ package wordmaps
 import (
 	"regexp"
 
+	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/errors"
-	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // Regular expression of a MarkDown table row.
@@ -12,8 +12,8 @@ var tableDividerExpr = regexp.MustCompile(`^\s*\|(\s*-+\s*\|){2,}\s*$`)
 
 // Check whether or not a line in a MarkDown file is part of a table.
 func isTableRow(row string) bool {
-	row = strings.TrimSpace(row)
-	return strings.HasPrefix(row, "|") && strings.HasSuffix(row, "|")
+	row = stringsx.TrimSpace(row)
+	return stringsx.HasPrefix(row, "|") && stringsx.HasSuffix(row, "|")
 }
 
 // Parse a row of a MarkDown table into it's column values.
@@ -21,15 +21,14 @@ func isTableRow(row string) bool {
 // The error will be set if the row has an unexpected format, for example an
 // incorrect number of columns.
 func parseTableRow(row string) ([]string, error) {
-	rowValues := strings.Split(row, "|")
+	rowValues := stringsx.Split(row, "|")
 	if len(rowValues) < 4 {
 		return nil, errors.Newf("Unexpected table row format (in '%s')", row)
 	}
 
 	rowValues = rowValues[1 : len(rowValues)-1]
-
-	strings.Map(rowValues, strings.TrimSpace)
-	if strings.Any(rowValues, strings.IsEmpty) {
+	rowValues = stringsx.MapAll(rowValues, stringsx.TrimSpace)
+	if stringsx.Any(rowValues, stringsx.IsEmpty) {
 		return nil, errors.Newf("Missing value (in '%s')", row)
 	}
 
@@ -96,7 +95,7 @@ func parseTable(tableLines []string, wm *WordMap) (int, error) {
 func parseMarkDownFile(rawFileData *string) (WordMap, error) {
 	var wm WordMap
 
-	lines := strings.Split(*rawFileData, "\n")
+	lines := stringsx.Split(*rawFileData, "\n")
 	for i := 0; i < len(lines); i++ {
 		line := lines[i]
 		if isTableRow(line) {

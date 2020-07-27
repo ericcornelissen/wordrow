@@ -4,9 +4,9 @@
 package wordmaps
 
 import (
+	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // The WordMap type provides a guaranteed mapping from one set of strings to
@@ -43,8 +43,8 @@ func (wm *WordMap) AddFrom(other WordMap) {
 //
 // This function panics if an empty string is provided.
 func (wm *WordMap) AddOne(from, to string) {
-	fromValue := strings.TrimSpace(from)
-	toValue := strings.TrimSpace(to)
+	fromValue := stringsx.TrimSpace(from)
+	toValue := stringsx.TrimSpace(to)
 	if fromValue == "" || toValue == "" {
 		panic(1)
 	}

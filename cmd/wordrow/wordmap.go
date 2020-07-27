@@ -3,30 +3,39 @@ package main
 import (
 	"io/ioutil"
 
+	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/strings"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
 // Parse a --map-file argument into its component parts.
 //
-// A --map-file argument can either be just a file path, or a file path with
-// ":format" appended to it. For example:
+// A --map-file argument can either be just a file path, or a file path with an
+// explicit ":format" appended to it. For example:
 //
 //   /path/to/file.csv
 //   /path/to/file.txt:csv
 //
 // In the former the file extension is returned as format, in the latter the
 // explicitly stated format is returned as format.
+//
+// If the file does not have an extension it is expected to have an explicit
+// ":format" appended to it. For example:
+//
+//   /path/to/file:csv
+//   /path/to/file
+//
+// In the former the file explicitly stated format, in the latter no format is
+// returned.
 func parseMapFileArgument(argument string) (filePath string, format string) {
 	fileExtension := fs.GetExt(argument)
 
-	fileExtensionSplit := strings.Split(fileExtension, ":")
-	if len(fileExtensionSplit) > 1 {
-		explicitFormat := fileExtensionSplit[len(fileExtensionSplit)-1]
-		filePath := strings.TrimSuffix(argument, ":"+explicitFormat)
+	explicitFormatSplit := stringsx.Split(argument, ":")
+	if len(explicitFormatSplit) > 1 {
+		explicitFormat := explicitFormatSplit[len(explicitFormatSplit)-1]
+		filePath := stringsx.TrimSuffix(argument, ":"+explicitFormat)
 		return filePath, explicitFormat
 	}
 
@@ -90,7 +99,7 @@ func openAndProcessMapFiles(
 // Add a CLI defined mapping to the `wordmap`. If the mapping is invalid this
 // function returns an error (and leave `wordmap` unchanged).
 func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
-	values := strings.Split(mapping, ",")
+	values := stringsx.Split(mapping, ",")
 	if len(values) != 2 {
 		return errors.Newf("Invalid CLI defined mapping '%s'", mapping)
 	}
