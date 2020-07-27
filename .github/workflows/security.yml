@@ -3,8 +3,8 @@ on:
   - pull_request
 
 jobs:
-  test:
-    name: Security
+  gosec:
+    name: Gosec
     runs-on: ubuntu-latest
     env:
       GO111MODULE: on
@@ -26,8 +26,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-
     - name: Install the Snyk CLI
       run: npm install -g snyk
-    - name: Run snyk analysis
+    - name: Run Snyk analysis
       run: snyk test
