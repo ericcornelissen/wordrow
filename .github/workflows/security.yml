@@ -52,7 +52,7 @@ jobs:
     # Fuzzing the CLI
     - name: Rename package main
       run: sed -i "s|package main|package _main|g" ./cmd/wordrow/*.go
-    - name: Build fuzz target for CLI
+    - name: Build fuzz target
       run: make fuzz-build PKG=cmd/wordrow
     - name: Push fuzz target
       run: |

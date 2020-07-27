@@ -5,8 +5,8 @@ package main
 import (
 	"errors"
 
+	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/cli"
-	"github.com/ericcornelissen/wordrow/internal/strings"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
@@ -17,7 +17,7 @@ const (
 
 func dataToInputs(data []byte) ([]string, error) {
 	s := string(data)
-	inputs := strings.Split(s, "\n")
+	inputs := stringsx.Split(s, "\n")
 
 	if len(inputs) < 4 {
 		return nil, errors.New("too little input data")
@@ -27,13 +27,13 @@ func dataToInputs(data []byte) ([]string, error) {
 }
 
 func _processMapFile(s, format string, wordmap *wordmaps.WordMap) {
-	s = strings.ReplaceAll(s, ";", "\n")
-	mapfileReader := strings.NewReader(s)
+	s = stringsx.ReplaceAll(s, ";", "\n")
+	mapfileReader := stringsx.NewReader(s)
 	processMapFile(mapfileReader, format, wordmap)
 }
 
 func _doReplace(s string, wordmap *wordmaps.WordMap) {
-	inputfileReader := strings.NewReader(s)
+	inputfileReader := stringsx.NewReader(s)
 	doReplace(inputfileReader, wordmap)
 }
 
@@ -43,7 +43,7 @@ func Fuzz(data []byte) int {
 		return -1
 	}
 
-	_, args := cli.ParseArgs(strings.Split(x[0], ";"))
+	_, args := cli.ParseArgs(stringsx.Split(x[0], ";"))
 
 	var wordmap wordmaps.WordMap
 	processInlineMappings(args.Mappings, &wordmap)
