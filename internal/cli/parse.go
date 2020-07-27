@@ -107,6 +107,12 @@ func doParseOneArgument(
 			return context, errors.Newf("Missing value for %s option", context)
 		}
 
+		if equalsSplit := strings.Split(arg, "="); len(equalsSplit) == 2 {
+			option, value := equalsSplit[0], equalsSplit[1]
+			newContext, err = doParseOneArgument(option, context, arguments)
+			parseArgumentAsValue(value, newContext, arguments)
+		}
+
 		if strings.HasPrefix(arg, "--") {
 			newContext, err = parseArgumentAsOption(arg, arguments)
 		} else {
