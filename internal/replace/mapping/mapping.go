@@ -33,7 +33,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/ericcornelissen/wordrow/internal/strings"
+	"github.com/ericcornelissen/stringsx"
 )
 
 // A Regular Expression that matches groups of whitespace characters.
@@ -41,7 +41,7 @@ var whitespaceExpr = regexp.MustCompile(`(\s+)`)
 
 // Check if a string ends with the suffix symbol.
 func endsWithSuffixSymbol(s string) bool {
-	return strings.HasSuffix(s, `-`) && !strings.HasSuffix(s, `\-`)
+	return stringsx.HasSuffix(s, `-`) && !stringsx.HasSuffix(s, `\-`)
 }
 
 // Remove the prefix and suffix symbols from a string. If the symbols are not
@@ -62,7 +62,7 @@ func removePrefixAndSuffixSymbols(s string) string {
 
 // Check if a string starts with the prefix symbol.
 func startsWithPrefixSymbol(s string) bool {
-	return strings.HasPrefix(s, `-`)
+	return stringsx.HasPrefix(s, `-`)
 }
 
 // The Mapping type provides a guaranteed mapping from one string to another. As

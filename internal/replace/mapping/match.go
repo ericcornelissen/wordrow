@@ -3,9 +3,10 @@ package mapping
 import (
 	"fmt"
 	"regexp"
+	"unicode/utf8"
 
+	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // The Match type represents a matching substring in a larger string of a
@@ -36,8 +37,8 @@ type Match struct {
 // Given a query string to find Matches for, clean it so as to avoid any
 // problems when using it to match against a target string.
 func cleanStringToMatch(s string) string {
-	s = strings.ReplaceAll(s, `\\`, `\`)
-	s = strings.ReplaceAll(s, `\-`, `-`)
+	s = stringsx.ReplaceAll(s, `\\`, `\`)
+	s = stringsx.ReplaceAll(s, `\-`, `-`)
 	s = regexp.QuoteMeta(s)
 	return whitespaceExpr.ReplaceAllString(s, `\s+`)
 }
@@ -50,7 +51,7 @@ func getAllMatches(s, substr string) chan Match {
 	go func() {
 		defer close(ch)
 
-		if !strings.IsValidUTF8(substr) {
+		if !utf8.ValidString(substr) {
 			logger.Warningf("Invalid mapping value '%s'", substr)
 			return
 		}
