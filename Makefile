@@ -20,6 +20,8 @@ install-deps:
 	go get -u github.com/yargevad/filepathx
 
 install-dev-deps:
+	@echo "INSTALLLING DEVELOPMENT TOOLS"
+	$(go_nomod) go get golang.org/x/tools/cmd/goimports
 	@echo "INSTALLLING STATIC ANALYSIS TOOLS"
 	$(go_nomod) go get -u golang.org/x/lint/golint
 	curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b ${GOPATH}/bin v2.3.0
@@ -67,6 +69,7 @@ analysis:
 
 format:
 	go fmt ./...
+	goimports -w .
 
 lint: lint-go lint-md
 
