@@ -3,8 +3,8 @@ on:
   - pull_request
 
 jobs:
-  test:
-    name: Security
+  gosec:
+    name: Gosec
     runs-on: ubuntu-latest
     env:
       GO111MODULE: on
@@ -13,4 +13,20 @@ jobs:
     - name: Run gosec Security Scanner
       uses: securego/gosec@master
       with:
-        args: ./...
+        args: -conf .gosecrc.json ./...
+
+  snyk:
+    name: Snyk
+    runs-on: ubuntu-latest
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_API_KEY }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up NodeJS  # NodeJS required for snyk-CLI
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install the Snyk CLI
+      run: npm install -g snyk
+    - name: Run Snyk analysis
+      run: snyk test

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"testing/iotest"
 
-	"github.com/ericcornelissen/wordrow/internal/strings"
+	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
@@ -73,7 +73,7 @@ func TestProcessMapFile(t *testing.T) {
 		format := "csv"
 		expectedFrom, expectedTo := "foo", "bar"
 		content := fmt.Sprintf("%s,%s", expectedFrom, expectedTo)
-		handle := strings.NewReader(content)
+		handle := stringsx.NewReader(content)
 
 		err := processMapFile(handle, format, &wordmap)
 		if err != nil {
@@ -100,7 +100,7 @@ func TestProcessMapFile(t *testing.T) {
 
 		format := "csv"
 		content := "foobar"
-		handle := strings.NewReader(content)
+		handle := stringsx.NewReader(content)
 
 		err := processMapFile(handle, format, &wordmap)
 		if err == nil {
@@ -117,7 +117,7 @@ func TestProcessMapFile(t *testing.T) {
 
 		format := "csv"
 		content := ""
-		handle := strings.NewReader(content)
+		handle := stringsx.NewReader(content)
 
 		err := processMapFile(handle, format, &wordmap)
 		if err != nil {
@@ -134,7 +134,7 @@ func TestProcessMapFile(t *testing.T) {
 
 		format := "csv"
 		content := "foo,bar"
-		handle := iotest.TimeoutReader(strings.NewReader(content))
+		handle := iotest.TimeoutReader(stringsx.NewReader(content))
 
 		err := processMapFile(handle, format, &wordmap)
 		if err == nil {

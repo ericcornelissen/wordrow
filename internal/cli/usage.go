@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/ericcornelissen/wordrow/internal/strings"
+	"github.com/ericcornelissen/stringsx"
 )
 
 // The maximum line length for the usage message.
@@ -12,15 +12,15 @@ const maxLineLen = 80
 // Utility function to clean a source-formatted string into a single line
 // string.
 func clean(s string) string {
-	s = strings.ReplaceAll(s, "\n", " ")
-	s = strings.TrimSpace(s)
+	s = stringsx.ReplaceAll(s, "\n", " ")
+	s = stringsx.TrimSpace(s)
 
 	return s
 }
 
 // Utility function to get a string of spaces the length of a given string.
 func asWhitespace(s string) string {
-	return strings.Repeat(" ", len(s))
+	return stringsx.Repeat(" ", len(s))
 }
 
 // Get an option and option alias as a bullet for the usage message.
@@ -34,7 +34,7 @@ func getOptionBullet(option, optionAlias string) string {
 
 // Format the usage of a single option.
 func formatOption(option Option, message string) string {
-	var sb strings.Builder
+	var sb stringsx.Builder
 	var lineCount = 1
 
 	message = clean(message)
@@ -43,7 +43,7 @@ func formatOption(option Option, message string) string {
 	indentation := asWhitespace(topic)
 
 	sb.WriteString(topic)
-	for _, word := range strings.Fields(message) {
+	for _, word := range stringsx.Fields(message) {
 		if (sb.Len() + len(word)) > (lineCount * maxLineLen) {
 			sb.WriteRune('\n')
 			sb.WriteString(indentation)

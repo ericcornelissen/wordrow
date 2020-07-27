@@ -16,14 +16,14 @@ original text. Namely:
 package replace
 
 import (
+	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/replace/mapping"
-	"github.com/ericcornelissen/wordrow/internal/strings"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
 // Replace all instances of `from` by `to` in `s`.
 func replaceOne(s string, m mapping.Mapping) string {
-	var sb strings.Builder
+	var sb stringsx.Builder
 
 	lastIndex := 0
 	for match := range m.Match(s) {
