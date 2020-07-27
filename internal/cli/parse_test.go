@@ -461,20 +461,38 @@ func TestMappingOptionIncorrect(t *testing.T) {
 }
 
 func TestArgumentWithEquals(t *testing.T) {
-	args := createArgs("--map=foo,bar")
-	run, arguments := ParseArgs(args)
+	t.Run("Valid option", func(t *testing.T) {
+		args := createArgs("--map=foo,bar")
+		run, arguments := ParseArgs(args)
 
-	if run != false {
-		t.Fatal("The first return value should be false without input file")
-	}
+		if run != false {
+			t.Fatal("The first return value should be false without input file")
+		}
 
-	if mappingsCount := len(arguments.Mappings); mappingsCount != 1 {
-		t.Fatalf("Expected one mapping to be set (got %d)", mappingsCount)
-	}
+		testDefaultsExcept(t, arguments, "mappings")
 
-	if mapping := arguments.Mappings[0]; mapping != "foo,bar" {
-		t.Errorf("Unexpected first mapping (got '%s')", mapping)
-	}
+		if mappingsCount := len(arguments.Mappings); mappingsCount != 1 {
+			t.Fatalf("Expected one mapping to be set (got %d)", mappingsCount)
+		}
+
+		if mapping := arguments.Mappings[0]; mapping != "foo,bar" {
+			t.Errorf("Unexpected first mapping (got '%s')", mapping)
+		}
+	})
+	t.Run("Invalid option", func(t *testing.T) {
+		args := createArgs("--lolwat=foo,bar")
+		run, arguments := ParseArgs(args)
+
+		if run != false {
+			t.Fatal("The first return value should be false without input file")
+		}
+
+		testDefaultsExcept(t, arguments, "no exceptions")
+
+		if inputCount := len(arguments.InputFiles); inputCount != 0 {
+			t.Fatalf("Expected no input files (got %d)", inputCount)
+		}
+	})
 }
 
 func TestUnknownOption(t *testing.T) {
