@@ -3,7 +3,6 @@ package mapping
 import (
 	"fmt"
 	"regexp"
-	"unicode/utf8"
 
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/logger"
@@ -51,7 +50,7 @@ func getAllMatches(s, substr string) chan Match {
 	go func() {
 		defer close(ch)
 
-		if !utf8.ValidString(substr) {
+		if !stringsx.IsValidUTF8(substr) {
 			logger.Warningf("Invalid mapping value '%s'", substr)
 			return
 		}

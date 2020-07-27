@@ -1,6 +1,6 @@
 github.com/dvyukov/go-fuzz v0.0.0-20200318091601-be3528f3a813 h1:NgO45/5mBLRVfiXerEFzH6ikcZ7DNRPS639xFg3ENzU=
 github.com/dvyukov/go-fuzz v0.0.0-20200318091601-be3528f3a813/go.mod h1:11Gm+ccJnvAhCNLlf5+cS9KjtbaD5I5zaZpFMsTHWTw=
-github.com/ericcornelissen/stringsx v0.0.0-20200722155541-2dedfe84daa0 h1:iiO4B++gFuIVvQeLZ+Am/RFekcPIGiJMjLtsI/D05/I=
-github.com/ericcornelissen/stringsx v0.0.0-20200722155541-2dedfe84daa0/go.mod h1:DDDw69nk7GMGSwy4QmTQYYHbqdUa/K/CSNJ62knuaFE=
+github.com/ericcornelissen/stringsx v0.0.0-20200727095713-42951b0a5921 h1:EXY/9km1QXoFlpLjQAu5no1CAse/+DoO2SWBHLpEtAg=
+github.com/ericcornelissen/stringsx v0.0.0-20200727095713-42951b0a5921/go.mod h1:DDDw69nk7GMGSwy4QmTQYYHbqdUa/K/CSNJ62knuaFE=
 github.com/yargevad/filepathx v0.0.0-20161019152617-907099cb5a62 h1:pZlTNPEY1N9n4Frw+wiRy9goxBru/H5KaBxJ4bFt89w=
 github.com/yargevad/filepathx v0.0.0-20161019152617-907099cb5a62/go.mod h1:VtdjfTSVslSOB39qCxkH9K3m2qUauaJk/6y+pNkvCQY=
