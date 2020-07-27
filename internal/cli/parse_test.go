@@ -460,6 +460,23 @@ func TestMappingOptionIncorrect(t *testing.T) {
 	})
 }
 
+func TestArgumentWithEquals(t *testing.T) {
+	args := createArgs("--map=foo,bar")
+	run, arguments := ParseArgs(args)
+
+	if run != false {
+		t.Fatal("The first return value should be false without input file")
+	}
+
+	if mappingsCount := len(arguments.Mappings); mappingsCount != 1 {
+		t.Fatalf("Expected one mapping to be set (got %d)", mappingsCount)
+	}
+
+	if mapping := arguments.Mappings[0]; mapping != "foo,bar" {
+		t.Errorf("Unexpected first mapping (got '%s')", mapping)
+	}
+}
+
 func TestUnknownOption(t *testing.T) {
 	args := createArgs("--this-is-definitely-not-a-valid-option")
 	run, _ := ParseArgs(args)
