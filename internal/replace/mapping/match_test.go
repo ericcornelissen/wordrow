@@ -31,6 +31,12 @@ func TestCleanStringToMatch(t *testing.T) {
 		if actual != expected {
 			t.Errorf("Unexpected result (got '%s')", actual)
 		}
+
+		in, expected = `\\`, `\\`
+		actual = cleanStringToMatch(in)
+		if actual != expected {
+			t.Errorf("Unexpected result (got '%s')", actual)
+		}
 	})
 }
 
