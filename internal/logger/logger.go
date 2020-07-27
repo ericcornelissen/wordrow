@@ -21,7 +21,7 @@ package logger
 import (
 	"fmt"
 
-	"github.com/ericcornelissen/wordrow/internal/strings"
+	"github.com/ericcornelissen/stringsx"
 )
 
 // The maximum log level that should be logged.
@@ -34,7 +34,7 @@ func SetLogLevel(newLogLevel LogLevel) {
 
 // Convert a string to sentence case, i.e. starting with a capital letter.
 func toSentenceCase(s string) string {
-	return strings.ToUpper(s[:1]) + s[1:]
+	return stringsx.ToUpper(s[:1]) + s[1:]
 }
 
 // Internal function that should be use for printing. It will only print if the

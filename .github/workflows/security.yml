@@ -13,7 +13,7 @@ jobs:
     - name: Run gosec Security Scanner
       uses: securego/gosec@master
       with:
-        args: ./...
+        args: -conf .gosecrc.json ./...
 
   snyk:
     name: Snyk

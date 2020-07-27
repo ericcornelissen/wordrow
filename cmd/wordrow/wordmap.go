@@ -3,10 +3,10 @@ package main
 import (
 	"io/ioutil"
 
+	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/strings"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
@@ -32,10 +32,10 @@ import (
 func parseMapFileArgument(argument string) (filePath string, format string) {
 	fileExtension := fs.GetExt(argument)
 
-	explicitFormatSplit := strings.Split(argument, ":")
+	explicitFormatSplit := stringsx.Split(argument, ":")
 	if len(explicitFormatSplit) > 1 {
 		explicitFormat := explicitFormatSplit[len(explicitFormatSplit)-1]
-		filePath := strings.TrimSuffix(argument, ":"+explicitFormat)
+		filePath := stringsx.TrimSuffix(argument, ":"+explicitFormat)
 		return filePath, explicitFormat
 	}
 
@@ -99,7 +99,7 @@ func openAndProcessMapFiles(
 // Add a CLI defined mapping to the `wordmap`. If the mapping is invalid this
 // function returns an error (and leave `wordmap` unchanged).
 func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
-	values := strings.Split(mapping, ",")
+	values := stringsx.Split(mapping, ",")
 	if len(values) != 2 {
 		return errors.Newf("Invalid CLI defined mapping '%s'", mapping)
 	}

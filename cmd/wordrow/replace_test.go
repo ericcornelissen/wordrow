@@ -8,7 +8,7 @@ import (
 	"testing"
 	"testing/iotest"
 
-	"github.com/ericcornelissen/wordrow/internal/strings"
+	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
@@ -18,7 +18,7 @@ func TestDoReplace(t *testing.T) {
 
 	t.Run("Replace something", func(t *testing.T) {
 		content := "Foo Bar"
-		handle := strings.NewReader(content)
+		handle := stringsx.NewReader(content)
 
 		fixed, err := doReplace(handle, &wordmap)
 		if err != nil {
@@ -31,7 +31,7 @@ func TestDoReplace(t *testing.T) {
 	})
 	t.Run("Replace nothing", func(t *testing.T) {
 		content := "Bar"
-		handle := strings.NewReader(content)
+		handle := stringsx.NewReader(content)
 
 		fixed, err := doReplace(handle, &wordmap)
 		if err != nil {
@@ -44,7 +44,7 @@ func TestDoReplace(t *testing.T) {
 	})
 	t.Run("Reading error", func(t *testing.T) {
 		content := "Hello world"
-		handle := iotest.TimeoutReader(strings.NewReader(content))
+		handle := iotest.TimeoutReader(stringsx.NewReader(content))
 
 		_, err := doReplace(handle, &wordmap)
 		if err == nil {
@@ -52,7 +52,7 @@ func TestDoReplace(t *testing.T) {
 		}
 	})
 	t.Run("Empty reader", func(t *testing.T) {
-		handle := strings.NewReader("")
+		handle := stringsx.NewReader("")
 
 		fixed, err := doReplace(handle, &wordmap)
 		if err != nil {
@@ -108,7 +108,7 @@ func TestProcessFile(t *testing.T) {
 		content := fmt.Sprintf("%s %s", from0, from1)
 		expectedWritten := fmt.Sprintf("%s %s", to0, to1)
 
-		reader := strings.NewReader(content)
+		reader := stringsx.NewReader(content)
 		writer := new(bytes.Buffer)
 		bufferedReader := bufio.NewReader(reader)
 		bufferedWriter := bufio.NewWriter(writer)
@@ -127,11 +127,11 @@ func TestProcessFile(t *testing.T) {
 	})
 	t.Run("Replace nothing", func(t *testing.T) {
 		content := "foobar"
-		if strings.Contains(content, from0) || strings.Contains(content, from1) {
+		if stringsx.Contains(content, from0) || stringsx.Contains(content, from1) {
 			t.Fatal("Content cannot contain a string that may be replaced")
 		}
 
-		reader := strings.NewReader(content)
+		reader := stringsx.NewReader(content)
 		writer := new(bytes.Buffer)
 		bufferedReader := bufio.NewReader(reader)
 		bufferedWriter := bufio.NewWriter(writer)
@@ -151,7 +151,7 @@ func TestProcessFile(t *testing.T) {
 	t.Run("Reading error", func(t *testing.T) {
 		content := "foobar"
 
-		reader := iotest.TimeoutReader(strings.NewReader(content))
+		reader := iotest.TimeoutReader(stringsx.NewReader(content))
 		writer := new(bytes.Buffer)
 		bufferedReader := bufio.NewReader(reader)
 		bufferedWriter := bufio.NewWriter(writer)
@@ -174,7 +174,7 @@ func TestProcessFile(t *testing.T) {
 			t.Fatal("Content must be at least 2 bytes to ensure the writer errors")
 		}
 
-		reader := strings.NewReader(content)
+		reader := stringsx.NewReader(content)
 		writer := iotest.TruncateWriter(os.Stdin, 1)
 		bufferedReader := bufio.NewReader(reader)
 		bufferedWriter := bufio.NewWriterSize(writer, 1)
