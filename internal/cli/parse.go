@@ -93,7 +93,7 @@ func parseArgumentAsValue(
 	}
 }
 
-// Parse a single argument as a value or option/flag.
+// Parse a single argument as an option or flag.
 //
 // The function sets the error if the argument could not be parsed (in the
 // provided context).
