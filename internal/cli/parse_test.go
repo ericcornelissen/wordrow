@@ -479,6 +479,24 @@ func TestArgumentWithEquals(t *testing.T) {
 			t.Errorf("Unexpected first mapping (got '%s')", mapping)
 		}
 	})
+	t.Run("Valid option, multiple equals", func(t *testing.T) {
+		args := createArgs("--map=1=2,1=1")
+		run, arguments := ParseArgs(args)
+
+		if run != false {
+			t.Fatal("The first return value should be false without input file")
+		}
+
+		testDefaultsExcept(t, arguments, "mappings")
+
+		if mappingsCount := len(arguments.Mappings); mappingsCount != 1 {
+			t.Fatalf("Expected one mapping to be set (got %d)", mappingsCount)
+		}
+
+		if mapping := arguments.Mappings[0]; mapping != "1=2,1=1" {
+			t.Errorf("Unexpected first mapping (got '%s')", mapping)
+		}
+	})
 	t.Run("Invalid option", func(t *testing.T) {
 		args := createArgs("--lolwat=foo,bar")
 		run, arguments := ParseArgs(args)

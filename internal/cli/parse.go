@@ -101,8 +101,8 @@ func doParseOneOption(
 	arg string,
 	arguments *Arguments,
 ) (newContext argContext, err error) {
-	if equalsSplit := stringsx.Split(arg, "="); len(equalsSplit) == 2 {
-		option, value := equalsSplit[0], equalsSplit[1]
+	if equalsSplit := stringsx.Split(arg, "="); len(equalsSplit) > 1 {
+		option, value := equalsSplit[0], stringsx.Join(equalsSplit[1:], "=")
 		err := doParseProgramArguments([]string{option, value}, arguments)
 		return contextDefault, err
 	}
