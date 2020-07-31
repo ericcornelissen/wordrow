@@ -79,7 +79,6 @@ func printOptions() {
 	printOption(verboseFlag, `Enabled debug logging.`)
 
 	printSectionTitle("Options")
-	printOption(configOption, `Specify a configuration file.`)
 	printOption(mapfileOption, `
 		Specify a file with a mapping. To use multiple mapping files you can use
 		this option multiple times.
@@ -106,11 +105,6 @@ func printInterface() {
 		dryRunFlag.name,
 		silentFlag.alias,
 		silentFlag.name,
-	)
-	fmt.Printf("%s [%s | %s <file>]\n",
-		indentation,
-		configOption.alias,
-		configOption.name,
 	)
 	fmt.Printf("%s [%s | %s <file>]\n",
 		indentation,
