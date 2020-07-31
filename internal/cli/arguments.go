@@ -21,9 +21,6 @@ type Arguments struct {
 	// Flag indicating if the program should be verbose.
 	Verbose bool
 
-	// The config file.
-	ConfigFile string
-
 	// List of files to be processed.
 	InputFiles []string
 

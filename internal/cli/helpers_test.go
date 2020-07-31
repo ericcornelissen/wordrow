@@ -48,15 +48,6 @@ func testDefaultVerbose(t *testing.T, arguments Arguments) {
 	}
 }
 
-// Test if ConfigFile has the default value.
-func testDefaultConfigFile(t *testing.T, arguments Arguments) {
-	t.Helper()
-
-	if arguments.ConfigFile != "" {
-		t.Error("The default ConfigFile should not be set")
-	}
-}
-
 // Test if MapFiles has the default value.
 func testDefaultMapFiles(t *testing.T, arguments Arguments) {
 	t.Helper()
@@ -90,9 +81,6 @@ func testDefaultsExcept(t *testing.T, arguments Arguments, exclude string) {
 	}
 	if exclude != "verbose" {
 		testDefaultVerbose(t, arguments)
-	}
-	if exclude != "config file" {
-		testDefaultConfigFile(t, arguments)
 	}
 	if exclude != "map files" {
 		testDefaultMapFiles(t, arguments)
