@@ -17,8 +17,8 @@ const (
 
 func dataToInputs(data []byte) ([]string, error) {
 	s := string(data)
-	inputs := stringsx.Split(s, "\n")
 
+	inputs := stringsx.Split(s, "\n")
 	if len(inputs) < 4 {
 		return nil, errors.New("too little input data")
 	}
@@ -32,31 +32,33 @@ func _processMapFile(s, format string, wordmap *wordmaps.WordMap) {
 	processMapFile(mapfileReader, format, wordmap)
 }
 
-func _doReplace(s string, wordmap *wordmaps.WordMap) {
+func _doReplace(s string, wordmap *wordmaps.WordMap) string {
+	s = stringsx.ReplaceAll(s, ";", "\n")
 	inputfileReader := stringsx.NewReader(s)
-	doReplace(inputfileReader, wordmap)
+	output, _ := doReplace(inputfileReader, wordmap)
+	return output
 }
 
 func Fuzz(data []byte) int {
-	x, err := dataToInputs(data)
+	inputs, err := dataToInputs(data)
 	if err != nil {
 		return -1
 	}
 
-	_, args := cli.ParseArgs(stringsx.Split(x[0], ";"))
+	rawArgs := stringsx.Split(inputs[0], ";")
+	_, args := cli.ParseArgs(rawArgs)
 
 	var wordmap wordmaps.WordMap
 	processInlineMappings(args.Mappings, &wordmap)
-	_processMapFile(x[1], csv, &wordmap)
-	_processMapFile(x[2], markdown, &wordmap)
+	_processMapFile(inputs[1], csv, &wordmap)
+	_processMapFile(inputs[2], markdown, &wordmap)
 
 	if args.Invert {
 		wordmap.Invert()
 	}
 
-	_doReplace(x[3], &wordmap)
-
-	if wordmap.Size() > 0 && len(x[3]) > 0 {
+	output := _doReplace(inputs[3], &wordmap)
+	if output != inputs[3] {
 		return 1
 	}
 
