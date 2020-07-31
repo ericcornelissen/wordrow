@@ -154,7 +154,7 @@ func ParseArgs(args []string) (run bool, arguments Arguments) {
 
 	arguments, err := doParseProgramArguments(args[1:])
 	if err != nil {
-		logger.Error(err)
+		logger.Fatalf("An error occurred while parsing arguments: %s", err)
 		return false, arguments
 	}
 
