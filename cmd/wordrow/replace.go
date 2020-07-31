@@ -21,8 +21,9 @@ func doReplace(
 		return updatedContent, err
 	}
 
+	m := wordmap.Iter()
 	content := string(data)
-	return replace.All(content, *wordmap), nil
+	return replace.All(content, m), nil
 }
 
 // Writes the `updatedContents` to the `writer`.
