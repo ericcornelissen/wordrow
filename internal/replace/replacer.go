@@ -4,7 +4,7 @@ this end it provides one function that accepts a string and a mapping and
 returns the string with all words of the mapping replaced.
 
 	var s string
-	var m WordMap
+	var m map[string]string
 	All(s, m)
 
 The replacement will do some clever things to maintain the formatting of the
@@ -18,7 +18,6 @@ package replace
 import (
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/replace/mapping"
-	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
 // Replace all instances of `from` by `to` in `s`.
@@ -41,9 +40,9 @@ func replaceOne(s string, m mapping.Mapping) string {
 	return sb.String()
 }
 
-// All replaces substrings of `s` according to the mapping in `wordmap`.
-func All(s string, wordmap wordmaps.WordMap) string {
-	for from, to := range wordmap.Iter() {
+// All replaces substrings of `s` according to the mapping defined by `m`.
+func All(s string, m map[string]string) string {
+	for from, to := range m {
 		m := mapping.New(from, to)
 		s = replaceOne(s, m)
 	}
