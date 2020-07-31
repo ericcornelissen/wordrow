@@ -15,6 +15,10 @@ Versioning].
 
 - Fix bug preventing the usage of map files without file extension. ([#101])
 
+### Miscellaneous
+
+- Removed (unused) `--config` option. ([#107])
+
 ## [0.5.0-beta] - 2020-07-24
 
 ### Features
@@ -123,3 +127,4 @@ Versioning].
 [#99]: https://github.com/ericcornelissen/wordrow/pull/99
 [#101]: https://github.com/ericcornelissen/wordrow/pull/101
 [#102]: https://github.com/ericcornelissen/wordrow/pull/102
+[#107]: https://github.com/ericcornelissen/wordrow/pull/107
