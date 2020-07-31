@@ -142,6 +142,11 @@ func (mapping *Mapping) To() string {
 func (mapping *Mapping) Match(s string) chan Match {
 	ch := make(chan Match)
 
+	if stringsx.IsEmpty(mapping.from) {
+		close(ch)
+		return ch
+	}
+
 	go func() {
 		defer close(ch)
 
