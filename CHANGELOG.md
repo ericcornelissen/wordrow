@@ -16,6 +16,10 @@ Versioning].
 - Fix bug preventing the usage of map files without file extension. ([#101])
 - Fix logs of incorrect level being logged. ([#107], [#108])
 
+### Miscellaneous
+
+- Removed (unused) `--config` option. ([#107])
+
 ## [0.5.0-beta] - 2020-07-24
 
 ### Features
