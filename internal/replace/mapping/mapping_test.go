@@ -965,6 +965,12 @@ func TestMatch(t *testing.T) {
 			}
 		})
 	})
+	t.Run("empty string", func(t *testing.T) {
+		mapping := Mapping{"", "to"}
+		for match := range mapping.Match("Hello world") {
+			t.Errorf("There shouldn't be any matches (got '%+v'", match)
+		}
+	})
 }
 
 func TestUnconventionalMappings(t *testing.T) {
