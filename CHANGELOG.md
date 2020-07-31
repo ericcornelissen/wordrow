@@ -7,6 +7,10 @@ Versioning].
 
 ## [Unreleased]
 
+### Features
+
+- Add support for CLI arguments with "=". ([#102])
+
 ### Bug Fixes
 
 - Fix bug preventing the usage of map files without file extension. ([#101])
@@ -119,5 +123,6 @@ Versioning].
 [#98]: https://github.com/ericcornelissen/wordrow/pull/98
 [#99]: https://github.com/ericcornelissen/wordrow/pull/99
 [#101]: https://github.com/ericcornelissen/wordrow/pull/101
+[#102]: https://github.com/ericcornelissen/wordrow/pull/102
 [#107]: https://github.com/ericcornelissen/wordrow/pull/107
 [#108]: https://github.com/ericcornelissen/wordrow/pull/108

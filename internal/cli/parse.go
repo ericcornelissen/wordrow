@@ -93,6 +93,29 @@ func parseArgumentAsValue(
 	}
 }
 
+// Parse a single argument as an option or flag.
+//
+// The function sets the error if the argument could not be parsed (in the
+// provided context).
+func doParseOneOption(
+	arg string,
+	arguments *Arguments,
+) (newContext argContext, err error) {
+	if equalsSplit := stringsx.Split(arg, "="); len(equalsSplit) > 1 {
+		option, value := equalsSplit[0], stringsx.Join(equalsSplit[1:], "=")
+		err := doParseProgramArguments([]string{option, value}, arguments)
+		return contextDefault, err
+	}
+
+	if stringsx.HasPrefix(arg, "--") {
+		newContext, err = parseArgumentAsOption(arg, arguments)
+	} else {
+		newContext, err = parseArgumentAsAlias(arg, arguments)
+	}
+
+	return newContext, err
+}
+
 // Parse a single argument as a value or option/flag.
 //
 // The function sets the error if the argument could not be parsed (in the
@@ -107,11 +130,7 @@ func doParseOneArgument(
 			return context, errors.Newf("Missing value for %s option", context)
 		}
 
-		if stringsx.HasPrefix(arg, "--") {
-			newContext, err = parseArgumentAsOption(arg, arguments)
-		} else {
-			newContext, err = parseArgumentAsAlias(arg, arguments)
-		}
+		newContext, err = doParseOneOption(arg, arguments)
 	} else {
 		parseArgumentAsValue(arg, context, arguments)
 		newContext = contextDefault
@@ -124,24 +143,22 @@ func doParseOneArgument(
 //
 // The function sets the error if there is any issue with the provided
 // arguments.
-func doParseProgramArguments(args []string) (Arguments, error) {
-	var arguments Arguments
-
+func doParseProgramArguments(args []string, arguments *Arguments) error {
 	context := contextDefault
 	for _, arg := range args {
-		newContext, err := doParseOneArgument(arg, context, &arguments)
+		newContext, err := doParseOneArgument(arg, context, arguments)
 		if err != nil {
-			return arguments, err
+			return err
 		}
 
 		context = newContext
 	}
 
 	if context != contextDefault {
-		return arguments, errors.New("More arguments expected")
+		return errors.New("More arguments expected")
 	}
 
-	return arguments, nil
+	return nil
 }
 
 // ParseArgs parses a list of arguments (e.g. `os.Args`) into an Arguments
@@ -152,7 +169,7 @@ func ParseArgs(args []string) (run bool, arguments Arguments) {
 		return false, arguments
 	}
 
-	arguments, err := doParseProgramArguments(args[1:])
+	err := doParseProgramArguments(args[1:], &arguments)
 	if err != nil {
 		logger.Fatalf("An error occurred while parsing arguments: %s", err)
 		return false, arguments
