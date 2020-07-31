@@ -9,12 +9,6 @@ func TestArgContextToString(t *testing.T) {
 			t.Error("result should not be an empty string")
 		}
 	})
-	t.Run("contextConfigFile", func(t *testing.T) {
-		result := contextConfigFile.String()
-		if result == "" {
-			t.Error("result should not be an empty string")
-		}
-	})
 	t.Run("contextMapFile", func(t *testing.T) {
 		result := contextMapFile.String()
 		if result == "" {

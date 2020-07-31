@@ -61,9 +61,6 @@ func parseArgumentAsOption(
 		arguments.Verbose = true
 
 	// Options
-	case configOption.name, configOption.alias:
-		newContext = contextConfigFile
-		logger.Warningf("The %s argument is not yet supported", option)
 	case mapfileOption.name, mapfileOption.alias:
 		newContext = contextMapFile
 	case mappingOption.name, mappingOption.alias:
@@ -84,8 +81,6 @@ func parseArgumentAsValue(
 	switch context {
 	case contextDefault:
 		arguments.InputFiles = append(arguments.InputFiles, value)
-	case contextConfigFile:
-		arguments.ConfigFile = value
 	case contextMapFile:
 		arguments.MapFiles = append(arguments.MapFiles, value)
 	case contextMapping:

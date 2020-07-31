@@ -45,12 +45,6 @@ var (
 		alias: "-v",
 	}
 
-	// The option to specify the configuration file to use.
-	configOption = Option{
-		name:  "--config",
-		alias: "-c",
-	}
-
 	// The option to specify a mapping file.
 	mapfileOption = Option{
 		name:  "--map-file",
