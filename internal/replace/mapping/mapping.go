@@ -162,7 +162,7 @@ func (mapping *Mapping) Match(s string) chan Match {
 	return ch
 }
 
-// Get the WordMap as a human readable string.
+// Get the Mapping as a human readable string.
 func (mapping *Mapping) String() string {
 	return fmt.Sprintf("[%s -> %s]",
 		mapping.from,

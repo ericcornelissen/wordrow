@@ -4,7 +4,7 @@ this end it provides one function that accepts a string and a mapping and
 returns the string with all words of the mapping replaced.
 
 	var s string
-	var m WordMap
+	var m map[string]string
 	All(s, m)
 
 The replacement will do some clever things to maintain the formatting of the

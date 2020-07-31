@@ -17,7 +17,7 @@ type Match struct {
 	// The matched word as it appears in the original string.
 	Word string
 
-	// The replacement of the Word based on the WordMap that created the Match.
+	// The replacement of the Word based on the Mapping that created the Match.
 	Replacement string
 
 	// The prefix of the matched Word.

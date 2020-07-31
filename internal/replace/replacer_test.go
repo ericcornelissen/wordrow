@@ -26,7 +26,7 @@ func TestReplaceEmptyString(t *testing.T) {
 	}
 }
 
-func TestReplaceEmptyWordmap(t *testing.T) {
+func TestReplaceEmptyMapping(t *testing.T) {
 	mapping := make(map[string]string)
 
 	source := "Hello world!"
@@ -37,13 +37,13 @@ func TestReplaceEmptyWordmap(t *testing.T) {
 	}
 }
 
-func TestReplaceOneWordInWordMap(t *testing.T) {
+func TestReplaceOneWordInMapping(t *testing.T) {
 	from, to := "foo", "bar"
 
 	mapping := make(map[string]string)
 	mapping[from] = to
 
-	t.Run("source is 'from' in the WordMap", func(t *testing.T) {
+	t.Run("source is 'from' in the Mapping", func(t *testing.T) {
 		source := from
 		result := All(source, mapping)
 
@@ -51,7 +51,7 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
 			reportIncorrectReplacement(t, to, result)
 		}
 	})
-	t.Run("source is 'to' in the WordMap", func(t *testing.T) {
+	t.Run("source is 'to' in the Mapping", func(t *testing.T) {
 		source := to
 		result := All(source, mapping)
 
@@ -85,7 +85,7 @@ func TestReplaceOneWordInWordMap(t *testing.T) {
 	})
 }
 
-func TestReplaceMultipleWordsInWordMap(t *testing.T) {
+func TestReplaceMultipleWordsInMapping(t *testing.T) {
 	mapping := make(map[string]string)
 	mapping["foo"] = "bar"
 	mapping["color"] = "colour"
