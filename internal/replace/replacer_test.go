@@ -668,3 +668,15 @@ func TestReplaceEscapeEscapeCharacter(t *testing.T) {
 		}
 	})
 }
+
+func TestEmptyFromValue(t *testing.T) {
+	mapping := make(map[string]string)
+	mapping[""] = "foobar"
+
+	s := "Hello world!"
+	result := All(s, mapping)
+
+	if result != s {
+		t.Errorf("Unexpected result (got '%s')", result)
+	}
+}
