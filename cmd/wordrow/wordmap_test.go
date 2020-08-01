@@ -189,6 +189,22 @@ func TestProcessInlineMapping(t *testing.T) {
 			t.Fatalf("Unexpected wordmap size (got %d)", wordmapSize)
 		}
 	})
+	t.Run("Empty string", func(t *testing.T) {
+		var wordmap wordmaps.WordMap
+
+		if err := processInlineMapping("foo,", &wordmap); err == nil {
+			t.Errorf("Expected no error but got one (%s)", err)
+		}
+
+		if err := processInlineMapping(",bar", &wordmap); err == nil {
+			t.Errorf("Expected no error but got one (%s)", err)
+		}
+
+		wordmapSize := wordmap.Size()
+		if wordmapSize != 0 {
+			t.Fatalf("Unexpected wordmap size (got %d)", wordmapSize)
+		}
+	})
 }
 
 func TestProcessInlineMappings(t *testing.T) {
