@@ -105,7 +105,7 @@ func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
 	}
 
 	from, to := values[0], values[1]
-	if stringsx.IsEmpty(from) || stringsx.IsEmpty(to) {
+	if stringsx.IsEmpty(from) {
 		return errors.Newf("Invalid CLI defined mapping '%s'", mapping)
 	}
 
