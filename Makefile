@@ -24,6 +24,7 @@ install-dev-deps:
 	$(go_nomod) go get golang.org/x/tools/cmd/goimports
 	@echo "INSTALLLING STATIC ANALYSIS TOOLS"
 	$(go_nomod) go get -u golang.org/x/lint/golint
+	$(go_nomod) go get -u github.com/gordonklaus/ineffassign
 	curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b ${GOPATH}/bin v2.3.0
 	@echo "INSTALLLING MANUAL ANALYSIS TOOLS"
 	$(go_nomod) go get -u github.com/dvyukov/go-fuzz/go-fuzz github.com/dvyukov/go-fuzz/go-fuzz-build
@@ -68,6 +69,8 @@ analysis:
 	@gosec -conf .gosecrc.json -quiet ./...
 	@echo "VERIFYING ERRORS ARE CHECKED..."
 	@errcheck -asserts -blank -ignoretests -exclude errcheck_excludes.txt ./...
+	@echo "CHECKING FOR INEFFECTIVE ASSIGNMENTS"
+	@ineffassign ./*
 
 format:
 	go fmt ./...
