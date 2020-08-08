@@ -8,10 +8,10 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/logger"
 )
 
-func run(args cli.Arguments) error {
+func run(args cli.Arguments) (errs []error) {
 	wordmap, err := getWordMap(args.MapFiles, args.Mappings)
 	if err != nil {
-		return err
+		return []error{err}
 	}
 
 	if args.Invert {
@@ -20,14 +20,14 @@ func run(args cli.Arguments) error {
 
 	filePaths, err := fs.ResolveGlobs(args.InputFiles...)
 	if err != nil {
-		return err
+		return []error{err}
 	}
 
 	if !args.DryRun {
-		err = processInputFiles(filePaths, &wordmap)
+		errs = processInputFiles(filePaths, &wordmap)
 	}
 
-	return err
+	return errs
 }
 
 func setLogLevel(args cli.Arguments) {
@@ -48,9 +48,11 @@ func main() {
 	if shouldRun {
 		setLogLevel(args)
 
-		err := run(args)
-		if err != nil {
-			logger.Error(err)
+		errs := run(args)
+		if len(errs) > 0 {
+			for _, err := range errs {
+				logger.Error(err)
+			}
 		}
 	}
 }

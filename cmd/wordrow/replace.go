@@ -69,14 +69,17 @@ func openAndProcessFile(filePath string, wordmap *wordmaps.WordMap) error {
 // Update the contents of all files specified by `filePaths` based on the
 // `wordmap`. If any reading or writing error occurs this function will return
 // an error immediately.
-func processInputFiles(filePaths []string, wordmap *wordmaps.WordMap) error {
+func processInputFiles(
+	filePaths []string,
+	wordmap *wordmaps.WordMap,
+) (errs []error) {
 	for _, filePath := range filePaths {
 		logger.Debugf("Processing '%s'", filePath)
 		err := openAndProcessFile(filePath, wordmap)
 		if err != nil {
-			return err
+			errs = append(errs, err)
 		}
 	}
 
-	return nil
+	return errs
 }
