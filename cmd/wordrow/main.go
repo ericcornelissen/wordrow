@@ -9,9 +9,9 @@ import (
 )
 
 func run(args cli.Arguments) (errs []error) {
-	wordmap, err := getWordMap(args.MapFiles, args.Mappings)
-	if err != nil {
-		return []error{err}
+	wordmap, errs := getWordMap(args.MapFiles, args.Mappings)
+	if len(errs) > 0 {
+		return errs
 	}
 
 	if args.Invert {

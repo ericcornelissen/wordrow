@@ -84,16 +84,16 @@ func openAndProcessMapFile(
 func openAndProcessMapFiles(
 	filePaths []string,
 	wordmap *wordmaps.WordMap,
-) error {
+) (errs []error) {
 	for _, filePath := range filePaths {
 		logger.Debugf("Processing '%s' as a map file", filePath)
 		err := openAndProcessMapFile(filePath, wordmap)
 		if err != nil {
-			return err
+			errs = append(errs, err)
 		}
 	}
 
-	return nil
+	return errs
 }
 
 // Add a CLI defined mapping to the `wordmap`. If the mapping is invalid this
@@ -116,16 +116,19 @@ func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
 // Add all CLI defined mappings to the `wordmap`. If any mapping is invalid this
 // function will return an error immediately (with a partially updated
 // `wordmap`).
-func processInlineMappings(mappings []string, wordmap *wordmaps.WordMap) error {
+func processInlineMappings(
+	mappings []string,
+	wordmap *wordmaps.WordMap,
+) (errs []error) {
 	for _, mapping := range mappings {
 		logger.Debugf("Processing '%s' as a CLI specified mapping", mapping)
 		err := processInlineMapping(mapping, wordmap)
 		if err != nil {
-			return err
+			errs = append(errs, err)
 		}
 	}
 
-	return nil
+	return errs
 }
 
 // Get a WordMap for the specified `mapFiles` and `inlineMappings`. If either
@@ -133,12 +136,8 @@ func processInlineMappings(mappings []string, wordmap *wordmaps.WordMap) error {
 func getWordMap(
 	mapFiles []string,
 	inlineMappings []string,
-) (wordmap wordmaps.WordMap, err error) {
-	err = openAndProcessMapFiles(mapFiles, &wordmap)
-	if err != nil {
-		return wordmap, err
-	}
-
-	err = processInlineMappings(inlineMappings, &wordmap)
-	return wordmap, err
+) (wordmap wordmaps.WordMap, errs []error) {
+	errs = openAndProcessMapFiles(mapFiles, &wordmap)
+	errs = append(errs, processInlineMappings(inlineMappings, &wordmap)...)
+	return wordmap, errs
 }
