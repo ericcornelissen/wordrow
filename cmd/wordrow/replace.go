@@ -67,8 +67,8 @@ func openAndProcessFile(filePath string, wordmap *wordmaps.WordMap) error {
 }
 
 // Update the contents of all files specified by `filePaths` based on the
-// `wordmap`. If any reading or writing error occurs this function will return
-// an error immediately.
+// `wordmap`. Any error that occurs is returned after all files have been
+// processed.
 func processInputFiles(
 	filePaths []string,
 	wordmap *wordmaps.WordMap,

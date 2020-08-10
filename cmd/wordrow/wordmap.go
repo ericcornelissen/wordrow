@@ -79,8 +79,8 @@ func openAndProcessMapFile(
 }
 
 // Open the map files specified by `filePaths` and add their mapping to the
-// `wordmap`. If any map file is invalid this function will return an error
-// immediately (with a partially updated `wordmap`).
+// `wordmap`. Any error that occurs is returned after all files have been
+// processed.
 func openAndProcessMapFiles(
 	filePaths []string,
 	wordmap *wordmaps.WordMap,
@@ -113,9 +113,8 @@ func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
 	return nil
 }
 
-// Add all CLI defined mappings to the `wordmap`. If any mapping is invalid this
-// function will return an error immediately (with a partially updated
-// `wordmap`).
+// Add all CLI defined mappings to the `wordmap`. Any error that occurs is
+// returned after all mappings have been processed.
 func processInlineMappings(
 	mappings []string,
 	wordmap *wordmaps.WordMap,
@@ -131,8 +130,10 @@ func processInlineMappings(
 	return errs
 }
 
-// Get a WordMap for the specified `mapFiles` and `inlineMappings`. If either
-// contains an invalid mapping this function will return an error immediately.
+// Get a WordMap for the specified `mapFiles` and `inlineMappings`. Any error
+// that occurs is returned after both have been processed. In case of any error
+// the `wordmap` that is returned represents only the arguments that could be
+// successfully processed.
 func getWordMap(
 	mapFiles []string,
 	inlineMappings []string,
