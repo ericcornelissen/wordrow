@@ -18,9 +18,9 @@ func run(args cli.Arguments) (errs []error) {
 		wordmap.Invert()
 	}
 
-	filePaths, err := fs.ResolveGlobs(args.InputFiles...)
-	if err != nil {
-		return []error{err}
+	filePaths, errs := fs.ResolveGlobs(args.InputFiles...)
+	if len(errs) > 0 {
+		return errs
 	}
 
 	if !args.DryRun {
