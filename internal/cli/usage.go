@@ -33,13 +33,13 @@ func getOptionBullet(option, optionAlias string) string {
 }
 
 // Format the usage of a single option.
-func formatOption(option Option, message string) string {
+func formatOption(o option, message string) string {
 	var sb stringsx.Builder
 	var lineCount = 1
 
 	message = clean(message)
 
-	topic := getOptionBullet(option.name, option.alias)
+	topic := getOptionBullet(o.name, o.alias)
 	indentation := asWhitespace(topic)
 
 	sb.WriteString(topic)
@@ -59,8 +59,8 @@ func formatOption(option Option, message string) string {
 }
 
 // Print the usage of a single option.
-func printOption(option Option, message string) {
-	optionDoc := formatOption(option, message)
+func printOption(o option, message string) {
+	optionDoc := formatOption(o, message)
 	fmt.Println(optionDoc)
 }
 
@@ -76,7 +76,7 @@ func printOptions() {
 	printOption(dryRunFlag, `Don't make any changes to the input files.`)
 	printOption(invertFlag, `Invert all specified mappings.`)
 	printOption(silentFlag, `Disable informative logging.`)
-	printOption(verboseFlag, `Enabled debug logging.`)
+	printOption(verboseFlag, `Enable debug logging.`)
 
 	printSectionTitle("Options")
 	printOption(mapfileOption, `
@@ -95,14 +95,16 @@ func printInterface() {
 	base := "Usage: wordrow"
 	indentation := asWhitespace(base)
 
-	fmt.Printf("%s [%s] [%s]\n",
+	fmt.Printf("%s [%s] [%s] [%s]\n",
 		base,
 		helpFlag.name,
 		versionFlag.name,
-	)
-	fmt.Printf("%s [%s] [%s | %s]\n",
-		indentation,
 		dryRunFlag.name,
+	)
+	fmt.Printf("%s [%s | %s] [%s | %s]\n",
+		indentation,
+		verboseFlag.alias,
+		verboseFlag.name,
 		silentFlag.alias,
 		silentFlag.name,
 	)
