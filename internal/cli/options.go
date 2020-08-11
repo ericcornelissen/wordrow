@@ -48,7 +48,7 @@ var (
 	// The flag to make the program run in strict mode.
 	strictFlag = option{
 		name:  "--strict",
-		alias: "-t",
+		alias: "-S",
 	}
 
 	// The option to specify a mapping file.
