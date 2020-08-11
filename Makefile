@@ -26,6 +26,8 @@ install-dev-deps:
 	$(go_nomod) go get -u golang.org/x/lint/golint
 	$(go_nomod) go get -u github.com/gordonklaus/ineffassign
 	$(go_nomod) go get -u github.com/remyoudompheng/go-misc/deadcode
+	$(go_nomod) go get -u github.com/mdempsky/unconvert
+	$(go_nomod) go get -u github.com/mdempsky/maligned
 	curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b ${GOPATH}/bin v2.3.0
 	@echo "INSTALLLING MANUAL ANALYSIS TOOLS"
 	$(go_nomod) go get -u github.com/dvyukov/go-fuzz/go-fuzz github.com/dvyukov/go-fuzz/go-fuzz-build
@@ -66,6 +68,8 @@ benchmark:
 analysis:
 	@echo "VETTING..."
 	@go vet ./...
+	@unconvert -v ./...
+	@maligned ./...
 	@echo "SECURITY SCAN..."
 	@gosec -conf .gosecrc.json -quiet ./...
 	@echo "VERIFYING ERRORS ARE CHECKED..."
