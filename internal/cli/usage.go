@@ -33,13 +33,13 @@ func getOptionBullet(option, optionAlias string) string {
 }
 
 // Format the usage of a single option.
-func formatOption(option Option, message string) string {
+func formatOption(o option, message string) string {
 	var sb stringsx.Builder
 	var lineCount = 1
 
 	message = clean(message)
 
-	topic := getOptionBullet(option.name, option.alias)
+	topic := getOptionBullet(o.name, o.alias)
 	indentation := asWhitespace(topic)
 
 	sb.WriteString(topic)
@@ -59,8 +59,8 @@ func formatOption(option Option, message string) string {
 }
 
 // Print the usage of a single option.
-func printOption(option Option, message string) {
-	optionDoc := formatOption(option, message)
+func printOption(o option, message string) {
+	optionDoc := formatOption(o, message)
 	fmt.Println(optionDoc)
 }
 
