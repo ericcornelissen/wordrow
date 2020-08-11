@@ -59,6 +59,8 @@ func parseArgumentAsOption(
 		arguments.Silent = true
 	case verboseFlag.name, verboseFlag.alias:
 		arguments.Verbose = true
+	case strictFlag.name, strictFlag.alias:
+		arguments.Strict = true
 
 	// Options
 	case mapfileOption.name, mapfileOption.alias:
@@ -159,6 +161,7 @@ func doParseProgramArguments(args []string, arguments *Arguments) error {
 // ParseArgs parses a list of arguments (e.g. `os.Args`) into an Arguments
 // instance.
 func ParseArgs(args []string) (run bool, arguments Arguments) {
+
 	if noArgumentsProvided(args) {
 		printUsage()
 		return false, arguments

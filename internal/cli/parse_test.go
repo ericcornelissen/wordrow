@@ -177,6 +177,37 @@ func TestVerboseFlag(t *testing.T) {
 	})
 }
 
+func TestStrictFlag(t *testing.T) {
+	t.Run(strictFlag.name, func(t *testing.T) {
+		args := createArgs(strictFlag.name, "foo.bar")
+		run, arguments := ParseArgs(args)
+
+		if run != true {
+			t.Fatal("The first return value should be true for this test")
+		}
+
+		testDefaultsExcept(t, arguments, "strict")
+
+		if arguments.Strict != true {
+			t.Errorf("The Strict value should be true if %s is an argument", strictFlag)
+		}
+	})
+	t.Run(strictFlag.alias, func(t *testing.T) {
+		args := createArgs(strictFlag.alias, "foo.bar")
+		run, arguments := ParseArgs(args)
+
+		if run != true {
+			t.Fatal("The first return value should be true for this test")
+		}
+
+		testDefaultsExcept(t, arguments, "strict")
+
+		if arguments.Strict != true {
+			t.Errorf("The Strict value should be true if %s is an argument", strictFlag.alias)
+		}
+	})
+}
+
 func TestCombinedFlags(t *testing.T) {
 	t.Run("Two flags", func(t *testing.T) {
 		flags := fmt.Sprintf("-%s%s", verboseFlag.alias[1:], invertFlag.alias[1:])

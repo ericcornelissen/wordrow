@@ -48,6 +48,15 @@ func testDefaultVerbose(t *testing.T, arguments Arguments) {
 	}
 }
 
+// Test if Strict has the default value.
+func testDefaultStrict(t *testing.T, arguments Arguments) {
+	t.Helper()
+
+	if arguments.Strict == true {
+		t.Error("The default value for the Strict option should be false")
+	}
+}
+
 // Test if MapFiles has the default value.
 func testDefaultMapFiles(t *testing.T, arguments Arguments) {
 	t.Helper()
@@ -81,6 +90,9 @@ func testDefaultsExcept(t *testing.T, arguments Arguments, exclude string) {
 	}
 	if exclude != "verbose" {
 		testDefaultVerbose(t, arguments)
+	}
+	if exclude != "strict" {
+		testDefaultStrict(t, arguments)
 	}
 	if exclude != "map files" {
 		testDefaultMapFiles(t, arguments)
