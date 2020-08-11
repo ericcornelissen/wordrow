@@ -95,11 +95,16 @@ func printInterface() {
 	base := "Usage: wordrow"
 	indentation := asWhitespace(base)
 
-	fmt.Printf("%s [%s] [%s] [%s]\n",
+	fmt.Printf("%s [%s] [%s]\n",
 		base,
 		helpFlag.name,
 		versionFlag.name,
+	)
+	fmt.Printf("%s [%s] [%s | %s]\n",
+		indentation,
 		dryRunFlag.name,
+		invertFlag.alias,
+		invertFlag.name,
 	)
 	fmt.Printf("%s [%s | %s] [%s | %s]\n",
 		indentation,
