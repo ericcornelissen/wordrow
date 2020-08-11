@@ -76,7 +76,7 @@ func printOptions() {
 	printOption(dryRunFlag, `Don't make any changes to the input files.`)
 	printOption(invertFlag, `Invert all specified mappings.`)
 	printOption(silentFlag, `Disable informative logging.`)
-	printOption(verboseFlag, `Enabled debug logging.`)
+	printOption(verboseFlag, `Enable debug logging.`)
 
 	printSectionTitle("Options")
 	printOption(mapfileOption, `
