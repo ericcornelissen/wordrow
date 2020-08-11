@@ -10,7 +10,7 @@ import (
 
 func run(args cli.Arguments) (errs []error) {
 	wordmap, errs := getWordMap(args.MapFiles, args.Mappings)
-	if len(errs) > 0 {
+	if len(errs) > 0 && args.Strict {
 		return errs
 	}
 
@@ -19,7 +19,7 @@ func run(args cli.Arguments) (errs []error) {
 	}
 
 	filePaths, errs := fs.ResolveGlobs(args.InputFiles...)
-	if len(errs) > 0 {
+	if len(errs) > 0 && args.Strict {
 		return errs
 	}
 
