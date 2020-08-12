@@ -8,7 +8,8 @@ fuzz_dir:=./_fuzz
 
 markdown_files:=./*.md ./docs/*.md ./.github/**/*.md
 
-go_nomod:=GO111MODULE=off
+go_install:=go get -u
+go_install_dev:=GO111MODULE=off $(go_install)
 
 
 default: build
@@ -17,23 +18,23 @@ install: install-deps install-dev-deps
 
 install-deps:
 	@echo "INSTALLLING DEPENDENCIES"
-	go get -u github.com/yargevad/filepathx
+	$(go_install) github.com/yargevad/filepathx
 
 install-dev-deps:
 	@echo "INSTALLLING DEVELOPMENT TOOLS"
-	$(go_nomod) go get golang.org/x/tools/cmd/goimports
+	$(go_install_dev) golang.org/x/tools/cmd/goimports
 	@echo "INSTALLLING STATIC ANALYSIS TOOLS"
-	$(go_nomod) go get -u golang.org/x/lint/golint
-	$(go_nomod) go get -u github.com/gordonklaus/ineffassign
-	$(go_nomod) go get -u github.com/remyoudompheng/go-misc/deadcode
-	$(go_nomod) go get -u github.com/mdempsky/unconvert
-	$(go_nomod) go get -u github.com/mdempsky/maligned
-	$(go_nomod) go get -u github.com/jgautheron/goconst/cmd/goconst
-	$(go_nomod) go get -u mvdan.cc/unparam
-	$(go_nomod) go get -u github.com/tommy-muehle/go-mnd/cmd/mnd
+	$(go_install_dev) golang.org/x/lint/golint
+	$(go_install_dev) github.com/gordonklaus/ineffassign
+	$(go_install_dev) github.com/remyoudompheng/go-misc/deadcode
+	$(go_install_dev) github.com/mdempsky/unconvert
+	$(go_install_dev) github.com/mdempsky/maligned
+	$(go_install_dev) github.com/jgautheron/goconst/cmd/goconst
+	$(go_install_dev) mvdan.cc/unparam
+	$(go_install_dev) github.com/tommy-muehle/go-mnd/cmd/mnd
 	curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b ${GOPATH}/bin v2.3.0
 	@echo "INSTALLLING MANUAL ANALYSIS TOOLS"
-	$(go_nomod) go get -u github.com/dvyukov/go-fuzz/go-fuzz github.com/dvyukov/go-fuzz/go-fuzz-build
+	$(go_install_dev) github.com/dvyukov/go-fuzz/go-fuzz github.com/dvyukov/go-fuzz/go-fuzz-build
 
 build:
 	go build -o $(executable_file) $(program_main)
