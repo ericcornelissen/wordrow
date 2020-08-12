@@ -10,8 +10,10 @@ import (
 // The error will be set if the row has an unexpected format, for example an
 // incorrect number of columns.
 func parseRow(row string, wm *WordMap) error {
+	rowValuesCount := 2
+
 	rowValues := stringsx.Split(row, ",")
-	if len(rowValues) < 2 {
+	if len(rowValues) < rowValuesCount {
 		return errors.Newf(incorrectFormat, row)
 	}
 

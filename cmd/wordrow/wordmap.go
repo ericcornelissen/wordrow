@@ -99,8 +99,10 @@ func openAndProcessMapFiles(
 // Add a CLI defined mapping to the `wordmap`. If the mapping is invalid this
 // function returns an error (and leave `wordmap` unchanged).
 func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
+	valuesCount := 2
+
 	values := stringsx.Split(mapping, ",")
-	if len(values) != 2 {
+	if len(values) != valuesCount {
 		return errors.Newf("Invalid CLI defined mapping '%s'", mapping)
 	}
 
