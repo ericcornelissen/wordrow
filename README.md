@@ -5,6 +5,7 @@
 [![Maintainability][maintainability-image]][maintainability-url]
 [![LGTM Alerts][lgtm-image]][lgtm-url]
 [![BCH Compliance][bch-image]][bch-url]
+[![Go Report Card][grc-image]][grc-url]
 
 A small CLI tool to replace instances of words with other wirds in plaintext,
 written in Go.
@@ -19,3 +20,5 @@ written in Go.
 [lgtm-image]: https://img.shields.io/lgtm/alerts/g/ericcornelissen/wordrow.svg?logo=lgtm&logoWidth=18
 [bch-url]: https://bettercodehub.com/results/ericcornelissen/wordrow
 [bch-image]: https://bettercodehub.com/edge/badge/ericcornelissen/wordrow?branch=master
+[grc-url]: https://goreportcard.com/report/github.com/ericcornelissen/wordrow
+[grc-image]: https://goreportcard.com/badge/github.com/ericcornelissen/wordrow
