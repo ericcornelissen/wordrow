@@ -118,7 +118,7 @@ func printInterface() {
 		mapfileOption.alias,
 		mapfileOption.name,
 	)
-	fmt.Printf("%s [%s | %s <file>]\n",
+	fmt.Printf("%s [%s | %s <mapping>]\n",
 		indentation,
 		mappingOption.alias,
 		mappingOption.name,

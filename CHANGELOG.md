@@ -16,7 +16,7 @@ Versioning].
 - Fix bug preventing the usage of map files without file extension. ([#101])
 - Fix logs of incorrect level being logged. ([#107], [#108])
 - Fix crash due to empty values in the `--map` option. ([#110])
-- Fix mistakes in the program help message. ([#114], [#115])
+- Fix mistakes in the program help message. ([#114], [#115], [#116])
 
 ### Miscellaneous
 
@@ -135,3 +135,4 @@ Versioning].
 [#110]: https://github.com/ericcornelissen/wordrow/pull/110
 [#114]: https://github.com/ericcornelissen/wordrow/pull/114
 [#115]: https://github.com/ericcornelissen/wordrow/pull/115
+[#116]: https://github.com/ericcornelissen/wordrow/pull/116
