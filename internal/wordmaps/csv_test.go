@@ -123,7 +123,7 @@ func TestCsvToFewColumns(t *testing.T) {
 		t.Fatal("Error should be set for incorrect CSV file")
 	}
 
-	if !strings.Contains(err.Error(), "Unexpected row") {
+	if !strings.Contains(err.Error(), "Incorrect format") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }

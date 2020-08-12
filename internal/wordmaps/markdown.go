@@ -23,13 +23,13 @@ func isTableRow(row string) bool {
 func parseTableRow(row string) ([]string, error) {
 	rowValues := stringsx.Split(row, "|")
 	if len(rowValues) < 4 {
-		return nil, errors.Newf("Unexpected table row format (in '%s')", row)
+		return nil, errors.Newf(incorrectFormat, row)
 	}
 
 	rowValues = rowValues[1 : len(rowValues)-1]
 	rowValues = stringsx.MapAll(rowValues, stringsx.TrimSpace)
 	if stringsx.Any(rowValues, stringsx.IsEmpty) {
-		return nil, errors.Newf("Missing value (in '%s')", row)
+		return nil, errors.Newf(missingValue, row)
 	}
 
 	return rowValues, nil
@@ -49,7 +49,7 @@ func parseTableHeader(tableLines []string) (rerr error) {
 	} else if _, err = parseTableRow(dividerLine); err != nil {
 		rerr = errors.Newf("Missing table divider (in '%s')", dividerLine)
 	} else if tableDividerExpr.MatchString(dividerLine) == false {
-		rerr = errors.Newf("Missing table divider (in '%s')", dividerLine)
+		rerr = errors.Newf("Incorrect table divider (in '%s')", dividerLine)
 	} else if _, err = parseTableRow(firstTableRow); err != nil {
 		rerr = errors.Newf("Missing table body (in '%s')", firstTableRow)
 	}

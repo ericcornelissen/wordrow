@@ -163,7 +163,7 @@ func TestMarkDownMissingDivider(t *testing.T) {
 		t.Fatal("Error should be set for missing table divider")
 	}
 
-	if !strings.Contains(err.Error(), "Missing table divider") {
+	if !strings.Contains(err.Error(), "Incorrect table divider") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }

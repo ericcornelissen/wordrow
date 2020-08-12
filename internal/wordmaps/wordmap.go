@@ -9,6 +9,9 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/logger"
 )
 
+// Error text for out-of-range errors in the WordMap.
+const outOfRangeMessage = "%d is outside the range of the WordMap"
+
 // The WordMap type provides a guaranteed mapping from one set of strings to
 // another set of strings.
 type WordMap struct {
@@ -80,7 +83,7 @@ func (wm *WordMap) Contains(query string) bool {
 // This function panics if the index is outside the range of the WordMap.
 func (wm *WordMap) GetFrom(i int) string {
 	if wm.inRange(i) {
-		logger.Fatalf("%d is outside the range of the WordMap", i)
+		logger.Fatalf(outOfRangeMessage, i)
 		panic(1)
 	}
 
@@ -92,7 +95,7 @@ func (wm *WordMap) GetFrom(i int) string {
 // This function panics if the index is outside the range of the WordMap.
 func (wm *WordMap) GetTo(i int) string {
 	if wm.inRange(i) {
-		logger.Fatalf("%d is outside the range of the WordMap", i)
+		logger.Fatalf(outOfRangeMessage, i)
 		panic(1)
 	}
 

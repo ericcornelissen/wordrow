@@ -12,12 +12,12 @@ import (
 func parseRow(row string, wm *WordMap) error {
 	rowValues := stringsx.Split(row, ",")
 	if len(rowValues) < 2 {
-		return errors.Newf("Unexpected row format (in '%s')", row)
+		return errors.Newf(incorrectFormat, row)
 	}
 
 	rowValues = stringsx.MapAll(rowValues, stringsx.TrimSpace)
 	if stringsx.Any(rowValues, stringsx.IsEmpty) {
-		return errors.Newf("Missing value (in '%s')", row)
+		return errors.Newf(missingValue, row)
 	}
 
 	last := len(rowValues) - 1
