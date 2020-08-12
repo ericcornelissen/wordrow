@@ -25,6 +25,7 @@ install-dev-deps:
 	$(go_install_dev) golang.org/x/tools/cmd/goimports
 	@echo "INSTALLLING STATIC ANALYSIS TOOLS"
 	$(go_install_dev) golang.org/x/lint/golint
+	$(go_install_dev) github.com/kisielk/errcheck
 	$(go_install_dev) github.com/gordonklaus/ineffassign
 	$(go_install_dev) github.com/remyoudompheng/go-misc/deadcode
 	$(go_install_dev) github.com/mdempsky/unconvert
