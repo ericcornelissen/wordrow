@@ -25,6 +25,9 @@ install-dev-deps:
 	$(go_install_dev) golang.org/x/tools/cmd/goimports
 	@echo "INSTALLLING STATIC ANALYSIS TOOLS"
 	$(go_install_dev) golang.org/x/lint/golint
+	$(go_install_dev) github.com/alexkohler/nakedret
+	$(go_install_dev) github.com/alexkohler/unimport
+	$(go_install_dev) 4d63.com/gochecknoinits
 	$(go_install_dev) github.com/kisielk/errcheck
 	$(go_install_dev) github.com/gordonklaus/ineffassign
 	$(go_install_dev) github.com/remyoudompheng/go-misc/deadcode
@@ -97,6 +100,9 @@ lint: lint-go lint-md
 
 lint-go:
 	golint -set_exit_status ./...
+	nakedret -l 0 ./...
+	unimport ./...
+	gochecknoinits ./...
 
 lint-md:
 	npx markdownlint-cli -c .markdownlintrc.yml $(markdown_files)
