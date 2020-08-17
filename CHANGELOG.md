@@ -10,6 +10,7 @@ Versioning].
 ### Features
 
 - Add support for CLI arguments with "=". ([#102])
+- Add support for many-to-one mapping syntax on the CLI. ([#118])
 
 ### Bug Fixes
 
@@ -136,3 +137,4 @@ Versioning].
 [#114]: https://github.com/ericcornelissen/wordrow/pull/114
 [#115]: https://github.com/ericcornelissen/wordrow/pull/115
 [#116]: https://github.com/ericcornelissen/wordrow/pull/116
+[#118]: https://github.com/ericcornelissen/wordrow/pull/118

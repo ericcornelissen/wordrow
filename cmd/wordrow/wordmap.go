@@ -99,18 +99,7 @@ func openAndProcessMapFiles(
 // Add a CLI defined mapping to the `wordmap`. If the mapping is invalid this
 // function returns an error (and leave `wordmap` unchanged).
 func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
-	values := stringsx.Split(mapping, ",")
-	if len(values) != 2 {
-		return errors.Newf("Invalid CLI defined mapping '%s'", mapping)
-	}
-
-	from, to := values[0], values[1]
-	if stringsx.IsEmpty(from) || stringsx.IsEmpty(to) {
-		return errors.Newf("Missing value in CLI defined mapping '%s'", mapping)
-	}
-
-	wordmap.AddOne(from, to)
-	return nil
+	return wordmap.AddFile(&mapping, "csv")
 }
 
 // Add all CLI defined mappings to the `wordmap`. If any mapping is invalid this
