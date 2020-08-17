@@ -59,41 +59,24 @@ func processMapFile(
 	return wordmap.AddFile(&content, format)
 }
 
-// Open the map file specified by `fileArgument` and add its mapping to the
-// `wordmap`. If the file cannot be opened or processing failed the function
-// returns an error.
-func openAndProcessMapFile(
-	fileArgument string,
-	wordmap *wordmaps.WordMap,
-) error {
-	filePath, format := parseMapFileArgument(fileArgument)
+// Opens the file provided by the handler and add its mapping to the `wordmap`.
+// If the file cannot be opened or processing failed the function returns an
+// error.
+func openAndProcessMapFileWith(wordmap *wordmaps.WordMap) fileHandler {
+	return func(fileArgument string) error {
+		filePath, format := parseMapFileArgument(fileArgument)
 
-	logger.Debugf("Opening '%s' as a '%s' formatted map file", filePath, format)
-	handle, err := fs.OpenFile(filePath, fs.OReadOnly)
-	if err != nil {
-		return errors.Newf("Could not open '%s' (%s mode)", filePath, fs.OReadOnly)
-	}
-
-	defer handle.Close()
-	return processMapFile(handle, format, wordmap)
-}
-
-// Open the map files specified by `filePaths` and add their mapping to the
-// `wordmap`. Any error that occurs is returned after all files have been
-// processed.
-func openAndProcessMapFiles(
-	filePaths []string,
-	wordmap *wordmaps.WordMap,
-) (errs []error) {
-	for _, filePath := range filePaths {
-		logger.Debugf("Processing '%s' as a map file", filePath)
-		err := openAndProcessMapFile(filePath, wordmap)
+		logger.Debugf("Opening '%s' as a '%s' formatted map file", filePath, format)
+		handle, err := fs.OpenFile(filePath, fs.OReadOnly)
 		if err != nil {
-			errs = append(errs, err)
+			return errors.Newf("Could not open '%s' (%s mode)", filePath, fs.OReadOnly)
 		}
-	}
 
-	return errs
+		defer handle.Close()
+
+		logger.Debugf("Processing '%s' as a map file", filePath)
+		return processMapFile(handle, format, wordmap)
+	}
 }
 
 // Add a CLI defined mapping to the `wordmap`. If the mapping is invalid this
@@ -138,7 +121,7 @@ func getWordMap(
 	mapFiles []string,
 	inlineMappings []string,
 ) (wordmap wordmaps.WordMap, errs []error) {
-	errs = openAndProcessMapFiles(mapFiles, &wordmap)
+	errs = forEach(mapFiles, openAndProcessMapFileWith(&wordmap))
 	errs = append(errs, processInlineMappings(inlineMappings, &wordmap)...)
 	return wordmap, errs
 }
