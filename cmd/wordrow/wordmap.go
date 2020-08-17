@@ -71,7 +71,7 @@ func openAndProcessMapFile(
 	logger.Debugf("Opening '%s' as a '%s' formatted map file", filePath, format)
 	handle, err := fs.OpenFile(filePath, fs.OReadOnly)
 	if err != nil {
-		return errors.Newf("Could not open '%s' (%s mode)", filePath, fs.OReadOnly)
+		return err
 	}
 
 	defer handle.Close()
