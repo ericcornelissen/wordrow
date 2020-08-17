@@ -107,6 +107,11 @@ func printInterface() {
 		strictFlag.alias,
 		strictFlag.name,
 	)
+	fmt.Printf("%s [%s | %s]\n",
+		indentation,
+		invertFlag.alias,
+		invertFlag.name,
+	)
 	fmt.Printf("%s [%s | %s] [%s | %s]\n",
 		indentation,
 		verboseFlag.alias,
@@ -119,7 +124,7 @@ func printInterface() {
 		mapfileOption.alias,
 		mapfileOption.name,
 	)
-	fmt.Printf("%s [%s | %s <file>]\n",
+	fmt.Printf("%s [%s | %s <mapping>]\n",
 		indentation,
 		mappingOption.alias,
 		mappingOption.name,
