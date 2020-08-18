@@ -59,6 +59,8 @@ func parseArgumentAsOption(
 		arguments.Silent = true
 	case verboseFlag.name, verboseFlag.alias:
 		arguments.Verbose = true
+	case strictFlag.name, strictFlag.alias:
+		arguments.Strict = true
 
 	// Options
 	case mapfileOption.name, mapfileOption.alias:
