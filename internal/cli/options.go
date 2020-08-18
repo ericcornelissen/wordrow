@@ -45,6 +45,12 @@ var (
 		alias: "-v",
 	}
 
+	// The flag to make the program run in strict mode.
+	strictFlag = option{
+		name:  "--strict",
+		alias: "-S",
+	}
+
 	// The option to specify a mapping file.
 	mapfileOption = option{
 		name:  "--map-file",

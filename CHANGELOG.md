@@ -7,10 +7,15 @@ Versioning].
 
 ## [Unreleased]
 
+### Breaking Changes
+
+- Continue on non-blocking errors. ([#112])
+
 ### Features
 
 - Add support for CLI arguments with "=". ([#102])
 - Add support for many-to-one mapping syntax on the CLI. ([#118])
+- Add `--strict`/`-S` flag to stop for any error. ([#112])
 
 ### Bug Fixes
 
@@ -134,6 +139,7 @@ Versioning].
 [#107]: https://github.com/ericcornelissen/wordrow/pull/107
 [#108]: https://github.com/ericcornelissen/wordrow/pull/108
 [#110]: https://github.com/ericcornelissen/wordrow/pull/110
+[#112]: https://github.com/ericcornelissen/wordrow/pull/112
 [#114]: https://github.com/ericcornelissen/wordrow/pull/114
 [#115]: https://github.com/ericcornelissen/wordrow/pull/115
 [#116]: https://github.com/ericcornelissen/wordrow/pull/116

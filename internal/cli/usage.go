@@ -77,6 +77,7 @@ func printOptions() {
 	printOption(invertFlag, `Invert all specified mappings.`)
 	printOption(silentFlag, `Disable informative logging.`)
 	printOption(verboseFlag, `Enable debug logging.`)
+	printOption(strictFlag, `Enable strict mode.`)
 
 	printSectionTitle("Options")
 	printOption(mapfileOption, `
@@ -103,6 +104,11 @@ func printInterface() {
 	fmt.Printf("%s [%s] [%s | %s]\n",
 		indentation,
 		dryRunFlag.name,
+		strictFlag.alias,
+		strictFlag.name,
+	)
+	fmt.Printf("%s [%s | %s]\n",
+		indentation,
 		invertFlag.alias,
 		invertFlag.name,
 	)
