@@ -7,6 +7,10 @@ Versioning].
 
 ## [Unreleased]
 
+- _No changes yet_
+
+## [0.6.0-beta] - 2020-08-18
+
 ### Breaking Changes
 
 - Continue on non-blocking errors. ([#112])
