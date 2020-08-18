@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"os"
-	"strings"
 
 	"github.com/ericcornelissen/wordrow/internal/cli"
 	"github.com/ericcornelissen/wordrow/internal/fs"
@@ -34,18 +33,23 @@ func run(args cli.Arguments) (errors []error) {
 	return errors
 }
 
-func runOnStdin(args cli.Arguments, input string) []error {
-	wm, err := getWordMap(args.MapFiles, args.Mappings)
-	if err != nil {
-		return err
+func runOnStdin(args cli.Arguments) (errors []error) {
+	wordmap, errs := getWordMap(args.MapFiles, args.Mappings)
+	if check(&errors, errs) && args.Strict {
+		return errs
 	}
 
 	if args.Invert {
-		wm.Invert()
+		wordmap.Invert()
 	}
 
-	fixedInput := replace.All(input, wm.Iter())
-	os.Stdout.WriteString(fixedInput)
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		line := scanner.Text()
+		fixedInput := replace.All(line, wordmap.Iter())
+		os.Stdout.WriteString(fixedInput)
+		os.Stdout.WriteString("\n")
+	}
 
 	return nil
 }
@@ -72,18 +76,7 @@ func main() {
 
 	if hasStdin() {
 		logger.SetLogLevel(logger.FATAL)
-
-		var sb strings.Builder
-
-		scanner := bufio.NewScanner(os.Stdin)
-		for scanner.Scan() {
-			line := scanner.Text()
-			sb.WriteString(line)
-			sb.WriteByte('\n')
-		}
-
-		input := sb.String()
-		err := runOnStdin(args, input)
+		err := runOnStdin(args)
 		if err != nil {
 			panic(err)
 		}
