@@ -6,7 +6,7 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/replacer"
+	"github.com/ericcornelissen/wordrow/internal/replace"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
@@ -21,8 +21,9 @@ func doReplace(
 		return updatedContent, err
 	}
 
+	mapping := wordmap.Iter()
 	content := string(data)
-	return replacer.ReplaceAll(content, *wordmap), nil
+	return replace.All(content, mapping), nil
 }
 
 // Writes the `updatedContents` to the `writer`.
@@ -51,31 +52,30 @@ func processFile(file fs.ReadWriter, wordmap *wordmaps.WordMap) error {
 	return nil
 }
 
-// Open the file specified by `filePath` and process it using the `wordmap`. If
+// Opens the file provided by the handler and process it using the `wordmap`. If
 // opening the file fails or a reading or writing error occurs this function
 // returns an error.
-func openAndProcessFile(filePath string, wordmap *wordmaps.WordMap) error {
-	logger.Debugf("Opening '%s'", filePath)
-	handle, err := fs.OpenFile(filePath, fs.OReadWrite)
-	if err != nil {
-		return errors.Newf("Could not open '%s' (%s mode)", filePath, fs.OReadWrite)
-	}
+func openAndProcessFileWith(wordmap *wordmaps.WordMap) fileHandler {
+	return func(filePath string) error {
+		logger.Debugf("Opening '%s'", filePath)
+		handle, err := fs.OpenFile(filePath, fs.OReadWrite)
+		if err != nil {
+			return errors.Newf("Could not open '%s' (%s mode)", filePath, fs.OReadWrite)
+		}
 
-	defer handle.Close()
-	return processFile(handle, wordmap)
+		defer handle.Close()
+
+		logger.Debugf("Processing '%s'", filePath)
+		return processFile(handle, wordmap)
+	}
 }
 
 // Update the contents of all files specified by `filePaths` based on the
-// `wordmap`. If any reading or writing error occurs this function will return
-// an error immediately.
-func processInputFiles(filePaths []string, wordmap *wordmaps.WordMap) error {
-	for _, filePath := range filePaths {
-		logger.Debugf("Processing '%s'", filePath)
-		err := openAndProcessFile(filePath, wordmap)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+// `wordmap`. Any error that occurs is returned after all files have been
+// processed.
+func processInputFiles(
+	filePaths []string,
+	wordmap *wordmaps.WordMap,
+) (errs []error) {
+	return forEach(filePaths, openAndProcessFileWith(wordmap))
 }

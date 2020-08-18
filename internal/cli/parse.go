@@ -15,9 +15,9 @@ package cli
 import (
 	"fmt"
 
+	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // Check if any arguments were provided to the program.
@@ -59,11 +59,10 @@ func parseArgumentAsOption(
 		arguments.Silent = true
 	case verboseFlag.name, verboseFlag.alias:
 		arguments.Verbose = true
+	case strictFlag.name, strictFlag.alias:
+		arguments.Strict = true
 
 	// Options
-	case configOption.name, configOption.alias:
-		newContext = contextConfigFile
-		logger.Warningf("The %s argument is not yet supported", option)
 	case mapfileOption.name, mapfileOption.alias:
 		newContext = contextMapFile
 	case mappingOption.name, mappingOption.alias:
@@ -84,13 +83,34 @@ func parseArgumentAsValue(
 	switch context {
 	case contextDefault:
 		arguments.InputFiles = append(arguments.InputFiles, value)
-	case contextConfigFile:
-		arguments.ConfigFile = value
 	case contextMapFile:
 		arguments.MapFiles = append(arguments.MapFiles, value)
 	case contextMapping:
 		arguments.Mappings = append(arguments.Mappings, value)
 	}
+}
+
+// Parse a single argument as an option or flag.
+//
+// The function sets the error if the argument could not be parsed (in the
+// provided context).
+func doParseOneOption(
+	arg string,
+	arguments *Arguments,
+) (newContext argContext, err error) {
+	if equalsSplit := stringsx.Split(arg, "="); len(equalsSplit) > 1 {
+		option, value := equalsSplit[0], stringsx.Join(equalsSplit[1:], "=")
+		err := doParseProgramArguments([]string{option, value}, arguments)
+		return contextDefault, err
+	}
+
+	if stringsx.HasPrefix(arg, "--") {
+		newContext, err = parseArgumentAsOption(arg, arguments)
+	} else {
+		newContext, err = parseArgumentAsAlias(arg, arguments)
+	}
+
+	return newContext, err
 }
 
 // Parse a single argument as a value or option/flag.
@@ -102,16 +122,12 @@ func doParseOneArgument(
 	context argContext,
 	arguments *Arguments,
 ) (newContext argContext, err error) {
-	if strings.HasPrefix(arg, "-") {
+	if stringsx.HasPrefix(arg, "-") {
 		if context != contextDefault {
 			return context, errors.Newf("Missing value for %s option", context)
 		}
 
-		if strings.HasPrefix(arg, "--") {
-			newContext, err = parseArgumentAsOption(arg, arguments)
-		} else {
-			newContext, err = parseArgumentAsAlias(arg, arguments)
-		}
+		newContext, err = doParseOneOption(arg, arguments)
 	} else {
 		parseArgumentAsValue(arg, context, arguments)
 		newContext = contextDefault
@@ -124,24 +140,22 @@ func doParseOneArgument(
 //
 // The function sets the error if there is any issue with the provided
 // arguments.
-func doParseProgramArguments(args []string) (Arguments, error) {
-	var arguments Arguments
-
+func doParseProgramArguments(args []string, arguments *Arguments) error {
 	context := contextDefault
 	for _, arg := range args {
-		newContext, err := doParseOneArgument(arg, context, &arguments)
+		newContext, err := doParseOneArgument(arg, context, arguments)
 		if err != nil {
-			return arguments, err
+			return err
 		}
 
 		context = newContext
 	}
 
 	if context != contextDefault {
-		return arguments, errors.New("More arguments expected")
+		return errors.New("More arguments expected")
 	}
 
-	return arguments, nil
+	return nil
 }
 
 // ParseArgs parses a list of arguments (e.g. `os.Args`) into an Arguments
@@ -152,9 +166,9 @@ func ParseArgs(args []string) (run bool, arguments Arguments) {
 		return false, arguments
 	}
 
-	arguments, err := doParseProgramArguments(args[1:])
+	err := doParseProgramArguments(args[1:], &arguments)
 	if err != nil {
-		logger.Error(err)
+		logger.Fatalf("An error occurred while parsing arguments: %s", err)
 		return false, arguments
 	}
 

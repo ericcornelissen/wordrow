@@ -1,20 +1,23 @@
 package wordmaps
 
-import "github.com/ericcornelissen/wordrow/internal/strings"
+import (
+	"github.com/ericcornelissen/stringsx"
+	"github.com/ericcornelissen/wordrow/internal/errors"
+)
 
 // Parse a single row of a CSV file and add it to the WordMap.
 //
 // The error will be set if the row has an unexpected format, for example an
 // incorrect number of columns.
 func parseRow(row string, wm *WordMap) error {
-	rowValues := strings.Split(row, ",")
+	rowValues := stringsx.Split(row, ",")
 	if len(rowValues) < 2 {
-		return &parseError{"Unexpected row format", row}
+		return errors.Newf("Unexpected row format (in '%s')", row)
 	}
 
-	strings.Map(rowValues, strings.TrimSpace)
-	if strings.Any(rowValues, strings.IsEmpty) {
-		return &parseError{"Missing value", row}
+	rowValues = stringsx.MapAll(rowValues, stringsx.TrimSpace)
+	if stringsx.Any(rowValues, stringsx.IsEmpty) {
+		return errors.Newf("Missing value (in '%s')", row)
 	}
 
 	last := len(rowValues) - 1
@@ -28,10 +31,10 @@ func parseRow(row string, wm *WordMap) error {
 func parseCsvFile(rawFileData *string) (WordMap, error) {
 	var wm WordMap
 
-	lines := strings.Split(*rawFileData, "\n")
+	lines := stringsx.Split(*rawFileData, "\n")
 	for i := 0; i < len(lines); i++ {
 		line := lines[i]
-		if strings.TrimSpace(line) == "" {
+		if stringsx.TrimSpace(line) == "" {
 			continue
 		}
 

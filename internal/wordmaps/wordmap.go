@@ -1,13 +1,12 @@
 // Package wordmaps provides two structures for mappings and replacement. The
 // first structure, `WordMap`, is a map-like that provides certain guarantees on
-// its contents. The second structure, Mapping, represents an individual mapping
-// from one string to another.
+// its contents.
 package wordmaps
 
 import (
+	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/strings"
 )
 
 // The WordMap type provides a guaranteed mapping from one set of strings to
@@ -44,8 +43,8 @@ func (wm *WordMap) AddFrom(other WordMap) {
 //
 // This function panics if an empty string is provided.
 func (wm *WordMap) AddOne(from, to string) {
-	fromValue := strings.TrimSpace(strings.ToLower(from))
-	toValue := strings.TrimSpace(strings.ToLower(to))
+	fromValue := stringsx.TrimSpace(from)
+	toValue := stringsx.TrimSpace(to)
 	if fromValue == "" || toValue == "" {
 		panic(1)
 	}
@@ -108,20 +107,17 @@ func (wm *WordMap) Invert() {
 	wm.to = tmp
 }
 
-// Iter returns the contents of the WordMap as an iterable.
-func (wm *WordMap) Iter() chan Mapping {
-	ch := make(chan Mapping, wm.Size())
+// Iter returns the contents of the WordMap as an iterable. Note that the order
+// of the iterable is not fixed.
+func (wm *WordMap) Iter() map[string]string {
+	m := make(map[string]string, wm.Size())
 
-	go func() {
-		defer close(ch)
+	for i := 0; i < wm.Size(); i++ {
+		from, to := wm.from[i], wm.to[i]
+		m[from] = to
+	}
 
-		for i := 0; i < wm.Size(); i++ {
-			from, to := wm.from[i], wm.to[i]
-			ch <- Mapping{from, to}
-		}
-	}()
-
-	return ch
+	return m
 }
 
 // Size returns the size of the WordMap. I.e. the number of words mapped from

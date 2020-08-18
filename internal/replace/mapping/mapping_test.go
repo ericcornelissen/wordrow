@@ -1,4 +1,4 @@
-package wordmaps
+package mapping
 
 import (
 	"fmt"
@@ -15,76 +15,118 @@ func ExampleMatch() {
 	}
 }
 
-func TestMappingGetFrom(t *testing.T) {
+func TestEndsWithSuffixSymbol(t *testing.T) {
+	t.Run("No suffix symbol", func(t *testing.T) {
+		result := endsWithSuffixSymbol(`foobar`)
+		if result == true {
+			t.Error("Expected result to be false, was true")
+		}
+	})
+	t.Run("A suffix symbol", func(t *testing.T) {
+		result := endsWithSuffixSymbol(`foo-`)
+		if result == false {
+			t.Error("Expected result to be true, was false")
+		}
+	})
+	t.Run("Escaped suffix symbol", func(t *testing.T) {
+		result := endsWithSuffixSymbol(`foo\-`)
+		if result == true {
+			t.Error("Expected result to be false, was true")
+		}
+	})
+}
+
+func TestStartsWithPrefixSymbol(t *testing.T) {
+	t.Run("No prefix symbol", func(t *testing.T) {
+		result := startsWithPrefixSymbol(`foobar`)
+		if result == true {
+			t.Error("Expected result to be false, was true")
+		}
+	})
+	t.Run("A prefix symbol", func(t *testing.T) {
+		result := startsWithPrefixSymbol(`-foo`)
+		if result == false {
+			t.Error("Expected result to be true, was false")
+		}
+	})
+	t.Run("Escaped prefix symbol", func(t *testing.T) {
+		result := startsWithPrefixSymbol(`\-foo`)
+		if result == true {
+			t.Error("Expected result to be false, was true")
+		}
+	})
+}
+
+func TestMappingFrom(t *testing.T) {
 	from, to := "hello", "hey"
 
 	t.Run("no prefix, no suffix", func(t *testing.T) {
 		mapping := Mapping{from, to}
 
-		result := mapping.GetFrom()
+		result := mapping.From()
 		if result != from {
-			t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+			t.Errorf("Unexpected value  (got '%s')", result)
 		}
 	})
 	t.Run("with prefix, no suffix", func(t *testing.T) {
 		mapping := Mapping{"-" + from, to}
 
-		result := mapping.GetFrom()
+		result := mapping.From()
 		if result != from {
-			t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+			t.Errorf("Unexpected value  (got '%s')", result)
 		}
 	})
 	t.Run("no prefix, with suffix", func(t *testing.T) {
 		mapping := Mapping{from + "-", to}
 
-		result := mapping.GetFrom()
+		result := mapping.From()
 		if result != from {
-			t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+			t.Errorf("Unexpected value  (got '%s')", result)
 		}
 	})
 	t.Run("with prefix, with suffix", func(t *testing.T) {
 		mapping := Mapping{"-" + from + "-", to}
 
-		result := mapping.GetFrom()
+		result := mapping.From()
 		if result != from {
-			t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+			t.Errorf("Unexpected value  (got '%s')", result)
 		}
 	})
 }
 
-func TestMappingGetTo(t *testing.T) {
+func TestMappingTo(t *testing.T) {
 	from, to := "hello", "hey"
 
 	t.Run("no prefix, no suffix", func(t *testing.T) {
 		mapping := Mapping{from, to}
 
-		result := mapping.GetTo()
+		result := mapping.To()
 		if result != to {
-			t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+			t.Errorf("Unexpected value  (got '%s')", result)
 		}
 	})
 	t.Run("with prefix, no suffix", func(t *testing.T) {
 		mapping := Mapping{from, "-" + to}
 
-		result := mapping.GetTo()
+		result := mapping.To()
 		if result != to {
-			t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+			t.Errorf("Unexpected value  (got '%s')", result)
 		}
 	})
 	t.Run("no prefix, with suffix", func(t *testing.T) {
 		mapping := Mapping{from, to + "-"}
 
-		result := mapping.GetTo()
+		result := mapping.To()
 		if result != to {
-			t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+			t.Errorf("Unexpected value  (got '%s')", result)
 		}
 	})
 	t.Run("with prefix, with suffix", func(t *testing.T) {
 		mapping := Mapping{from, "-" + to + "-"}
 
-		result := mapping.GetTo()
+		result := mapping.To()
 		if result != to {
-			t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+			t.Errorf("Unexpected value  (got '%s')", result)
 		}
 	})
 }
@@ -835,6 +877,150 @@ func TestMatch(t *testing.T) {
 			}
 		})
 	})
+	t.Run("escaped prefix", func(t *testing.T) {
+		from, unescapedFrom, to := `\-bar`, `-bar`, `bar`
+		mapping := Mapping{from, to}
+
+		t.Run("a match", func(t *testing.T) {
+			rawSource := "foo %s"
+			source := fmt.Sprintf(rawSource, unescapedFrom)
+			fmt.Printf(source)
+
+			expectedMatches := []Match{
+				{
+					Full:        unescapedFrom,
+					Word:        unescapedFrom,
+					Replacement: to,
+					Prefix:      "",
+					Suffix:      "",
+					Start:       4,
+					End:         4 + len(unescapedFrom),
+				},
+			}
+
+			i := 0
+			for match := range mapping.Match(source) {
+				if i >= len(expectedMatches) {
+					t.Fatal("Too many matches found")
+				}
+
+				if match != expectedMatches[i] {
+					t.Errorf("Unexpected match at index %d (was %+v)", i, match)
+				}
+
+				i++
+			}
+
+			if i != len(expectedMatches) {
+				t.Errorf("not enough matches (got %d)", i)
+			}
+		})
+		t.Run("from value with a prefix", func(t *testing.T) {
+			for match := range mapping.Match("foobar") {
+				t.Errorf("There shouldn't be any matches (got %+v)", match)
+			}
+		})
+	})
+	t.Run("escaped suffix", func(t *testing.T) {
+		from, unescapedFrom, to := `foo\-`, `foo-`, `foo`
+		mapping := Mapping{from, to}
+
+		t.Run("a match", func(t *testing.T) {
+			rawSource := "%s bar"
+			source := fmt.Sprintf(rawSource, unescapedFrom)
+			fmt.Printf(source)
+
+			expectedMatches := []Match{
+				{
+					Full:        unescapedFrom,
+					Word:        unescapedFrom,
+					Replacement: to,
+					Prefix:      "",
+					Suffix:      "",
+					Start:       0,
+					End:         0 + len(unescapedFrom),
+				},
+			}
+
+			i := 0
+			for match := range mapping.Match(source) {
+				if i >= len(expectedMatches) {
+					t.Fatal("Too many matches found")
+				}
+
+				if match != expectedMatches[i] {
+					t.Errorf("Unexpected match at index %d (was %+v)", i, match)
+				}
+
+				i++
+			}
+
+			if i != len(expectedMatches) {
+				t.Errorf("not enough matches (got %d)", i)
+			}
+		})
+		t.Run("from value with a prefix", func(t *testing.T) {
+			for match := range mapping.Match("foobar") {
+				t.Errorf("There shouldn't be any matches (got %+v)", match)
+			}
+		})
+	})
+	t.Run("empty string", func(t *testing.T) {
+		mapping := Mapping{"", "to"}
+		for match := range mapping.Match("Hello world") {
+			t.Errorf("There shouldn't be any matches (got '%+v'", match)
+		}
+	})
+}
+
+func TestUnconventionalMappings(t *testing.T) {
+	t.Run("non UTF-8 characters", func(t *testing.T) {
+		mapping := Mapping{"\xbf", "a"}
+
+		for match := range mapping.Match("Hello world!") {
+			t.Errorf("Expected no matches (matched '%s')", match.Full)
+		}
+
+		for match := range mapping.Match("Hello \xbf!") {
+			t.Errorf("Expected no matches (matched '%s')", match.Full)
+		}
+	})
+	t.Run("Invalid Regular Expression", func(t *testing.T) {
+		from, to := "(foo", "(bar"
+		mapping := Mapping{from, to}
+
+		rawSource := "Foo bar %s bar)"
+		source := fmt.Sprintf(rawSource, from)
+
+		expectedMatches := []Match{
+			{
+				Full:        from,
+				Word:        from,
+				Replacement: to,
+				Prefix:      "",
+				Suffix:      "",
+				Start:       8,
+				End:         8 + len(from),
+			},
+		}
+
+		i := 0
+		for match := range mapping.Match(source) {
+			if i >= len(expectedMatches) {
+				t.Fatal("Too many matches found")
+			}
+
+			if match != expectedMatches[i] {
+				t.Errorf("Unexpected match at index %d (was %+v)", i, match)
+			}
+
+			i++
+		}
+
+		if i != len(expectedMatches) {
+			t.Errorf("not enough matches (got %d)", i)
+		}
+	})
 }
 
 func TestString(t *testing.T) {
@@ -846,7 +1032,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[hello -> hey]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 		t.Run("-to", func(t *testing.T) {
@@ -854,7 +1040,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[hello -> -hey]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 		t.Run("to-", func(t *testing.T) {
@@ -862,7 +1048,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[hello -> hey-]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 		t.Run("-to-", func(t *testing.T) {
@@ -870,7 +1056,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[hello -> -hey-]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 	})
@@ -880,7 +1066,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[-hello -> hey]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 		t.Run("-to", func(t *testing.T) {
@@ -888,7 +1074,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[-hello -> -hey]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 		t.Run("to-", func(t *testing.T) {
@@ -896,7 +1082,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[-hello -> hey-]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 		t.Run("-to-", func(t *testing.T) {
@@ -904,7 +1090,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[-hello -> -hey-]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 	})
@@ -914,7 +1100,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[hello- -> hey]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 		t.Run("-to", func(t *testing.T) {
@@ -922,7 +1108,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[hello- -> -hey]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 		t.Run("to-", func(t *testing.T) {
@@ -930,7 +1116,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[hello- -> hey-]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 		t.Run("-to-", func(t *testing.T) {
@@ -938,7 +1124,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[hello- -> -hey-]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 	})
@@ -948,7 +1134,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[-hello- -> hey]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 		t.Run("-to", func(t *testing.T) {
@@ -956,7 +1142,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[-hello- -> -hey]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 		t.Run("to-", func(t *testing.T) {
@@ -964,7 +1150,7 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[-hello- -> hey-]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 		t.Run("-to-", func(t *testing.T) {
@@ -972,8 +1158,21 @@ func TestString(t *testing.T) {
 
 			result := mapping.String()
 			if result != "[-hello- -> -hey-]" {
-				t.Errorf("Unexpected value from GetFrom (got '%s')", result)
+				t.Errorf("Unexpected value  (got '%s')", result)
 			}
 		})
 	})
+}
+
+func TestNew(t *testing.T) {
+	from, to := "foo", "bar"
+	m := New(from, to)
+
+	if m.from != from {
+		t.Errorf("Unexpected from value in mapping (got '%s')", m.from)
+	}
+
+	if m.to != to {
+		t.Errorf("Unexpected from value in mapping (got '%s')", m.from)
+	}
 }

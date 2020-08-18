@@ -1,0 +1,10 @@
+{
+  "G104": {
+    "github.com/ericcornelissen/stringsx.Builder": [
+      "Write",
+      "WriteByte",
+      "WriteRune",
+      "WriteString"
+    ]
+  }
+}

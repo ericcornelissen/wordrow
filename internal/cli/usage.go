@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/ericcornelissen/wordrow/internal/strings"
+	"github.com/ericcornelissen/stringsx"
 )
 
 // The maximum line length for the usage message.
@@ -12,15 +12,15 @@ const maxLineLen = 80
 // Utility function to clean a source-formatted string into a single line
 // string.
 func clean(s string) string {
-	s = strings.ReplaceAll(s, "\n", " ")
-	s = strings.TrimSpace(s)
+	s = stringsx.ReplaceAll(s, "\n", " ")
+	s = stringsx.TrimSpace(s)
 
 	return s
 }
 
 // Utility function to get a string of spaces the length of a given string.
 func asWhitespace(s string) string {
-	return strings.Repeat(" ", len(s))
+	return stringsx.Repeat(" ", len(s))
 }
 
 // Get an option and option alias as a bullet for the usage message.
@@ -33,17 +33,17 @@ func getOptionBullet(option, optionAlias string) string {
 }
 
 // Format the usage of a single option.
-func formatOption(option Option, message string) string {
-	var sb strings.Builder
+func formatOption(o option, message string) string {
+	var sb stringsx.Builder
 	var lineCount = 1
 
 	message = clean(message)
 
-	topic := getOptionBullet(option.name, option.alias)
+	topic := getOptionBullet(o.name, o.alias)
 	indentation := asWhitespace(topic)
 
 	sb.WriteString(topic)
-	for _, word := range strings.Fields(message) {
+	for _, word := range stringsx.Fields(message) {
 		if (sb.Len() + len(word)) > (lineCount * maxLineLen) {
 			sb.WriteRune('\n')
 			sb.WriteString(indentation)
@@ -59,8 +59,8 @@ func formatOption(option Option, message string) string {
 }
 
 // Print the usage of a single option.
-func printOption(option Option, message string) {
-	optionDoc := formatOption(option, message)
+func printOption(o option, message string) {
+	optionDoc := formatOption(o, message)
 	fmt.Println(optionDoc)
 }
 
@@ -76,10 +76,10 @@ func printOptions() {
 	printOption(dryRunFlag, `Don't make any changes to the input files.`)
 	printOption(invertFlag, `Invert all specified mappings.`)
 	printOption(silentFlag, `Disable informative logging.`)
-	printOption(verboseFlag, `Enabled debug logging.`)
+	printOption(verboseFlag, `Enable debug logging.`)
+	printOption(strictFlag, `Enable strict mode.`)
 
 	printSectionTitle("Options")
-	printOption(configOption, `Specify a configuration file.`)
 	printOption(mapfileOption, `
 		Specify a file with a mapping. To use multiple mapping files you can use
 		this option multiple times.
@@ -104,20 +104,27 @@ func printInterface() {
 	fmt.Printf("%s [%s] [%s | %s]\n",
 		indentation,
 		dryRunFlag.name,
+		strictFlag.alias,
+		strictFlag.name,
+	)
+	fmt.Printf("%s [%s | %s]\n",
+		indentation,
+		invertFlag.alias,
+		invertFlag.name,
+	)
+	fmt.Printf("%s [%s | %s] [%s | %s]\n",
+		indentation,
+		verboseFlag.alias,
+		verboseFlag.name,
 		silentFlag.alias,
 		silentFlag.name,
-	)
-	fmt.Printf("%s [%s | %s <file>]\n",
-		indentation,
-		configOption.alias,
-		configOption.name,
 	)
 	fmt.Printf("%s [%s | %s <file>]\n",
 		indentation,
 		mapfileOption.alias,
 		mapfileOption.name,
 	)
-	fmt.Printf("%s [%s | %s <file>]\n",
+	fmt.Printf("%s [%s | %s <mapping>]\n",
 		indentation,
 		mappingOption.alias,
 		mappingOption.name,

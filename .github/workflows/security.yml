@@ -1,10 +1,14 @@
 name: Security
 on:
-  - pull_request
+  pull_request:
+  push:
+    branches:
+      - master
+      - 'sec**'
 
 jobs:
-  test:
-    name: Security
+  gosec:
+    name: Gosec
     runs-on: ubuntu-latest
     env:
       GO111MODULE: on
@@ -13,4 +17,38 @@ jobs:
     - name: Run gosec Security Scanner
       uses: securego/gosec@master
       with:
-        args: ./...
+        args: -conf .gosecrc.json ./...
+
+  snyk:
+    name: Snyk
+    runs-on: ubuntu-latest
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_API_KEY }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up NodeJS  # NodeJS required for snyk-CLI
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install the Snyk CLI
+      run: npm install -g snyk
+    - name: Run Snyk analysis
+      run: snyk test
+
+  fuzz:
+    name: Fuzz (build only)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.13
+    - name: Get go-fuzz-build
+      run: go get -u github.com/dvyukov/go-fuzz/go-fuzz-build
+
+    # Attempt building the fuzz target for package main
+    - name: Rename package main
+      run: sed -i "s|package main|package _main|g" ./cmd/wordrow/*.go
+    - name: Build fuzz target
+      run: make fuzz-build PKG=cmd/wordrow
