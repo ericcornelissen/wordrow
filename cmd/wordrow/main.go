@@ -49,10 +49,8 @@ func main() {
 		setLogLevel(args)
 
 		errs := run(args)
-		if len(errs) > 0 {
-			for _, err := range errs {
-				logger.Error(err)
-			}
+		for _, err := range errs {
+			logger.Error(err)
 		}
 	}
 }
