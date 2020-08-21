@@ -127,3 +127,18 @@ func TestCsvToFewColumns(t *testing.T) {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
+
+func BenchmarkParseCsvWithString(b *testing.B) {
+	s := []byte("Hello,World\nfoo,bar\n3,4")
+	for n := 0; n < b.N; n++ {
+		x := string(s)
+		parseCsvFile(&x)
+	}
+}
+
+func BenchmarkParseCsvWithBytes(b *testing.B) {
+	s := []byte("Hello,World\nfoo,bar\n3,4")
+	for n := 0; n < b.N; n++ {
+		_parseCsvFile(s)
+	}
+}
