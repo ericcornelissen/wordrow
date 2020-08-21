@@ -96,53 +96,49 @@ func TestGetParserForCSVFile(t *testing.T) {
 }
 
 func TestParseFileNoParser(t *testing.T) {
-	var wm WordMap
 	content := "Hello world!"
 
-	err := parseFile(&content, ".bar", &wm)
+	_, err := parseFile(&content, ".bar")
 	if err == nil {
 		t.Fatal("The error should set for this test")
 	}
 }
 
 func TestParseFileUpdatesWordMap(t *testing.T) {
-	var wm WordMap
 	content := "this is definitely not a real CSV file"
 
-	err := parseFile(&content, ".csv", &wm)
+	_, err := parseFile(&content, ".csv")
 	if err == nil {
 		t.Fatal("The error should set for this test")
 	}
 }
 
 func TestParseFileParseCSV(t *testing.T) {
-	var wm WordMap
 	content := "foo,bar"
 
-	err := parseFile(&content, ".csv", &wm)
+	wm, err := parseFile(&content, ".csv")
 	if err != nil {
 		t.Fatalf("The error should not be set for this test (got '%s')", err)
 	}
 
-	if wm.Size() == 0 {
+	if len(wm) == 0 {
 		t.Error("The size of the WordMap should be greater than 0")
 	}
 }
 
 func TestParseFileParseMarkDown(t *testing.T) {
-	var wm WordMap
 	content := `
 		| From | To  |
 		| ---- | --- |
 		| foo  | bar |
 	`
 
-	err := parseFile(&content, ".md", &wm)
+	wm, err := parseFile(&content, ".md")
 	if err != nil {
 		t.Fatalf("The error should not be set for this test (got '%s')", err)
 	}
 
-	if wm.Size() == 0 {
+	if len(wm) == 0 {
 		t.Error("The size of the WordMap should be greater than 0")
 	}
 }

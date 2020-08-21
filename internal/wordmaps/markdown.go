@@ -61,7 +61,7 @@ func parseTableHeader(tableLines []string) (rerr error) {
 //
 // The error will be set if the table head or any table row has an incorrect
 // format.
-func parseTable(tableLines []string, wm *WordMap) (int, error) {
+func parseTable(tableLines []string, wm *StringMap) (int, error) {
 	if len(tableLines) < 3 {
 		return 0, errors.Newf("Incomplete table (starting at '%s')", tableLines[0])
 	}
@@ -70,7 +70,7 @@ func parseTable(tableLines []string, wm *WordMap) (int, error) {
 		return 0, err
 	}
 
-	sizeBefore := wm.Size()
+	sizeBefore := len(*wm)
 	for i := 2; i < len(tableLines); i++ {
 		row := tableLines[i]
 		if !isTableRow(row) {
@@ -83,17 +83,17 @@ func parseTable(tableLines []string, wm *WordMap) (int, error) {
 		}
 
 		last := len(rowValues) - 1
-		wm.AddMany(rowValues[0:last], rowValues[last])
+		wm.addMany(rowValues[0:last], rowValues[last])
 	}
 
-	return (2 + (wm.Size() - sizeBefore)), nil
+	return (2 + (len(*wm) - sizeBefore)), nil
 }
 
 // Parse a MarkDown (MD) formatted file into a WordMap.
 //
 // The error will be set if any error occurred while parsing the MD file.
-func parseMarkDownFile(rawFileData *string) (WordMap, error) {
-	var wm WordMap
+func parseMarkDownFile(rawFileData *string) (StringMap, error) {
+	wm := make(StringMap, 1)
 
 	lines := stringsx.Split(*rawFileData, "\n")
 	for i := 0; i < len(lines); i++ {

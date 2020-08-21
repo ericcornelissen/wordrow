@@ -9,7 +9,7 @@ import (
 //
 // The error will be set if the row has an unexpected format, for example an
 // incorrect number of columns.
-func parseRow(row string, wm *WordMap) error {
+func parseRow(row string, wm *StringMap) error {
 	rowValues := stringsx.Split(row, ",")
 	if len(rowValues) < 2 {
 		return errors.Newf("Unexpected row format (in '%s')", row)
@@ -21,15 +21,15 @@ func parseRow(row string, wm *WordMap) error {
 	}
 
 	last := len(rowValues) - 1
-	wm.AddMany(rowValues[0:last], rowValues[last])
+	wm.addMany(rowValues[0:last], rowValues[last])
 	return nil
 }
 
 // Parse a Comma Separated Values (CSV) file into a WordMap.
 //
 // The error will be set if any error occurred while parsing the CSV file.
-func parseCsvFile(rawFileData *string) (WordMap, error) {
-	var wm WordMap
+func parseCsvFile(rawFileData *string) (StringMap, error) {
+	wm := make(StringMap, 1)
 
 	lines := stringsx.Split(*rawFileData, "\n")
 	for i := 0; i < len(lines); i++ {

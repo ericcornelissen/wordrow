@@ -4,24 +4,23 @@ import "testing"
 
 // Helper function to check if a WordMap is of the correct size and contains the
 // correct values.
-func checkWordMap(t *testing.T, wm WordMap, expected [][]string) {
+func checkWordMap(t *testing.T, wm StringMap, expected [][]string) {
 	t.Helper()
 
-	if wm.Size() != len(expected) {
-		t.Fatalf("The WordMap size should be %d (got %d)", len(expected), wm.Size())
+	if len(wm) != len(expected) {
+		t.Fatalf("The WordMap size should be %d (got %d)", len(expected), len(wm))
 	}
 
-	for i, expectedI := range expected {
+	for _, expectedI := range expected {
 		from, to := expectedI[0], expectedI[1]
 
-		actual := wm.GetFrom(i)
-		if actual != from {
-			t.Errorf("Incorrect from-value at index %d (got '%s')", i, actual)
+		actualTo, ok := wm[from]
+		if !ok {
+			t.Errorf("Missing from-value '%s'", from)
 		}
 
-		actual = wm.GetTo(i)
-		if actual != to {
-			t.Errorf("Incorrect to-value at index %d (got '%s')", i, actual)
+		if actualTo != to {
+			t.Errorf("Incorrect to value for '%s' (got '%s')", from, actualTo)
 		}
 	}
 }

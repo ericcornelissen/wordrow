@@ -2,20 +2,11 @@ package wordmaps
 
 import (
 	"fmt"
-	"sort"
 	"testing"
 )
 
-func TestWordMapEmpty(t *testing.T) {
-	var wm WordMap
-
-	if wm.Size() != 0 {
-		t.Errorf("The size of a new WordMap must be 0 (got %d)", wm.Size())
-	}
-}
-
 func TestWordMapAddFileUnknownType(t *testing.T) {
-	var wm WordMap
+	wm := make(StringMap, 1)
 
 	content := "Hello world"
 	format := ".bar"
@@ -27,7 +18,7 @@ func TestWordMapAddFileUnknownType(t *testing.T) {
 }
 
 func TestWordMapAddFileKnownType(t *testing.T) {
-	var wm WordMap
+	wm := make(StringMap, 1)
 
 	from, to := "foo", "bar"
 	content := fmt.Sprintf("%s,%s", from, to)
@@ -44,10 +35,10 @@ func TestWordMapAddFileKnownType(t *testing.T) {
 }
 
 func TestWordMapAddOne(t *testing.T) {
-	var wm WordMap
+	wm := make(StringMap, 1)
 	from, to := "cat", "dog"
 
-	wm.AddOne(from, to)
+	wm.addOne(from, to)
 
 	expected := make([][]string, 1)
 	expected[0] = []string{from, to}
@@ -55,10 +46,10 @@ func TestWordMapAddOne(t *testing.T) {
 }
 
 func TestWordMapAddMany(t *testing.T) {
-	var wm WordMap
+	wm := make(StringMap, 1)
 	from1, from2, to := "doge", "puppy", "dog"
 
-	wm.AddMany([]string{from1, from2}, to)
+	wm.addMany([]string{from1, from2}, to)
 
 	expected := make([][]string, 2)
 	expected[0] = []string{from1, to}
@@ -67,7 +58,7 @@ func TestWordMapAddMany(t *testing.T) {
 }
 
 func TestWordMapEmptyValues(t *testing.T) {
-	var wm WordMap
+	wm := make(StringMap, 1)
 
 	t.Run("Empty from value", func(t *testing.T) {
 		defer func() {
@@ -76,7 +67,7 @@ func TestWordMapEmptyValues(t *testing.T) {
 			}
 		}()
 
-		wm.AddOne("", "bar")
+		wm.addOne("", "bar")
 		t.Error("AddOne should have panicked but did not")
 	})
 	t.Run("Empty to value", func(t *testing.T) {
@@ -86,7 +77,7 @@ func TestWordMapEmptyValues(t *testing.T) {
 			}
 		}()
 
-		wm.AddOne("foo", "")
+		wm.addOne("foo", "")
 		t.Error("AddOne should have panicked but did not")
 	})
 }
@@ -111,105 +102,53 @@ func TestWordMapAddFrom(t *testing.T) {
 }
 
 func TestWordMapContains(t *testing.T) {
-	var wm WordMap
+	wm := make(StringMap, 1)
 	from, to := "cat", "dog"
 
-	if wm.Contains(from) || wm.Contains(to) {
-		t.Fatal("A new WordMap should not contain anything")
-	}
-
-	wm.AddOne(from, to)
-	if !wm.Contains(from) {
+	wm.addOne(from, to)
+	if _, ok := wm[from]; !ok {
 		t.Error("The WordMap should contain a word added by AddOne")
 	}
 
-	if wm.Contains(to) {
+	if _, ok := wm[to]; ok {
 		t.Error("The WordMap should NOT contain the 'to' word that was added")
 	}
 }
 
 func TestWordMapGet(t *testing.T) {
-	var wm WordMap
+	wm := make(StringMap, 1)
 	from, to := "cat", "dog"
 
-	wm.AddOne(from, to)
+	wm.addOne(from, to)
 
 	expected := make([][]string, 1)
 	expected[0] = []string{from, to}
 	checkWordMap(t, wm, expected)
-
-	outOfRangeIndex := wm.Size() + 1
-	t.Run("GetFrom out of range", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Error("GetFrom did not need recovery, but should have")
-			}
-		}()
-
-		wm.GetFrom(outOfRangeIndex)
-		t.Error("GetFrom should have panicked but did not")
-	})
-	t.Run("GetTo out of range", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Error("GetTo did not need recovery, but should have")
-			}
-		}()
-
-		wm.GetTo(outOfRangeIndex)
-		t.Error("GetTo should have panicked but did not")
-	})
 }
 
 func TestWordMapInvert(t *testing.T) {
-	var wm WordMap
-	from, to := "cat", "dog"
+	wm := make(StringMap, 3)
+	from1, to1 := "cat", "dog"
+	from2, to2 := "dog", "cat"
+	from3, to3 := "Hello", "world"
 
 	wm.Invert()
-	if wm.Size() != 0 {
+	if len(wm) != 0 {
 		t.Error("Inverting an empty WordMap should not do anything")
 	}
 
-	wm.AddOne(from, to)
-	if wm.Size() != 1 {
-		t.Fatalf("The size should be 1 after AddOne (got %d)", wm.Size())
+	wm.addOne(from1, to1)
+	wm.addOne(from2, to2)
+	wm.addOne(from3, to3)
+	if len(wm) != 3 {
+		t.Fatalf("The size should be 1 after AddOne (got %d)", len(wm))
 	}
 
-	wm.Invert()
+	wm = wm.Invert()
 
-	expected := make([][]string, 1)
-	expected[0] = []string{to, from}
+	expected := make([][]string, 3)
+	expected[0] = []string{to1, from1}
+	expected[1] = []string{to2, from2}
+	expected[2] = []string{to3, from3}
 	checkWordMap(t, wm, expected)
-}
-
-func TestWordMapIter(t *testing.T) {
-	var wm WordMap
-	from0, to0 := "cat", "dog"
-	from1, to1 := "horse", "zebra"
-
-	wm.AddOne(from0, to0)
-	wm.AddOne(from1, to1)
-
-	if wm.Size() != 2 {
-		t.Fatalf("The size of the WordMap must be 2 (got %d)", wm.Size())
-	}
-
-	expectedFroms := []string{from0, from1}
-	expectedTos := []string{to0, to1}
-
-	i := 0
-	for actualFrom, actualTo := range wm.Iter() {
-		fromI := sort.SearchStrings(expectedFroms, actualFrom)
-		if fromI == len(expectedFroms) {
-			t.Errorf("Unknown from-value (got '%s')", actualFrom)
-		} else if actualTo != expectedTos[fromI] {
-			t.Errorf("Wrong to-value (got '%s')", actualTo)
-		}
-
-		i++
-
-		// Remove the values used in this iteration
-		expectedFroms = append(expectedFroms[:fromI], expectedFroms[fromI+1:]...)
-		expectedTos = append(expectedTos[:fromI], expectedTos[fromI+1:]...)
-	}
 }
