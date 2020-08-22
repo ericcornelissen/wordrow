@@ -4,12 +4,8 @@ import "testing"
 
 // CreateArgs creates a list of arguments in the same fashion as `os.Args`.
 func createArgs(args ...string) []string {
-	cliArgs := []string{"wordrow"}
-	for _, arg := range args {
-		cliArgs = append(cliArgs, arg)
-	}
-
-	return cliArgs
+	baseArg := []string{"wordrow"}
+	return append(baseArg, args...)
 }
 
 // Test if DryRun has the default value.

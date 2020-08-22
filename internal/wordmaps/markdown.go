@@ -50,7 +50,7 @@ func parseTableHeader(tableLines []string) (rerr error) {
 		rerr = errors.Newf("Incorrect table header (in '%s')", headerLine)
 	} else if _, err = parseTableRow(dividerLine); err != nil {
 		rerr = errors.Newf("Missing table divider (in '%s')", dividerLine)
-	} else if tableDividerExpr.MatchString(dividerLine) == false {
+	} else if !tableDividerExpr.MatchString(dividerLine) {
 		rerr = errors.Newf("Incorrect table divider (in '%s')", dividerLine)
 	} else if _, err = parseTableRow(firstTableRow); err != nil {
 		rerr = errors.Newf("Missing table body (in '%s')", firstTableRow)
