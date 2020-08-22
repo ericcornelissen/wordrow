@@ -68,7 +68,7 @@ func TestParseMapFileArgument(t *testing.T) {
 
 func TestProcessMapFile(t *testing.T) {
 	t.Run("Read something, correct format", func(t *testing.T) {
-		var wordmap wordmaps.WordMap
+		wordmap := make(wordmaps.StringMap, 1)
 
 		format := "csv"
 		expectedFrom, expectedTo := "foo", "bar"
@@ -80,23 +80,22 @@ func TestProcessMapFile(t *testing.T) {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
 
-		wordmapSize := wordmap.Size()
+		wordmapSize := len(wordmap)
 		if wordmapSize != 1 {
 			t.Fatalf("Unexpected wordmap size (got %d)", wordmapSize)
 		}
 
-		actualFrom := wordmap.GetFrom(0)
-		if actualFrom != expectedFrom {
-			t.Errorf("Incorrect first from value (got '%s')", actualFrom)
+		actualTo, ok := wordmap[expectedFrom]
+		if !ok {
+			t.Error("From value missing from wordmap")
 		}
 
-		actualTo := wordmap.GetTo(0)
 		if actualTo != expectedTo {
 			t.Errorf("Incorrect first to value (got '%s')", actualTo)
 		}
 	})
 	t.Run("Read something, incorrect format", func(t *testing.T) {
-		var wordmap wordmaps.WordMap
+		wordmap := make(wordmaps.StringMap, 1)
 
 		format := "csv"
 		content := "foobar"
@@ -107,13 +106,13 @@ func TestProcessMapFile(t *testing.T) {
 			t.Error("Expected an error but didn't get one")
 		}
 
-		wordmapSize := wordmap.Size()
+		wordmapSize := len(wordmap)
 		if wordmapSize != 0 {
 			t.Fatalf("Unexpected wordmap size (got %d)", wordmapSize)
 		}
 	})
 	t.Run("Read nothing", func(t *testing.T) {
-		var wordmap wordmaps.WordMap
+		wordmap := make(wordmaps.StringMap, 1)
 
 		format := "csv"
 		content := ""
@@ -124,13 +123,13 @@ func TestProcessMapFile(t *testing.T) {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
 
-		wordmapSize := wordmap.Size()
+		wordmapSize := len(wordmap)
 		if wordmapSize != 0 {
 			t.Fatalf("Unexpected wordmap size (got %d)", wordmapSize)
 		}
 	})
 	t.Run("Reading error", func(t *testing.T) {
-		var wordmap wordmaps.WordMap
+		wordmap := make(wordmaps.StringMap, 1)
 
 		format := "csv"
 		content := "foo,bar"
@@ -141,7 +140,7 @@ func TestProcessMapFile(t *testing.T) {
 			t.Error("Expected an error but didn't get one")
 		}
 
-		wordmapSize := wordmap.Size()
+		wordmapSize := len(wordmap)
 		if wordmapSize != 0 {
 			t.Fatalf("Unexpected wordmap size (got %d)", wordmapSize)
 		}
@@ -150,7 +149,7 @@ func TestProcessMapFile(t *testing.T) {
 
 func TestProcessInlineMapping(t *testing.T) {
 	t.Run("Correct format", func(t *testing.T) {
-		var wordmap wordmaps.WordMap
+		wordmap := make(wordmaps.StringMap, 1)
 
 		expectedFrom, expectedTo := "hello", "hey"
 		mapping := fmt.Sprintf("%s,%s", expectedFrom, expectedTo)
@@ -160,23 +159,22 @@ func TestProcessInlineMapping(t *testing.T) {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
 
-		wordmapSize := wordmap.Size()
+		wordmapSize := len(wordmap)
 		if wordmapSize != 1 {
 			t.Fatalf("Unexpected wordmap size (got %d)", wordmapSize)
 		}
 
-		actualFrom := wordmap.GetFrom(0)
-		if actualFrom != expectedFrom {
-			t.Errorf("Incorrect first from value (got '%s')", actualFrom)
+		actualTo, ok := wordmap[expectedFrom]
+		if !ok {
+			t.Error("From value missing from wordmap")
 		}
 
-		actualTo := wordmap.GetTo(0)
 		if actualTo != expectedTo {
 			t.Errorf("Incorrect first to value (got '%s')", actualTo)
 		}
 	})
 	t.Run("Incorrect format", func(t *testing.T) {
-		var wordmap wordmaps.WordMap
+		wordmap := make(wordmaps.StringMap, 1)
 		mapping := "foobar"
 
 		err := processInlineMapping(mapping, &wordmap)
@@ -184,13 +182,13 @@ func TestProcessInlineMapping(t *testing.T) {
 			t.Error("Expected an error but didn't get one")
 		}
 
-		wordmapSize := wordmap.Size()
+		wordmapSize := len(wordmap)
 		if wordmapSize != 0 {
 			t.Fatalf("Unexpected wordmap size (got %d)", wordmapSize)
 		}
 	})
 	t.Run("Empty string", func(t *testing.T) {
-		var wordmap wordmaps.WordMap
+		wordmap := make(wordmaps.StringMap, 1)
 
 		if err := processInlineMapping("foo,", &wordmap); err == nil {
 			t.Errorf("Expected no error but got one (%s)", err)
@@ -200,7 +198,7 @@ func TestProcessInlineMapping(t *testing.T) {
 			t.Errorf("Expected no error but got one (%s)", err)
 		}
 
-		wordmapSize := wordmap.Size()
+		wordmapSize := len(wordmap)
 		if wordmapSize != 0 {
 			t.Fatalf("Unexpected wordmap size (got %d)", wordmapSize)
 		}
@@ -209,7 +207,7 @@ func TestProcessInlineMapping(t *testing.T) {
 
 func TestProcessInlineMappings(t *testing.T) {
 	t.Run("Correct formats", func(t *testing.T) {
-		var wordmap wordmaps.WordMap
+		wordmap := make(wordmaps.StringMap, 1)
 
 		expectedFrom0, expectedTo0 := "hello", "hey"
 		expectedFrom1, expectedTo1 := "world", "planet"
@@ -223,33 +221,31 @@ func TestProcessInlineMappings(t *testing.T) {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
 
-		wordmapSize := wordmap.Size()
+		wordmapSize := len(wordmap)
 		if wordmapSize != 2 {
 			t.Fatalf("Unexpected wordmap size (got %d)", wordmapSize)
 		}
 
-		actualFrom0 := wordmap.GetFrom(0)
-		if actualFrom0 != expectedFrom0 {
-			t.Errorf("Incorrect first from value (got '%s')", actualFrom0)
+		actualTo0, ok := wordmap[expectedFrom0]
+		if !ok {
+			t.Error("From first value missing from wordmap")
 		}
 
-		actualTo0 := wordmap.GetTo(0)
 		if actualTo0 != expectedTo0 {
 			t.Errorf("Incorrect first to value (got '%s')", actualTo0)
 		}
 
-		actualFrom1 := wordmap.GetFrom(1)
-		if actualFrom1 != expectedFrom1 {
-			t.Errorf("Incorrect second from value (got '%s')", actualFrom1)
+		actualTo1, ok := wordmap[expectedFrom1]
+		if !ok {
+			t.Error("From second value missing from wordmap")
 		}
 
-		actualTo1 := wordmap.GetTo(1)
 		if actualTo1 != expectedTo1 {
 			t.Errorf("Incorrect second to value (got '%s')", actualTo1)
 		}
 	})
 	t.Run("Correct format, Incorrect format", func(t *testing.T) {
-		var wordmap wordmaps.WordMap
+		wordmap := make(wordmaps.StringMap, 1)
 		mappings := []string{"hello,hey", "worldplanet"}
 
 		err := processInlineMappings(mappings, &wordmap)
@@ -258,7 +254,7 @@ func TestProcessInlineMappings(t *testing.T) {
 		}
 	})
 	t.Run("Incorrect format, Correct format", func(t *testing.T) {
-		var wordmap wordmaps.WordMap
+		wordmap := make(wordmaps.StringMap, 1)
 		mappings := []string{"hellohey", "world,planet"}
 
 		err := processInlineMappings(mappings, &wordmap)

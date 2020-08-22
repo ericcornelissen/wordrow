@@ -48,7 +48,7 @@ func parseMapFileArgument(argument string) (filePath string, format string) {
 func processMapFile(
 	reader fs.Reader,
 	format string,
-	wordmap *wordmaps.WordMap,
+	wordmap *wordmaps.StringMap,
 ) error {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
@@ -62,7 +62,7 @@ func processMapFile(
 // Opens the file provided by the handler and add its mapping to the `wordmap`.
 // If the file cannot be opened or processing failed the function returns an
 // error.
-func openAndProcessMapFileWith(wordmap *wordmaps.WordMap) fileHandler {
+func openAndProcessMapFileWith(wordmap *wordmaps.StringMap) fileHandler {
 	return func(fileArgument string) error {
 		filePath, format := parseMapFileArgument(fileArgument)
 
@@ -81,7 +81,7 @@ func openAndProcessMapFileWith(wordmap *wordmaps.WordMap) fileHandler {
 
 // Add a CLI defined mapping to the `wordmap`. If the mapping is invalid this
 // function returns an error (and leave `wordmap` unchanged).
-func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
+func processInlineMapping(mapping string, wordmap *wordmaps.StringMap) error {
 	return wordmap.AddFile(&mapping, "csv")
 }
 
@@ -89,7 +89,7 @@ func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
 // returned after all mappings have been processed.
 func processInlineMappings(
 	mappings []string,
-	wordmap *wordmaps.WordMap,
+	wordmap *wordmaps.StringMap,
 ) (errs []error) {
 	for _, mapping := range mappings {
 		logger.Debugf("Processing '%s' as a CLI specified mapping", mapping)
@@ -109,7 +109,7 @@ func processInlineMappings(
 func getWordMap(
 	mapFiles []string,
 	inlineMappings []string,
-) (wordmap wordmaps.WordMap, errs []error) {
+) (wordmap wordmaps.StringMap, errs []error) {
 	errs = forEach(mapFiles, openAndProcessMapFileWith(&wordmap))
 	errs = append(errs, processInlineMappings(inlineMappings, &wordmap)...)
 	return wordmap, errs

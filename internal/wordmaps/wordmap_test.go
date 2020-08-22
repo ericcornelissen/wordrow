@@ -83,20 +83,21 @@ func TestWordMapEmptyValues(t *testing.T) {
 }
 
 func TestWordMapAddFrom(t *testing.T) {
-	var wmA, wmB WordMap
+	wmA := make(StringMap, 1)
+	wmB := make(StringMap, 1)
 
-	wmA.AddOne("cat", "dog")
-	if wmA.Size() != 1 || wmB.Size() != 0 {
+	wmA.addOne("cat", "dog")
+	if len(wmA) != 1 || len(wmB) != 0 {
 		t.Fatal("The initial sizes of the WordMaps was incorrect for this test")
 	}
 
-	wmA.AddFrom(wmB)
-	if wmA.Size() != 1 {
+	wmA.addFrom(wmB)
+	if len(wmA) != 1 {
 		t.Error("Adding an empty WordMap should not change that WordMap's size")
 	}
 
-	wmB.AddFrom(wmA)
-	if wmB.Size() != 1 {
+	wmB.addFrom(wmA)
+	if len(wmB) != 1 {
 		t.Error("Adding a non-empty WordMap should increase that WordMap's size")
 	}
 }
