@@ -81,9 +81,7 @@ func maintainCapitalization(fromPhrase, toPhrase string) string {
 // If the `from` phrase contains whitespace (spaces, tabs, newlines), it will
 // return the `to` phrase with the same kinds of whitespace. Otherwise, the `to`
 // string is returned unchanged.
-func maintainWhitespace(from, to string) (string, int) {
-	offset := 0
-
+func maintainWhitespace(from, to string) (newTo string, offset int) {
 	fromWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(from, -1)
 	toWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(to, -1)
 
@@ -132,13 +130,13 @@ func changesFormattingOnly(from, to string) bool {
 //  - Maintain all caps.
 //  - Maintain first letter capitalization.
 //  - Maintain newlines, tabs, etc.
-func maintainFormatting(from, to string) (string, int) {
+func maintainFormatting(from, to string) (newTo string, offset int) {
 	if !changesFormattingOnly(from, to) {
 		to = stringsx.ToLower(to)
 		to = maintainAllCaps(from, to)
 		to = maintainCapitalization(from, to)
 	}
 
-	to, offset := maintainWhitespace(from, to)
+	to, offset = maintainWhitespace(from, to)
 	return to, offset
 }
