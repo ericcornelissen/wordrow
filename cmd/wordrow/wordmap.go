@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 
 	"github.com/ericcornelissen/stringsx"
-	"github.com/ericcornelissen/wordrow/internal/errors"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
 	"github.com/ericcornelissen/wordrow/internal/wordmaps"
@@ -29,7 +28,7 @@ import (
 //
 // In the former the file explicitly stated format, in the latter no format is
 // returned.
-func parseMapFileArgument(argument string) (filePath string, format string) {
+func parseMapFileArgument(argument string) (filePath, format string) {
 	fileExtension := fs.GetExt(argument)
 
 	explicitFormatSplit := stringsx.Split(argument, ":")
@@ -69,7 +68,7 @@ func openAndProcessMapFileWith(wordmap *wordmaps.StringMap) fileHandler {
 		logger.Debugf("Opening '%s' as a '%s' formatted map file", filePath, format)
 		handle, err := fs.OpenFile(filePath, fs.OReadOnly)
 		if err != nil {
-			return errors.Newf("Could not open '%s' (%s mode)", filePath, fs.OReadOnly)
+			return err
 		}
 
 		defer handle.Close()

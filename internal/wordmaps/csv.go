@@ -10,14 +10,16 @@ import (
 // The error will be set if the row has an unexpected format, for example an
 // incorrect number of columns.
 func parseRow(row string, wm *StringMap) error {
+	rowValuesCount := 2
+
 	rowValues := stringsx.Split(row, ",")
-	if len(rowValues) < 2 {
-		return errors.Newf("Unexpected row format (in '%s')", row)
+	if len(rowValues) < rowValuesCount {
+		return errors.Newf(incorrectFormat, row)
 	}
 
 	rowValues = stringsx.MapAll(rowValues, stringsx.TrimSpace)
 	if stringsx.Any(rowValues, stringsx.IsEmpty) {
-		return errors.Newf("Missing value (in '%s')", row)
+		return errors.Newf(missingValue, row)
 	}
 
 	last := len(rowValues) - 1

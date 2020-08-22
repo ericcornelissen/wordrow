@@ -8,7 +8,8 @@ fuzz_dir:=./_fuzz
 
 markdown_files:=./*.md ./docs/*.md ./.github/**/*.md
 
-go_nomod:=GO111MODULE=off
+go_install:=go get -u
+go_install_dev:=GO111MODULE=on $(go_install)
 
 
 default: build
@@ -17,16 +18,34 @@ install: install-deps install-dev-deps
 
 install-deps:
 	@echo "INSTALLLING DEPENDENCIES"
-	go get -u github.com/yargevad/filepathx
+	$(go_install) github.com/yargevad/filepathx
 
 install-dev-deps:
 	@echo "INSTALLLING DEVELOPMENT TOOLS"
-	$(go_nomod) go get golang.org/x/tools/cmd/goimports
+	$(go_install_dev) golang.org/x/tools/cmd/goimports
 	@echo "INSTALLLING STATIC ANALYSIS TOOLS"
-	$(go_nomod) go get -u golang.org/x/lint/golint
-	curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b ${GOPATH}/bin v2.3.0
+	$(go_install_dev) 4d63.com/gochecknoinits
+	$(go_install_dev) gitlab.com/opennota/check/cmd/aligncheck
+	$(go_install_dev) gitlab.com/opennota/check/cmd/structcheck
+	$(go_install_dev) gitlab.com/opennota/check/cmd/varcheck
+	$(go_install_dev) github.com/alexkohler/dogsled/cmd/dogsled
+	$(go_install_dev) github.com/alexkohler/nakedret
+	$(go_install_dev) github.com/alexkohler/prealloc
+	$(go_install_dev) github.com/alexkohler/unimport
+	$(go_install_dev) github.com/go-critic/go-critic/cmd/gocritic
+	$(go_install_dev) github.com/gordonklaus/ineffassign
+	$(go_install_dev) github.com/jgautheron/goconst/cmd/goconst
+	$(go_install_dev) github.com/kisielk/errcheck
+	$(go_install_dev) github.com/kyoh86/looppointer/cmd/looppointer
+	$(go_install_dev) github.com/mdempsky/unconvert
+	$(go_install_dev) github.com/nishanths/exhaustive/...
+	$(go_install_dev) github.com/remyoudompheng/go-misc/deadcode
+	$(go_install_dev) github.com/tommy-muehle/go-mnd/cmd/mnd
+	$(go_install_dev) golang.org/x/lint/golint
+	$(go_install_dev) honnef.co/go/tools/cmd/staticcheck
+	$(go_install_dev) mvdan.cc/unparam
 	@echo "INSTALLLING MANUAL ANALYSIS TOOLS"
-	$(go_nomod) go get -u github.com/dvyukov/go-fuzz/go-fuzz github.com/dvyukov/go-fuzz/go-fuzz-build
+	$(go_install_dev) github.com/dvyukov/go-fuzz/go-fuzz github.com/dvyukov/go-fuzz/go-fuzz-build
 
 build:
 	go build -o $(executable_file) $(program_main)
@@ -62,10 +81,29 @@ benchmark:
 	go test $(test_root) -bench=. -run=XXX
 
 analysis:
-	@echo "VETTING"
-	go vet ./...
-	@echo "SECURITY SCAN"
-	gosec -conf .gosecrc.json -quiet ./...
+	@echo "VETTING..."
+	@go vet ./...
+	@aligncheck ./...
+	@dogsled -n 1 -set_exit_status ./...
+	@exhaustive -maps ./...
+	@goconst -ignore-tests ./...
+	@gocritic check -enableAll ./...
+	@looppointer ./...
+	@mnd -ignored-numbers "0,1" ./...
+	@prealloc -set_exit_status ./...
+	@staticcheck -show-ignored ./...
+	@structcheck -a -e -t ./...
+	@unconvert -v ./...
+	@unparam -exported -tests ./...
+	@varcheck -e ./...
+
+	@echo "VERIFYING ERRORS ARE CHECKED..."
+	@errcheck -asserts -blank -ignoretests -exclude .errcheckrc.txt ./...
+
+	@echo "CHECKING FOR DEAD CODE..."
+	@ineffassign ./*
+	@deadcode ./internal/*
+	@deadcode ./cmd/*
 
 format:
 	go fmt ./...
@@ -74,10 +112,15 @@ format:
 lint: lint-go lint-md
 
 lint-go:
-	golint -set_exit_status ./...
+	@echo LINTING GO...
+	@golint -set_exit_status ./...
+	@gochecknoinits ./...
+	@nakedret -l 0 ./...
+	@unimport ./...
 
 lint-md:
-	npx markdownlint-cli -c .markdownlintrc.yml $(markdown_files)
+	@echo LINTING MARKDOWN...
+	@npx markdownlint-cli -c .markdownlintrc.yml $(markdown_files)
 
 clean:
 	rm -rf $(executable_file)*

@@ -19,10 +19,11 @@ const (
 
 // Get an argContext as a human readable string.
 func (context argContext) String() string {
+	template := "%s/%s"
 	names := []string{
 		"Unknown",
-		fmt.Sprintf("%s/%s", mapfileOption.name, mapfileOption.alias),
-		fmt.Sprintf("%s/%s", mappingOption.name, mappingOption.alias),
+		fmt.Sprintf(template, mapfileOption.name, mapfileOption.alias),
+		fmt.Sprintf(template, mappingOption.name, mappingOption.alias),
 	}
 
 	return names[context]

@@ -58,7 +58,7 @@ func openAndProcessFileWith(mapping *map[string]string) fileHandler {
 		logger.Debugf("Opening '%s'", filePath)
 		handle, err := fs.OpenFile(filePath, fs.OReadWrite)
 		if err != nil {
-			return errors.Newf("Could not open '%s' (%s mode)", filePath, fs.OReadWrite)
+			return err
 		}
 
 		defer handle.Close()

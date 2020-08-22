@@ -8,7 +8,7 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/logger"
 )
 
-func run(args cli.Arguments) (errors []error) {
+func run(args *cli.Arguments) (errors []error) {
 	mapping, errs := getWordMap(args.MapFiles, args.Mappings)
 	if check(&errors, errs) && args.Strict {
 		return errs
@@ -37,7 +37,7 @@ func check(errors *[]error, errs []error) bool {
 	return len(*errors) > 0
 }
 
-func setLogLevel(args cli.Arguments) {
+func setLogLevel(args *cli.Arguments) {
 	if args.Silent {
 		logger.SetLogLevel(logger.ERROR)
 	} else if args.Verbose {
@@ -53,9 +53,9 @@ func main() {
 	}
 
 	if shouldRun {
-		setLogLevel(args)
+		setLogLevel(&args)
 
-		errs := run(args)
+		errs := run(&args)
 		for _, err := range errs {
 			logger.Error(err)
 		}
