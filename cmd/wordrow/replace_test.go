@@ -19,7 +19,7 @@ func TestDoReplace(t *testing.T) {
 		content := "Foo Bar"
 		handle := stringsx.NewReader(content)
 
-		fixed, err := doReplace(handle, &mapping)
+		fixed, err := doReplace(handle, mapping)
 		if err != nil {
 			t.Fatalf("Unexpected error for reader (%s)", err)
 		}
@@ -32,7 +32,7 @@ func TestDoReplace(t *testing.T) {
 		content := "Bar"
 		handle := stringsx.NewReader(content)
 
-		fixed, err := doReplace(handle, &mapping)
+		fixed, err := doReplace(handle, mapping)
 		if err != nil {
 			t.Fatalf("Unexpected error for reader (%s)", err)
 		}
@@ -45,7 +45,7 @@ func TestDoReplace(t *testing.T) {
 		content := "Hello world"
 		handle := iotest.TimeoutReader(stringsx.NewReader(content))
 
-		_, err := doReplace(handle, &mapping)
+		_, err := doReplace(handle, mapping)
 		if err == nil {
 			t.Error("Expected an error but didn't get one")
 		}
@@ -53,7 +53,7 @@ func TestDoReplace(t *testing.T) {
 	t.Run("Empty reader", func(t *testing.T) {
 		handle := stringsx.NewReader("")
 
-		fixed, err := doReplace(handle, &mapping)
+		fixed, err := doReplace(handle, mapping)
 		if err != nil {
 			t.Fatalf("Unexpected error for reader (%s)", err)
 		}
@@ -112,7 +112,7 @@ func TestProcessFile(t *testing.T) {
 		bufferedWriter := bufio.NewWriter(writer)
 		handle := bufio.NewReadWriter(bufferedReader, bufferedWriter)
 
-		err := processFile(handle, &mapping)
+		err := processFile(handle, mapping)
 		if err != nil {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
@@ -135,7 +135,7 @@ func TestProcessFile(t *testing.T) {
 		bufferedWriter := bufio.NewWriter(writer)
 		handle := bufio.NewReadWriter(bufferedReader, bufferedWriter)
 
-		err := processFile(handle, &mapping)
+		err := processFile(handle, mapping)
 		if err != nil {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
@@ -155,7 +155,7 @@ func TestProcessFile(t *testing.T) {
 		bufferedWriter := bufio.NewWriter(writer)
 		handle := bufio.NewReadWriter(bufferedReader, bufferedWriter)
 
-		err := processFile(handle, &mapping)
+		err := processFile(handle, mapping)
 		if err == nil {
 			t.Fatal("Expected an error but got none")
 		}
@@ -178,7 +178,7 @@ func TestProcessFile(t *testing.T) {
 		bufferedWriter := bufio.NewWriterSize(writer, 1)
 		handle := bufio.NewReadWriter(bufferedReader, bufferedWriter)
 
-		err := processFile(handle, &mapping)
+		err := processFile(handle, mapping)
 		if err == nil {
 			t.Fatal("Expected an error but got none")
 		}

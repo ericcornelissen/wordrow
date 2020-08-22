@@ -13,7 +13,7 @@ import (
 // `mapping`.
 func doReplace(
 	reader fs.Reader,
-	mapping *map[string]string,
+	mapping map[string]string,
 ) (updatedContent string, er error) {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
@@ -21,7 +21,7 @@ func doReplace(
 	}
 
 	content := string(data)
-	return replace.All(content, *mapping), nil
+	return replace.All(content, mapping), nil
 }
 
 // Writes the `updatedContents` to the `writer`.
@@ -34,7 +34,7 @@ func doWriteBack(writer fs.Writer, updatedContent string) error {
 // Process `file` by reading its content, changing that based on the `mapping`,
 // and writing the updated content back to `file`.If a reading or writing error
 // occurs this function returns an error.
-func processFile(file fs.ReadWriter, mapping *map[string]string) error {
+func processFile(file fs.ReadWriter, mapping map[string]string) error {
 	logger.Debugf("Reading '%s' and replacing words", file)
 	updatedContent, err := doReplace(file, mapping)
 	if err != nil {
@@ -53,7 +53,7 @@ func processFile(file fs.ReadWriter, mapping *map[string]string) error {
 // Opens the file provided by the handler and process it using the `mapping`. If
 // opening the file fails or a reading or writing error occurs this function
 // returns an error.
-func openAndProcessFileWith(mapping *map[string]string) fileHandler {
+func openAndProcessFileWith(mapping map[string]string) fileHandler {
 	return func(filePath string) error {
 		logger.Debugf("Opening '%s'", filePath)
 		handle, err := fs.OpenFile(filePath, fs.OReadWrite)
@@ -73,7 +73,7 @@ func openAndProcessFileWith(mapping *map[string]string) fileHandler {
 // processed.
 func processInputFiles(
 	filePaths []string,
-	mapping *map[string]string,
+	mapping map[string]string,
 ) (errs []error) {
 	return forEach(filePaths, openAndProcessFileWith(mapping))
 }

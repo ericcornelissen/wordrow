@@ -25,12 +25,12 @@ func (sm *StringMap) AddFile(content *string, format string) error {
 
 // Invert TODO
 func (sm StringMap) Invert() StringMap {
-	new := make(StringMap, len(sm))
+	inverted := make(StringMap, len(sm))
 	for key, value := range sm {
-		new[value] = key
+		inverted[value] = key
 	}
 
-	return new
+	return inverted
 }
 
 func (sm *StringMap) addFrom(other StringMap) {

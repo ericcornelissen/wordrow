@@ -15,7 +15,7 @@ func run(args *cli.Arguments) (errors []error) {
 	}
 
 	if args.Invert {
-		mapping.Invert()
+		mapping = mapping.Invert()
 	}
 
 	filePaths, errs := fs.ResolveGlobs(args.InputFiles...)
@@ -25,7 +25,7 @@ func run(args *cli.Arguments) (errors []error) {
 
 	if !args.DryRun {
 		mapping := map[string]string(mapping)
-		errs = processInputFiles(filePaths, &mapping)
+		errs = processInputFiles(filePaths, mapping)
 		check(&errors, errs)
 	}
 
