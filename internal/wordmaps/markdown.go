@@ -109,7 +109,7 @@ func parseMarkDownFile(rawFileData *string) (WordMap, error) {
 				return wm, err
 			}
 
-			i = i + tableLength
+			i += tableLength
 		}
 	}
 

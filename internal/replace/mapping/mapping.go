@@ -87,7 +87,7 @@ func (mapping *Mapping) getReplacement(prefix, suffix string) string {
 	}
 
 	if mapping.keepSuffix() {
-		replacement = replacement + suffix
+		replacement += suffix
 	}
 
 	return replacement

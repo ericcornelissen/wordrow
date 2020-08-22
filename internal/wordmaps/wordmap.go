@@ -105,9 +105,7 @@ func (wm *WordMap) GetTo(i int) string {
 // Invert changes the direction of the WordMap. I.e. it inverts the `to` and
 // `from` values in the WordMap.
 func (wm *WordMap) Invert() {
-	tmp := wm.from
-	wm.from = wm.to
-	wm.to = tmp
+	wm.from, wm.to = wm.to, wm.from
 }
 
 // Iter returns the contents of the WordMap as an iterable. Note that the order
