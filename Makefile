@@ -9,7 +9,7 @@ fuzz_dir:=./_fuzz
 markdown_files:=./*.md ./docs/*.md ./.github/**/*.md
 
 go_install:=go get -u
-go_install_dev:=GO111MODULE=off $(go_install)
+go_install_dev:=GO111MODULE=on $(go_install)
 
 
 default: build
@@ -32,7 +32,7 @@ install-dev-deps:
 	$(go_install_dev) github.com/alexkohler/nakedret
 	$(go_install_dev) github.com/alexkohler/prealloc
 	$(go_install_dev) github.com/alexkohler/unimport
-	$(go_install_dev) github.com/go-critic/go-critic
+	$(go_install_dev) github.com/go-critic/go-critic/cmd/gocritic
 	$(go_install_dev) github.com/gordonklaus/ineffassign
 	$(go_install_dev) github.com/jgautheron/goconst/cmd/goconst
 	$(go_install_dev) github.com/kisielk/errcheck
@@ -89,7 +89,7 @@ analysis:
 	@goconst -ignore-tests ./...
 	@gocritic check -enableAll ./...
 	@looppointer ./...
-	@mnd ./...
+	@mnd -ignored-numbers "0,1" ./...
 	@prealloc -set_exit_status ./...
 	@staticcheck -show-ignored ./...
 	@structcheck -a -e -t ./...
