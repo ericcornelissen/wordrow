@@ -19,6 +19,7 @@ install: install-deps install-dev-deps
 install-deps:
 	@echo "INSTALLLING DEPENDENCIES"
 	$(go_install) github.com/yargevad/filepathx
+	$(go_install) github.com/ericcornelissen/stringsx
 
 install-dev-deps:
 	@echo "INSTALLLING DEVELOPMENT TOOLS"
