@@ -95,7 +95,7 @@ func (mapping *Mapping) getReplacement(prefix, suffix string) string {
 
 // Check if a Match is valid for this Mapping. I.e. check if the Match has a
 // prefix and/or suffix and if those are allowed by the Mapping's "from" value.
-func (mapping *Mapping) isValid(match Match) bool {
+func (mapping *Mapping) isValid(match *Match) bool {
 	if !mapping.mayIncludePrefix() && match.Prefix != "" {
 		return false
 	}
@@ -152,7 +152,8 @@ func (mapping *Mapping) Match(s string) chan Match {
 
 		matches := getAllMatches(s, mapping.From())
 		for match := range matches {
-			if mapping.isValid(match) {
+			match := match
+			if mapping.isValid(&match) {
 				match.Replacement = mapping.getReplacement(match.Prefix, match.Suffix)
 				ch <- match
 			}

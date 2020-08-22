@@ -28,7 +28,7 @@ import (
 //
 // In the former the file explicitly stated format, in the latter no format is
 // returned.
-func parseMapFileArgument(argument string) (filePath string, format string) {
+func parseMapFileArgument(argument string) (filePath, format string) {
 	fileExtension := fs.GetExt(argument)
 
 	explicitFormatSplit := stringsx.Split(argument, ":")
