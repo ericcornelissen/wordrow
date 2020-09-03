@@ -16,6 +16,7 @@ of this document. In this document you can read about:
   - [Prerequisites](#prerequisites)
   - [Commands](#commands)
   - [Git Hooks](#git-hooks)
+  - [Docker](#docker)
 - [Testing](#testing)
   - [Fuzzing](#fuzzing)
 
@@ -143,6 +144,21 @@ make lint
 git stash pop -q
 ```
 
+### Docker
+
+You can use the Dockerfile found in this repository to create a [Docker] image
+for development purposes. This image will include all development prerequisites.
+Follow the instructions below to get started.
+
+```shell
+# Build the image
+$ cd /path/to/wordrow
+$ docker build -t wordrow-dev .
+
+# Start a container with the local project mounted
+$ docker run --rm -it -v "$PWD":/go/src/wordrow -w /go/src/wordrow wordrow-dev
+```
+
 ---
 
 ## Testing
@@ -204,6 +220,7 @@ improving any of the existing fuzzing functions. If you discover a bug while
 fuzzing, please submit a [Bug Report].
 
 [Bug Report]: https://github.com/ericcornelissen/wordrow/issues/new?labels=bug&template=bug_report.md
+[Docker]: https://www.docker.com/
 [Feature Request]: https://github.com/ericcornelissen/wordrow/issues/new?labels=enhancement&template=feature_request.md
 [go-fuzz]: https://github.com/dvyukov/go-fuzz
 [gofmt]: https://golang.org/cmd/gofmt/
