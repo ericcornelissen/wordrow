@@ -92,10 +92,8 @@ The prerequisites for contributing to this project are:
 - Go; version `1.13`
 - Git
 - [GNU Make] (_Windows users can use [Make by GNUWin32]_)
-- [golint]
-- [gosec]
 - [go-fuzz] (_only for fuzzing_)
-- [NodeJS]; version `>=10` (_only needed for [markdownlint]_)
+- [NodeJS]; version `>=10` (_only for [markdownlint]_)
 
 ### Commands
 
