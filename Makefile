@@ -8,8 +8,7 @@ fuzz_dir:=./_fuzz
 
 markdown_files:=./*.md ./docs/*.md ./.github/**/*.md
 
-go_install:=go get -u
-go_install_dev:=GO111MODULE=on $(go_install)
+go_install:=GO111MODULE=on go get -u
 
 
 default: build
@@ -23,30 +22,30 @@ install-deps:
 
 install-dev-deps:
 	@echo "INSTALLLING DEVELOPMENT TOOLS"
-	$(go_install_dev) golang.org/x/tools/cmd/goimports
+	$(go_install) golang.org/x/tools/cmd/goimports
 	@echo "INSTALLLING STATIC ANALYSIS TOOLS"
-	$(go_install_dev) 4d63.com/gochecknoinits
-	$(go_install_dev) gitlab.com/opennota/check/cmd/aligncheck
-	$(go_install_dev) gitlab.com/opennota/check/cmd/structcheck
-	$(go_install_dev) gitlab.com/opennota/check/cmd/varcheck
-	$(go_install_dev) github.com/alexkohler/dogsled/cmd/dogsled
-	$(go_install_dev) github.com/alexkohler/nakedret
-	$(go_install_dev) github.com/alexkohler/prealloc
-	$(go_install_dev) github.com/alexkohler/unimport
-	$(go_install_dev) github.com/go-critic/go-critic/cmd/gocritic
-	$(go_install_dev) github.com/gordonklaus/ineffassign
-	$(go_install_dev) github.com/jgautheron/goconst/cmd/goconst
-	$(go_install_dev) github.com/kisielk/errcheck
-	$(go_install_dev) github.com/kyoh86/looppointer/cmd/looppointer
-	$(go_install_dev) github.com/mdempsky/unconvert
-	$(go_install_dev) github.com/nishanths/exhaustive/...
-	$(go_install_dev) github.com/remyoudompheng/go-misc/deadcode
-	$(go_install_dev) github.com/tommy-muehle/go-mnd/cmd/mnd
-	$(go_install_dev) golang.org/x/lint/golint
-	$(go_install_dev) honnef.co/go/tools/cmd/staticcheck
-	$(go_install_dev) mvdan.cc/unparam
+	$(go_install) 4d63.com/gochecknoinits
+	$(go_install) gitlab.com/opennota/check/cmd/aligncheck
+	$(go_install) gitlab.com/opennota/check/cmd/structcheck
+	$(go_install) gitlab.com/opennota/check/cmd/varcheck
+	$(go_install) github.com/alexkohler/dogsled/cmd/dogsled
+	$(go_install) github.com/alexkohler/nakedret
+	$(go_install) github.com/alexkohler/prealloc
+	$(go_install) github.com/alexkohler/unimport
+	$(go_install) github.com/go-critic/go-critic/cmd/gocritic
+	$(go_install) github.com/gordonklaus/ineffassign
+	$(go_install) github.com/jgautheron/goconst/cmd/goconst
+	$(go_install) github.com/kisielk/errcheck
+	$(go_install) github.com/kyoh86/looppointer/cmd/looppointer
+	$(go_install) github.com/mdempsky/unconvert
+	$(go_install) github.com/nishanths/exhaustive/...
+	$(go_install) github.com/remyoudompheng/go-misc/deadcode
+	$(go_install) github.com/tommy-muehle/go-mnd/cmd/mnd
+	$(go_install) golang.org/x/lint/golint
+	$(go_install) honnef.co/go/tools/cmd/staticcheck
+	$(go_install) mvdan.cc/unparam
 	@echo "INSTALLLING MANUAL ANALYSIS TOOLS"
-	$(go_install_dev) github.com/dvyukov/go-fuzz/go-fuzz github.com/dvyukov/go-fuzz/go-fuzz-build
+	$(go_install) github.com/dvyukov/go-fuzz/go-fuzz github.com/dvyukov/go-fuzz/go-fuzz-build
 
 build:
 	go build -o $(executable_file) $(program_main)
