@@ -102,10 +102,11 @@ of this project. Note that the table is (intentionally) incomplete.
 
 | Command          | Description                                          |
 | ---------------- | ---------------------------------------------------- |
-| `make`           | Compile a binary for the current OS called `wordrow` |
-| `make format`    | Format the source files of the project               |
+| `make`           | Compile a binary called `wordrow` for the current OS |
+| `make install`   | Install all dependencies for the project             |
 | `make test`      | Run all test suites for the project                  |
 | `make coverage`  | Run all test suites and show the coverage results    |
+| `make format`    | Format the source files of the project               |
 | `make lint`      | Lint the source files of the project                 |
 | `make analysis`  | Run static analysis tools on the code base           |
 | `make build-all` | Compile all target binaries for the project          |
