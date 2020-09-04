@@ -194,7 +194,6 @@ func Fuzz(data []byte) int {
 	// 4. Fuzz!
 	return 0
 }
-
 ```
 
 You are welcome to use existing fuzzing functions to discover bugs. You can also
@@ -207,7 +206,6 @@ fuzzing, please submit a [Bug Report].
 [go-fuzz]: https://github.com/dvyukov/go-fuzz
 [gofmt]: https://golang.org/cmd/gofmt/
 [golint]: https://github.com/golang/lint
-[gosec]: https://github.com/securego/gosec
 [GNU Make]: https://www.gnu.org/software/make/
 [Make by GNUWin32]: http://gnuwin32.sourceforge.net/packages/make.htm
 [markdownlint]: https://github.com/DavidAnson/markdownlint
