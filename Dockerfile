@@ -2,7 +2,6 @@ FROM golang:1.13-alpine
 
 # Install development tools
 RUN apk add --no-cache \
-  curl \
   gcc \
   git \
   libc-dev \
