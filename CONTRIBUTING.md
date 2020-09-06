@@ -16,6 +16,7 @@ of this document. In this document you can read about:
   - [Prerequisites](#prerequisites)
   - [Commands](#commands)
   - [Git Hooks](#git-hooks)
+  - [Docker](#docker)
 - [Testing](#testing)
   - [Fuzzing](#fuzzing)
 
@@ -92,10 +93,8 @@ The prerequisites for contributing to this project are:
 - Go; version `1.13`
 - Git
 - [GNU Make] (_Windows users can use [Make by GNUWin32]_)
-- [golint]
-- [gosec]
 - [go-fuzz] (_only for fuzzing_)
-- [NodeJS]; version `>=10` (_only needed for [markdownlint]_)
+- [NodeJS]; version `>=10` (_only for [markdownlint]_)
 
 ### Commands
 
@@ -104,10 +103,11 @@ of this project. Note that the table is (intentionally) incomplete.
 
 | Command          | Description                                          |
 | ---------------- | ---------------------------------------------------- |
-| `make`           | Compile a binary for the current OS called `wordrow` |
-| `make format`    | Format the source files of the project               |
+| `make`           | Compile a binary called `wordrow` for the current OS |
+| `make install`   | Install all dependencies for the project             |
 | `make test`      | Run all test suites for the project                  |
 | `make coverage`  | Run all test suites and show the coverage results    |
+| `make format`    | Format the source files of the project               |
 | `make lint`      | Lint the source files of the project                 |
 | `make analysis`  | Run static analysis tools on the code base           |
 | `make build-all` | Compile all target binaries for the project          |
@@ -141,6 +141,21 @@ make lint
 
 # Restore unstaged changes
 git stash pop -q
+```
+
+### Docker
+
+You can use the Dockerfile found in this repository to create a [Docker] image
+for development purposes. This image will include all development prerequisites.
+Follow the instructions below to get started.
+
+```shell
+# Build the image
+$ cd /path/to/wordrow
+$ docker build -t wordrow-dev .
+
+# Start a container with the local project mounted
+$ docker run --rm -it -v "$PWD":/go/src/wordrow -w /go/src/wordrow wordrow-dev
 ```
 
 ---
@@ -195,7 +210,6 @@ func Fuzz(data []byte) int {
 	// 4. Fuzz!
 	return 0
 }
-
 ```
 
 You are welcome to use existing fuzzing functions to discover bugs. You can also
@@ -204,11 +218,11 @@ improving any of the existing fuzzing functions. If you discover a bug while
 fuzzing, please submit a [Bug Report].
 
 [Bug Report]: https://github.com/ericcornelissen/wordrow/issues/new?labels=bug&template=bug_report.md
+[Docker]: https://www.docker.com/
 [Feature Request]: https://github.com/ericcornelissen/wordrow/issues/new?labels=enhancement&template=feature_request.md
 [go-fuzz]: https://github.com/dvyukov/go-fuzz
 [gofmt]: https://golang.org/cmd/gofmt/
 [golint]: https://github.com/golang/lint
-[gosec]: https://github.com/securego/gosec
 [GNU Make]: https://www.gnu.org/software/make/
 [Make by GNUWin32]: http://gnuwin32.sourceforge.net/packages/make.htm
 [markdownlint]: https://github.com/DavidAnson/markdownlint
