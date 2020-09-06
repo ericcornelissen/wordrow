@@ -26,13 +26,13 @@ func dataToInputs(data []byte) ([]string, error) {
 	return inputs, nil
 }
 
-func _processMapFile(s, format string, wordmap *wordmaps.WordMap) {
+func _processMapFile(s, format string, wordmap *wordmaps.StringMap) {
 	s = stringsx.ReplaceAll(s, ";", "\n")
 	mapfileReader := stringsx.NewReader(s)
 	processMapFile(mapfileReader, format, wordmap)
 }
 
-func _doReplace(s string, wordmap *wordmaps.WordMap) string {
+func _doReplace(s string, wordmap map[string]string) string {
 	s = stringsx.ReplaceAll(s, ";", "\n")
 	inputfileReader := stringsx.NewReader(s)
 	output, _ := doReplace(inputfileReader, wordmap)
@@ -48,7 +48,7 @@ func Fuzz(data []byte) int {
 	rawArgs := stringsx.Split(inputs[0], ";")
 	_, args := cli.ParseArgs(rawArgs)
 
-	var wordmap wordmaps.WordMap
+	var wordmap wordmaps.StringMap
 	processInlineMappings(args.Mappings, &wordmap)
 	_processMapFile(inputs[1], csv, &wordmap)
 	_processMapFile(inputs[2], markdown, &wordmap)
@@ -57,7 +57,7 @@ func Fuzz(data []byte) int {
 		wordmap.Invert()
 	}
 
-	output := _doReplace(inputs[3], &wordmap)
+	output := _doReplace(inputs[3], wordmap)
 	if output != inputs[3] {
 		return 1
 	}
