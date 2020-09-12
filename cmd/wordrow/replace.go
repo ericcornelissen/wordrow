@@ -53,7 +53,7 @@ func processFile(file fs.ReadWriter, mapping map[string]string) error {
 // Opens the file provided by the handler and process it using the `mapping`. If
 // opening the file fails or a reading or writing error occurs this function
 // returns an error.
-func openAndProcessFileWith(mapping map[string]string) fileHandler {
+func openAndProcessFileWith(mapping map[string]string) handler {
 	return func(filePath string) error {
 		logger.Debugf("Opening '%s'", filePath)
 		handle, err := fs.OpenFile(filePath, fs.OReadWrite)

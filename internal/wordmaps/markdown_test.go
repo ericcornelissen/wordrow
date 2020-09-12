@@ -14,14 +14,14 @@ func TestMarkDownTableOnly(t *testing.T) {
 		| %s   | %s  |
 	`, from, to)
 
-	wm, err := parseMarkDownFile(&markdown)
+	mapping, err := parseMarkDownFile(&markdown)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
 	expected := make([][]string, 1)
 	expected[0] = []string{from, to}
-	checkWordMap(t, wm, expected)
+	checkMapping(t, mapping, expected)
 }
 
 func TestMarkDownTextAndTable(t *testing.T) {
@@ -42,7 +42,7 @@ func TestMarkDownTextAndTable(t *testing.T) {
 		Suspendisse ante ante, interdum id felis vel, posuere.
 	`, from0, to0, from1, to1)
 
-	wm, err := parseMarkDownFile(&markdown)
+	mapping, err := parseMarkDownFile(&markdown)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -50,7 +50,7 @@ func TestMarkDownTextAndTable(t *testing.T) {
 	expected := make([][]string, 2)
 	expected[0] = []string{from0, to0}
 	expected[1] = []string{from1, to1}
-	checkWordMap(t, wm, expected)
+	checkMapping(t, mapping, expected)
 }
 
 func TestMarkDownTwoTables(t *testing.T) {
@@ -66,7 +66,7 @@ func TestMarkDownTwoTables(t *testing.T) {
 		| %s   | %s  |
 	`, from0, to0, from1, to1)
 
-	wm, err := parseMarkDownFile(&markdown)
+	mapping, err := parseMarkDownFile(&markdown)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -74,7 +74,7 @@ func TestMarkDownTwoTables(t *testing.T) {
 	expected := make([][]string, 2)
 	expected[0] = []string{from0, to0}
 	expected[1] = []string{from1, to1}
-	checkWordMap(t, wm, expected)
+	checkMapping(t, mapping, expected)
 }
 
 func TestMarkDownManyColumns(t *testing.T) {
@@ -87,7 +87,7 @@ func TestMarkDownManyColumns(t *testing.T) {
 		| %s     | %s     | %s  |
 	`, from01, from02, to0, from11, from12, to1)
 
-	wm, err := parseMarkDownFile(&markdown)
+	mapping, err := parseMarkDownFile(&markdown)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -97,7 +97,7 @@ func TestMarkDownManyColumns(t *testing.T) {
 	expected[1] = []string{from02, to0}
 	expected[2] = []string{from11, to1}
 	expected[3] = []string{from12, to1}
-	checkWordMap(t, wm, expected)
+	checkMapping(t, mapping, expected)
 }
 
 func TestMarkDownEmptyColumnValues(t *testing.T) {

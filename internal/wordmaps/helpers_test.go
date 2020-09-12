@@ -2,19 +2,23 @@ package wordmaps
 
 import "testing"
 
-// Helper function to check if a WordMap is of the correct size and contains the
+// Helper function to check if a mapping is of the correct size and contains the
 // correct values.
-func checkWordMap(t *testing.T, wm StringMap, expected [][]string) {
+func checkMapping(
+	t *testing.T,
+	mapping map[string]string,
+	expected [][]string,
+) {
 	t.Helper()
 
-	if len(wm) != len(expected) {
-		t.Fatalf("The WordMap size should be %d (got %d)", len(expected), len(wm))
+	if len(mapping) != len(expected) {
+		t.Fatalf("The mapping size should be %d (got %d)", len(expected), len(mapping))
 	}
 
 	for _, expectedI := range expected {
 		from, to := expectedI[0], expectedI[1]
 
-		actualTo, ok := wm[from]
+		actualTo, ok := mapping[from]
 		if !ok {
 			t.Errorf("Missing from-value '%s'", from)
 		}

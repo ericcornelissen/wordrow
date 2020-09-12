@@ -10,14 +10,14 @@ func TestCsvOneRow(t *testing.T) {
 	from, to := "cat", "dog"
 	csv := fmt.Sprintf("%s,%s", from, to)
 
-	wm, err := parseCsvFile(&csv)
+	mapping, err := parseCsvFile(&csv)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
 
 	expected := make([][]string, 1)
 	expected[0] = []string{from, to}
-	checkWordMap(t, wm, expected)
+	checkMapping(t, mapping, expected)
 }
 
 func TestCsvMultipleRows(t *testing.T) {
@@ -28,7 +28,7 @@ func TestCsvMultipleRows(t *testing.T) {
 		%s,%s
 	`, from0, to0, from1, to1)
 
-	wm, err := parseCsvFile(&csv)
+	mapping, err := parseCsvFile(&csv)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -36,13 +36,13 @@ func TestCsvMultipleRows(t *testing.T) {
 	expected := make([][]string, 2)
 	expected[0] = []string{from0, to0}
 	expected[1] = []string{from1, to1}
-	checkWordMap(t, wm, expected)
+	checkMapping(t, mapping, expected)
 }
 
 func TestCsvManyColumns(t *testing.T) {
 	from1, from2, to := "cat", "dog", "horse"
 	csv := fmt.Sprintf("%s,%s,%s", from1, from2, to)
-	wm, err := parseCsvFile(&csv)
+	mapping, err := parseCsvFile(&csv)
 
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (Error: %s)", err)
@@ -51,7 +51,7 @@ func TestCsvManyColumns(t *testing.T) {
 	expected := make([][]string, 2)
 	expected[0] = []string{from1, to}
 	expected[1] = []string{from2, to}
-	checkWordMap(t, wm, expected)
+	checkMapping(t, mapping, expected)
 }
 
 func TestCsvEmptyColumnValues(t *testing.T) {
@@ -84,7 +84,7 @@ func TestCsvIgnoreEmptyLines(t *testing.T) {
 		%s,%s
 	`, from0, to0, from1, to1)
 
-	wm, err := parseCsvFile(&csv)
+	mapping, err := parseCsvFile(&csv)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -92,7 +92,7 @@ func TestCsvIgnoreEmptyLines(t *testing.T) {
 	expected := make([][]string, 2)
 	expected[0] = []string{from0, to0}
 	expected[1] = []string{from1, to1}
-	checkWordMap(t, wm, expected)
+	checkMapping(t, mapping, expected)
 }
 
 func TestCsvIgnoresWhitespaceInRow(t *testing.T) {
@@ -104,7 +104,7 @@ func TestCsvIgnoresWhitespaceInRow(t *testing.T) {
 		%s  , %s
 	`, from0, to0, from1, to1)
 
-	wm, err := parseCsvFile(&csv)
+	mapping, err := parseCsvFile(&csv)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -112,7 +112,7 @@ func TestCsvIgnoresWhitespaceInRow(t *testing.T) {
 	expected := make([][]string, 2)
 	expected[0] = []string{from0, to0}
 	expected[1] = []string{from1, to1}
-	checkWordMap(t, wm, expected)
+	checkMapping(t, mapping, expected)
 }
 
 func TestCsvToFewColumns(t *testing.T) {

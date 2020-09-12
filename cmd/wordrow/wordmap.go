@@ -41,13 +41,13 @@ func parseMapFileArgument(argument string) (filePath, format string) {
 	return argument, fileExtension
 }
 
-// Add the mapping of `reader` to the `wordmap`. The `format` argument
+// Add the mapping of the `reader` to the `target`. The `format` argument
 // determines how the contents of the file are parsed. This function returns an
 // error if either the reading or parsing fails.
 func processMapFile(
 	reader fs.Reader,
 	format string,
-	wordmap *wordmaps.StringMap,
+	target map[string]string,
 ) error {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
@@ -55,13 +55,19 @@ func processMapFile(
 	}
 
 	content := string(data)
-	return wordmap.AddFile(&content, format)
+	mapping, err := wordmaps.ParseFile(&content, format)
+	if err != nil {
+		return err
+	}
+
+	merge(target, mapping)
+	return nil
 }
 
-// Opens the file provided by the handler and add its mapping to the `wordmap`.
-// If the file cannot be opened or processing failed the function returns an
+// Opens the file provided by the handler and add its mapping to the `mapping`.
+// If the file cannot be opened or processing failed the handler returns an
 // error.
-func openAndProcessMapFileWith(wordmap *wordmaps.StringMap) fileHandler {
+func openAndProcessMapFileWith(mapping map[string]string) handler {
 	return func(fileArgument string) error {
 		filePath, format := parseMapFileArgument(fileArgument)
 
@@ -74,42 +80,47 @@ func openAndProcessMapFileWith(wordmap *wordmaps.StringMap) fileHandler {
 		defer handle.Close()
 
 		logger.Debugf("Processing '%s' as a map file", filePath)
-		return processMapFile(handle, format, wordmap)
+		return processMapFile(handle, format, mapping)
 	}
 }
 
-// Add a CLI defined mapping to the `wordmap`. If the mapping is invalid this
-// function returns an error (and leave `wordmap` unchanged).
-func processInlineMapping(mapping string, wordmap *wordmaps.StringMap) error {
-	return wordmap.AddFile(&mapping, "csv")
-}
-
-// Add all CLI defined mappings to the `wordmap`. Any error that occurs is
-// returned after all mappings have been processed.
-func processInlineMappings(
-	mappings []string,
-	wordmap *wordmaps.StringMap,
-) (errs []error) {
-	for _, mapping := range mappings {
-		logger.Debugf("Processing '%s' as a CLI specified mapping", mapping)
-		err := processInlineMapping(mapping, wordmap)
-		if err != nil {
-			errs = append(errs, err)
-		}
+// Processes the value provided by the handler and add its mapping to the
+// `target`. Of the value cannot be parsed as a CSV mapping the handler returns
+// an error.
+func processInlineMapping(value string, target map[string]string) error {
+	mapping, err := wordmaps.ParseFile(&value, "csv")
+	if err != nil {
+		return err
 	}
 
-	return errs
+	merge(target, mapping)
+	return nil
 }
 
-// Get a WordMap for the specified `mapFiles` and `inlineMappings`. Any error
+// Processes the value provided by the handler and add its mapping to the
+// `mapping`. Of the value cannot be parsed as a CSV mapping the handler returns
+// an error.
+func processInlineMappingWith(mapping map[string]string) handler {
+	return func(value string) error {
+		logger.Debugf("Processing '%s' as a CLI specified mapping", value)
+		return processInlineMapping(value, mapping)
+	}
+}
+
+// Get a mapping for the specified `mapFiles` and `inlineMappings`. Any error
 // that occurs is returned after both have been processed. In case of any error
-// the `wordmap` that is returned represents only the arguments that could be
+// the mapping that is returned represents only the arguments that could be
 // successfully processed.
-func getWordMap(
+func getMapping(
 	mapFiles []string,
 	inlineMappings []string,
-) (wordmap wordmaps.StringMap, errs []error) {
-	errs = forEach(mapFiles, openAndProcessMapFileWith(&wordmap))
-	errs = append(errs, processInlineMappings(inlineMappings, &wordmap)...)
-	return wordmap, errs
+) (map[string]string, []error) {
+	mapping := make(map[string]string)
+
+	errs := forEach(mapFiles, openAndProcessMapFileWith(mapping))
+
+	inlineErrors := forEach(inlineMappings, processInlineMappingWith(mapping))
+	errs = append(errs, inlineErrors...)
+
+	return mapping, errs
 }

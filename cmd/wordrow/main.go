@@ -9,13 +9,13 @@ import (
 )
 
 func run(args *cli.Arguments) (errors []error) {
-	mapping, errs := getWordMap(args.MapFiles, args.Mappings)
+	mapping, errs := getMapping(args.MapFiles, args.Mappings)
 	if check(&errors, errs) && args.Strict {
 		return errs
 	}
 
 	if args.Invert {
-		mapping = mapping.Invert()
+		mapping = invert(mapping)
 	}
 
 	filePaths, errs := fs.ResolveGlobs(args.InputFiles...)
@@ -24,7 +24,6 @@ func run(args *cli.Arguments) (errors []error) {
 	}
 
 	if !args.DryRun {
-		mapping := map[string]string(mapping)
 		errs = processInputFiles(filePaths, mapping)
 		check(&errors, errs)
 	}

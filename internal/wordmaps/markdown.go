@@ -59,11 +59,11 @@ func parseTableHeader(tableLines []string) (rerr error) {
 	return rerr
 }
 
-// Parse a MarkDown table and put its values into a WordMap.
+// Parse a MarkDown table and put its values into the `mapping`.
 //
 // The error will be set if the table head or any table row has an incorrect
 // format.
-func parseTable(tableLines []string, wm *StringMap) (int, error) {
+func parseTable(tableLines []string, mapping map[string]string) (int, error) {
 	tableHeadOffset := 2
 	minRowCount := 3
 
@@ -75,7 +75,7 @@ func parseTable(tableLines []string, wm *StringMap) (int, error) {
 		return 0, err
 	}
 
-	sizeBefore := len(*wm)
+	sizeBefore := len(mapping)
 	for i := tableHeadOffset; i < len(tableLines); i++ {
 		row := tableLines[i]
 		if !isTableRow(row) {
@@ -88,30 +88,30 @@ func parseTable(tableLines []string, wm *StringMap) (int, error) {
 		}
 
 		last := len(rowValues) - 1
-		wm.addMany(rowValues[0:last], rowValues[last])
+		addMany(mapping, rowValues[0:last], rowValues[last])
 	}
 
-	return (tableHeadOffset + (len(*wm) - sizeBefore)), nil
+	return (tableHeadOffset + (len(mapping) - sizeBefore)), nil
 }
 
-// Parse a MarkDown (MD) formatted file into a WordMap.
+// Parse a MarkDown (MD) formatted file into a map[string]string.
 //
 // The error will be set if any error occurred while parsing the MD file.
-func parseMarkDownFile(rawFileData *string) (StringMap, error) {
-	wm := make(StringMap, 1)
+func parseMarkDownFile(rawFileData *string) (map[string]string, error) {
+	mapping := make(map[string]string, 1)
 
 	lines := stringsx.Split(*rawFileData, "\n")
 	for i := 0; i < len(lines); i++ {
 		line := lines[i]
 		if isTableRow(line) {
-			tableLength, err := parseTable(lines[i:], &wm)
+			tableLength, err := parseTable(lines[i:], mapping)
 			if err != nil {
-				return wm, err
+				return mapping, err
 			}
 
 			i += tableLength
 		}
 	}
 
-	return wm, nil
+	return mapping, nil
 }
