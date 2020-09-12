@@ -16,20 +16,20 @@ default: build
 init: hooks install
 
 hooks:
-	@echo "SETTING UP GIT HOOKS"
+	@echo SETTING UP GIT HOOKS...
 	@cp ./scripts/pre-commit.sh ./.git/hooks/pre-commit
 
 install: install-deps install-dev-deps
 
 install-deps:
-	@echo "INSTALLLING DEPENDENCIES"
+	@echo INSTALLING DEPENDENCIES...
 	$(go_install) github.com/yargevad/filepathx
 	$(go_install) github.com/ericcornelissen/stringsx
 
 install-dev-deps:
-	@echo "INSTALLLING DEVELOPMENT TOOLS"
+	@echo INSTALLING DEVELOPMENT TOOLS...
 	$(go_install) golang.org/x/tools/cmd/goimports
-	@echo "INSTALLLING STATIC ANALYSIS TOOLS"
+	@echo INSTALLING STATIC ANALYSIS TOOLS...
 	$(go_install) 4d63.com/gochecknoinits
 	$(go_install) gitlab.com/opennota/check/cmd/aligncheck
 	$(go_install) gitlab.com/opennota/check/cmd/structcheck
@@ -50,7 +50,7 @@ install-dev-deps:
 	$(go_install) golang.org/x/lint/golint
 	$(go_install) honnef.co/go/tools/cmd/staticcheck
 	$(go_install) mvdan.cc/unparam
-	@echo "INSTALLLING MANUAL ANALYSIS TOOLS"
+	@echo INSTALLING MANUAL ANALYSIS TOOLS...
 	$(go_install) github.com/dvyukov/go-fuzz/go-fuzz github.com/dvyukov/go-fuzz/go-fuzz-build
 
 build:
@@ -87,7 +87,7 @@ benchmark:
 	go test $(test_root) -bench=. -run=XXX
 
 analysis:
-	@echo "VETTING..."
+	@echo VETTING...
 	@go vet ./...
 	@aligncheck ./...
 	@dogsled -n 1 -set_exit_status ./...
@@ -103,10 +103,10 @@ analysis:
 	@unparam -exported -tests ./...
 	@varcheck -e ./...
 
-	@echo "VERIFYING ERRORS ARE CHECKED..."
+	@echo VERIFYING ERRORS ARE CHECKED...
 	@errcheck -asserts -blank -ignoretests -exclude .errcheckrc.txt ./...
 
-	@echo "CHECKING FOR DEAD CODE..."
+	@echo CHECKING FOR DEAD CODE...
 	@ineffassign ./*
 	@deadcode ./internal/*
 	@deadcode ./cmd/*
