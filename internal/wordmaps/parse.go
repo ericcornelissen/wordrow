@@ -1,3 +1,7 @@
+// Package wordmaps provides two structures for functionality to parse files
+// into a map[string]string. The supported formats are:
+// - CSV
+// - MarkDown
 package wordmaps
 
 import (
@@ -30,11 +34,10 @@ func getParserForFormat(format string) (parseFunction, error) {
 	return nil, errors.Newf(unknownFormat, format)
 }
 
-// Parse a string formatted in a certain way into a map[string]string.
-//
+// ParseFile parses a file formatted in a certain way into a map[string]string.
 // The function sets the error if the parsing failed, e.g. when the format is
 // unknown or if content is improperly formatted.
-func parseFile(content *string, format string) (map[string]string, error) {
+func ParseFile(content *string, format string) (map[string]string, error) {
 	parseFn, err := getParserForFormat(format)
 	if err != nil {
 		return nil, err

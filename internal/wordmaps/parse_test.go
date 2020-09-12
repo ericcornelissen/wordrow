@@ -98,7 +98,7 @@ func TestGetParserForCSVFile(t *testing.T) {
 func TestParseFileNoParser(t *testing.T) {
 	content := "Hello world!"
 
-	_, err := parseFile(&content, ".bar")
+	_, err := ParseFile(&content, ".bar")
 	if err == nil {
 		t.Fatal("The error should set for this test")
 	}
@@ -107,7 +107,7 @@ func TestParseFileNoParser(t *testing.T) {
 func TestParseFileFormatError(t *testing.T) {
 	content := "this is definitely not a real CSV file"
 
-	_, err := parseFile(&content, ".csv")
+	_, err := ParseFile(&content, ".csv")
 	if err == nil {
 		t.Fatal("The error should set for this test")
 	}
@@ -116,7 +116,7 @@ func TestParseFileFormatError(t *testing.T) {
 func TestParseFileParseCSV(t *testing.T) {
 	content := "foo,bar"
 
-	mapping, err := parseFile(&content, ".csv")
+	mapping, err := ParseFile(&content, ".csv")
 	if err != nil {
 		t.Fatalf("The error should not be set for this test (got '%s')", err)
 	}
@@ -133,7 +133,7 @@ func TestParseFileParseMarkDown(t *testing.T) {
 		| foo  | bar |
 	`
 
-	mapping, err := parseFile(&content, ".md")
+	mapping, err := ParseFile(&content, ".md")
 	if err != nil {
 		t.Fatalf("The error should not be set for this test (got '%s')", err)
 	}
