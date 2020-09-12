@@ -48,12 +48,12 @@ func Fuzz(data []byte) int {
 	_, args := cli.ParseArgs(rawArgs)
 
 	mapping := make(map[string]string)
-	processInlineMappings(args.Mappings, mapping)
+	forEach(args.Mappings, processInlineMappingWith(mapping))
 	_processMapFile(inputs[1], csv, mapping)
 	_processMapFile(inputs[2], markdown, mapping)
 
 	if args.Invert {
-		mapping.Invert()
+		mapping = invert(mapping)
 	}
 
 	output := _doReplace(inputs[3], mapping)
