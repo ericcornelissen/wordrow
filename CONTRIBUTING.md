@@ -104,6 +104,7 @@ of this project. Note that the table is (intentionally) incomplete.
 | Command          | Description                                          |
 | ---------------- | ---------------------------------------------------- |
 | `make`           | Compile a binary called `wordrow` for the current OS |
+| `make init`      | Initialize the development environment               |
 | `make install`   | Install all dependencies for the project             |
 | `make test`      | Run all test suites for the project                  |
 | `make coverage`  | Run all test suites and show the coverage results    |
@@ -116,32 +117,9 @@ of this project. Note that the table is (intentionally) incomplete.
 ### Git Hooks
 
 We recommend [setting up a Git hook](https://githooks.com) on commits or pushes
-to make sure your changes don't include any accidental mistakes. You can use the
-following shell script as a template.
-
-```shell
-#!/bin/sh
-
-set -e
-
-# Stash unstaged changes
-git stash -q --keep-index
-
-# See if the project can be build and all tests pass.
-make
-make test
-
-# Format the codebase and include (relevant) formatting changes in the commit.
-make format
-git update-index --again
-
-# Check other formatting things. You can use `make lint-go` if you don't have
-# NodeJS on your system.
-make lint
-
-# Restore unstaged changes
-git stash pop -q
-```
+to make sure your changes don't include any accidental mistakes. If you run
+`make hooks` (or `make init`) the recommended hooks will be installed for you.
+The source of these hooks can be found in [the `scripts/` directory](/scripts).
 
 ### Docker
 
