@@ -13,6 +13,8 @@ go_install:=GO111MODULE=on go get -u
 
 default: build
 
+init: hooks install
+
 hooks:
 	@echo "SETTING UP GIT HOOKS"
 	@cp ./scripts/pre-commit.sh ./.git/hooks/pre-commit
@@ -132,4 +134,4 @@ clean:
 	rm `find ./ -name '_fuzz'` -rf
 	rm `find ./ -name '*-fuzz.zip'` -rf
 
-.PHONY: default hooks install build clean format lint analysis test fuzz
+.PHONY: default init hooks install build clean format lint analysis test fuzz
