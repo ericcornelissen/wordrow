@@ -23,7 +23,7 @@ func parseRow(row string, mapping map[string]string) error {
 	}
 
 	last := len(rowValues) - 1
-	addMany(mapping, rowValues[0:last], rowValues[last])
+	addToMapping(mapping, rowValues[0:last], rowValues[last])
 	return nil
 }
 

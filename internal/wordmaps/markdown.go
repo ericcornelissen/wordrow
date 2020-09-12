@@ -88,7 +88,7 @@ func parseTable(tableLines []string, mapping map[string]string) (int, error) {
 		}
 
 		last := len(rowValues) - 1
-		addMany(mapping, rowValues[0:last], rowValues[last])
+		addToMapping(mapping, rowValues[0:last], rowValues[last])
 	}
 
 	return (tableHeadOffset + (len(mapping) - sizeBefore)), nil
