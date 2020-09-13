@@ -1,6 +1,8 @@
 name: Security
 on:
   pull_request:
+    branches:
+      - master
   push:
     branches:
       - master
@@ -52,3 +54,22 @@ jobs:
       run: sed -i "s|package main|package _main|g" ./cmd/wordrow/*.go
     - name: Build fuzz target
       run: make fuzz-build PKG=cmd/wordrow
+
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+    - run: git checkout HEAD^2
+      if: ${{ github.event_name == 'pull_request' }}
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: go
+        queries: security-extended
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
