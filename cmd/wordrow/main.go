@@ -11,13 +11,9 @@ import (
 )
 
 func run(args *cli.Arguments) (errors []error) {
-	mapping, errs := getMapping(args.MapFiles, args.Mappings)
+	mapping, errs := getMapping(args.MapFiles, args.Mappings, args.Invert)
 	if check(&errors, errs) && args.Strict {
 		return errs
-	}
-
-	if args.Invert {
-		mapping = invert(mapping)
 	}
 
 	filePaths, errs := fs.ResolveGlobs(args.InputFiles...)
@@ -34,13 +30,9 @@ func run(args *cli.Arguments) (errors []error) {
 }
 
 func runOnStdin(args *cli.Arguments) (errors []error) {
-	mapping, errs := getMapping(args.MapFiles, args.Mappings)
+	mapping, errs := getMapping(args.MapFiles, args.Mappings, args.Invert)
 	if check(&errors, errs) && args.Strict {
 		return errs
-	}
-
-	if args.Invert {
-		mapping = invert(mapping)
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -51,7 +43,7 @@ func runOnStdin(args *cli.Arguments) (errors []error) {
 		os.Stdout.WriteString("\n")
 	}
 
-	return nil
+	return errors
 }
 
 func check(errors *[]error, errs []error) bool {
