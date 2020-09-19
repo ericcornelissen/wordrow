@@ -15,7 +15,9 @@ RUN apk add --no-cache \
 # Set up
 WORKDIR /go/src/wordrow
 COPY Makefile ./
-RUN make install
+COPY scripts/ ./scripts
+COPY .git/ ./.git
+RUN make init
 
 # Remove build-only tools
 RUN apk del \
