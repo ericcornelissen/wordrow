@@ -52,11 +52,7 @@ func maintainCapitalization(fromPhrase, toPhrase string) string {
 	fromWords := phraseToWordsExpr.FindAllStringSubmatch(fromPhrase, -1)
 	toWords := phraseToWordsExpr.FindAllStringSubmatch(toPhrase, -1)
 
-	shortestLen := len(fromWords)
-	if len(toWords) < len(fromWords) {
-		shortestLen = len(toWords)
-	}
-
+	shortestLen := lowestInt(len(fromWords), len(toWords))
 	for i := 0; i < shortestLen; i++ {
 		fromWord, toWord := fromWords[i][1], toWords[i][1]
 		toDivider := toWords[i][2]
@@ -69,10 +65,8 @@ func maintainCapitalization(fromPhrase, toPhrase string) string {
 		sb.WriteString(toDivider)
 	}
 
-	if len(toWords) > len(fromWords) {
-		for i := shortestLen; i < len(toWords); i++ {
-			sb.WriteString(toWords[i][0])
-		}
+	for i := shortestLen; i < len(toWords); i++ {
+		sb.WriteString(toWords[i][0])
 	}
 
 	return sb.String()

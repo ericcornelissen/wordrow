@@ -9,7 +9,23 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/logger"
 )
 
-func run(args *cli.Arguments) (errors []error) {
+func run(args *cli.Arguments) {
+	if hasStdin() {
+		logger.SetLogLevel(logger.FATAL)
+		errors := runOnStdin(args)
+		if errors != nil {
+			panic(errors)
+		}
+	} else {
+		setLogLevel(args)
+		errors := runOnFiles(args)
+		for _, err := range errors {
+			logger.Error(err)
+		}
+	}
+}
+
+func runOnFiles(args *cli.Arguments) (errors []error) {
 	mapping, errs := getMapping(args.MapFiles, args.Mappings, args.Invert)
 	if check(&errors, errs) && args.Strict {
 		return errs
@@ -44,8 +60,8 @@ func runOnStdin(args *cli.Arguments) (errors []error) {
 	return errors
 }
 
-func check(errors *[]error, errs []error) bool {
-	*errors = append(*errors, errs...)
+func check(errors *[]error, newErrors []error) bool {
+	*errors = append(*errors, newErrors...)
 	return len(*errors) > 0
 }
 
@@ -59,23 +75,11 @@ func setLogLevel(args *cli.Arguments) {
 
 func main() {
 	shouldRun, args := cli.ParseArgs(os.Args)
-
 	if args.Version {
 		printVersion()
 	}
 
-	if hasStdin() {
-		logger.SetLogLevel(logger.FATAL)
-		err := runOnStdin(&args)
-		if err != nil {
-			panic(err)
-		}
-	} else if shouldRun {
-		setLogLevel(&args)
-
-		errs := run(&args)
-		for _, err := range errs {
-			logger.Error(err)
-		}
+	if shouldRun || hasStdin() {
+		run(&args)
 	}
 }
