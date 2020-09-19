@@ -1,4 +1,4 @@
-package wordmaps
+package mappings
 
 // Add one or more mappings to one value to a map.
 func addToMapping(target map[string]string, froms []string, to string) {

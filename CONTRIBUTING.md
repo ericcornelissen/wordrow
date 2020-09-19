@@ -168,7 +168,7 @@ $ make fuzz PKG=internal/cli
 
 # If there are multiple fuzzing functions for the package you must specify the
 # function name (including the "Fuzz" prefix) using "FUNC".
-$ make fuzz PKG=internal/wordmaps FUNC=FuzzMarkDown
+$ make fuzz PKG=internal/mappings FUNC=FuzzMarkDown
 ```
 
 In this project, fuzzing logic must be located in a file with the `_fuzz.go`

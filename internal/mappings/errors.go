@@ -1,4 +1,4 @@
-package wordmaps
+package mappings
 
 const (
 	// Error text for an incorrect format in a mapping.

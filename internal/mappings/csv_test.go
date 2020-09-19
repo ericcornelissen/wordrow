@@ -1,4 +1,4 @@
-package wordmaps
+package mappings
 
 import (
 	"fmt"

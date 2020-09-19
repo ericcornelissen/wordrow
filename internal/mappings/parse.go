@@ -1,8 +1,8 @@
-// Package wordmaps provides two structures for functionality to parse files
+// Package mappings provides two structures for functionality to parse files
 // into a map[string]string. The supported formats are:
 // - CSV
 // - MarkDown
-package wordmaps
+package mappings
 
 import (
 	"regexp"

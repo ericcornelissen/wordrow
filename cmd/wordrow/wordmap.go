@@ -6,7 +6,7 @@ import (
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/wordmaps"
+	"github.com/ericcornelissen/wordrow/internal/mappings"
 )
 
 // Parse a --map-file argument into its component parts.
@@ -55,7 +55,7 @@ func processMapFile(
 	}
 
 	content := string(data)
-	mapping, err := wordmaps.ParseFile(&content, format)
+	mapping, err := mappings.ParseFile(&content, format)
 	if err != nil {
 		return err
 	}
@@ -88,7 +88,7 @@ func openAndProcessMapFileWith(mapping map[string]string) handler {
 // `target`. Of the value cannot be parsed as a CSV mapping the handler returns
 // an error.
 func processInlineMapping(value string, target map[string]string) error {
-	mapping, err := wordmaps.ParseFile(&value, "csv")
+	mapping, err := mappings.ParseFile(&value, "csv")
 	if err != nil {
 		return err
 	}
