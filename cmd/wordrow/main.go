@@ -10,14 +10,14 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/replace"
 )
 
-func run(args cli.Arguments) (errors []error) {
-	wordmap, errs := getWordMap(args.MapFiles, args.Mappings)
+func run(args *cli.Arguments) (errors []error) {
+	mapping, errs := getMapping(args.MapFiles, args.Mappings)
 	if check(&errors, errs) && args.Strict {
 		return errs
 	}
 
 	if args.Invert {
-		wordmap.Invert()
+		mapping = invert(mapping)
 	}
 
 	filePaths, errs := fs.ResolveGlobs(args.InputFiles...)
@@ -26,27 +26,27 @@ func run(args cli.Arguments) (errors []error) {
 	}
 
 	if !args.DryRun {
-		errs = processInputFiles(filePaths, &wordmap)
+		errs = processInputFiles(filePaths, mapping)
 		check(&errors, errs)
 	}
 
 	return errors
 }
 
-func runOnStdin(args cli.Arguments) (errors []error) {
-	wordmap, errs := getWordMap(args.MapFiles, args.Mappings)
+func runOnStdin(args *cli.Arguments) (errors []error) {
+	mapping, errs := getMapping(args.MapFiles, args.Mappings)
 	if check(&errors, errs) && args.Strict {
 		return errs
 	}
 
 	if args.Invert {
-		wordmap.Invert()
+		mapping = invert(mapping)
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		line := scanner.Text()
-		fixedInput := replace.All(line, wordmap.Iter())
+		fixedInput := replace.All(line, mapping)
 		os.Stdout.WriteString(fixedInput)
 		os.Stdout.WriteString("\n")
 	}
@@ -59,7 +59,7 @@ func check(errors *[]error, errs []error) bool {
 	return len(*errors) > 0
 }
 
-func setLogLevel(args cli.Arguments) {
+func setLogLevel(args *cli.Arguments) {
 	if args.Silent {
 		logger.SetLogLevel(logger.ERROR)
 	} else if args.Verbose {
@@ -76,14 +76,14 @@ func main() {
 
 	if hasStdin() {
 		logger.SetLogLevel(logger.FATAL)
-		err := runOnStdin(args)
+		err := runOnStdin(&args)
 		if err != nil {
 			panic(err)
 		}
 	} else if shouldRun {
-		setLogLevel(args)
+		setLogLevel(&args)
 
-		errs := run(args)
+		errs := run(&args)
 		for _, err := range errs {
 			logger.Error(err)
 		}

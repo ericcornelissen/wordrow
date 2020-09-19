@@ -884,7 +884,6 @@ func TestMatch(t *testing.T) {
 		t.Run("a match", func(t *testing.T) {
 			rawSource := "foo %s"
 			source := fmt.Sprintf(rawSource, unescapedFrom)
-			fmt.Printf(source)
 
 			expectedMatches := []Match{
 				{
@@ -928,7 +927,6 @@ func TestMatch(t *testing.T) {
 		t.Run("a match", func(t *testing.T) {
 			rawSource := "%s bar"
 			source := fmt.Sprintf(rawSource, unescapedFrom)
-			fmt.Printf(source)
 
 			expectedMatches := []Match{
 				{

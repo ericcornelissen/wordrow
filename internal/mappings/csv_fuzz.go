@@ -1,6 +1,6 @@
 // +build gofuzz
 
-package wordmaps
+package mappings
 
 func FuzzCsv(data []byte) int {
 	s := string(data)
