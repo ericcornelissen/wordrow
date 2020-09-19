@@ -12,12 +12,12 @@ import (
 func run(args *cli.Arguments) (errors []error) {
 	mapping, errs := getMapping(args.MapFiles, args.Mappings, args.Invert)
 	if check(&errors, errs) && args.Strict {
-		return errs
+		return errors
 	}
 
 	filePaths, errs := fs.ResolveGlobs(args.InputFiles...)
 	if check(&errors, errs) && args.Strict {
-		return errs
+		return errors
 	}
 
 	if !args.DryRun {
@@ -64,15 +64,16 @@ func main() {
 		printVersion()
 	}
 
+	if !shouldRun {
+		return
+	}
+
 	if hasStdin() {
 		logger.SetLogLevel(logger.FATAL)
-		err := runOnStdin(&args)
-		if err != nil {
-			panic(err)
-		}
-	} else if shouldRun {
+		errs := runOnStdin(&args)
+		panic(errs)
+	} else {
 		setLogLevel(&args)
-
 		errs := run(&args)
 		for _, err := range errs {
 			logger.Error(err)

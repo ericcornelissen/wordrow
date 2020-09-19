@@ -50,7 +50,7 @@ func processBuffer(
 }
 
 // Process `file` by reading its content, changing that based on the `mapping`,
-// and writing the updated content back to `file`.If a reading or writing error
+// and writing the updated content back to `file`. If a reading or writing error
 // occurs this function returns an error.
 func processFile(file fs.ReadWriter, mapping map[string]string) error {
 	logger.Debugf("Reading '%s' and replacing words", file)
