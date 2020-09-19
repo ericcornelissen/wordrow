@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"io/ioutil"
 
 	"github.com/ericcornelissen/wordrow/internal/errors"
@@ -29,6 +30,23 @@ func doWriteBack(writer fs.Writer, updatedContent string) error {
 	data := []byte(updatedContent)
 	_, err := writer.Write(data)
 	return err
+}
+
+// Process the input provided by scanner, changing that based on the `mapping`,
+// and writing the updated content back to `out`. Writing errors are ignored.
+func processBuffer(
+	in *bufio.Scanner,
+	out *bufio.Writer,
+	mapping map[string]string,
+) error {
+	for in.Scan() {
+		line := in.Text()
+		fixedInput := replace.All(line, mapping)
+		out.WriteString(fixedInput)
+		out.WriteRune('\n')
+	}
+
+	return out.Flush()
 }
 
 // Process `file` by reading its content, changing that based on the `mapping`,

@@ -7,7 +7,6 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/cli"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/replace"
 )
 
 func run(args *cli.Arguments) (errors []error) {
@@ -32,16 +31,12 @@ func run(args *cli.Arguments) (errors []error) {
 func runOnStdin(args *cli.Arguments) (errors []error) {
 	mapping, errs := getMapping(args.MapFiles, args.Mappings, args.Invert)
 	if check(&errors, errs) && args.Strict {
-		return errs
+		return errors
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		line := scanner.Text()
-		fixedInput := replace.All(line, mapping)
-		os.Stdout.WriteString(fixedInput)
-		os.Stdout.WriteString("\n")
-	}
+	writer := bufio.NewWriter(os.Stdout)
+	processBuffer(scanner, writer, mapping)
 
 	return errors
 }
