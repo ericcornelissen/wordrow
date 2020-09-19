@@ -94,6 +94,73 @@ func TestDoWriteBack(t *testing.T) {
 	})
 }
 
+func TestProcessBuffer(t *testing.T) {
+	from0, to0 := "hello", "hey"
+	from1, to1 := "world", "planet"
+
+	mapping := make(map[string]string, 2)
+	mapping[from0] = to0
+	mapping[from1] = to1
+
+	t.Run("Replace something", func(t *testing.T) {
+		content := fmt.Sprintf("%s %s", from0, from1)
+		expectedWritten := fmt.Sprintf("%s %s\n", to0, to1)
+
+		reader := stringsx.NewReader(content)
+		writer := new(bytes.Buffer)
+		scanner := bufio.NewScanner(reader)
+		bufferedWriter := bufio.NewWriter(writer)
+
+		err := processBuffer(scanner, bufferedWriter, mapping)
+		if err != nil {
+			t.Fatalf("Unexpected error (%s)", err)
+		}
+
+		written := writer.Bytes()
+		if string(written) != expectedWritten {
+			t.Errorf("Unexpected value written (got '%s')", written)
+		}
+	})
+	t.Run("Replace nothing", func(t *testing.T) {
+		content := "foobar\n"
+		if stringsx.Contains(content, from0) || stringsx.Contains(content, from1) {
+			t.Fatal("Content cannot contain a string that may be replaced")
+		}
+
+		reader := stringsx.NewReader(content)
+		writer := new(bytes.Buffer)
+		scanner := bufio.NewScanner(reader)
+		bufferedWriter := bufio.NewWriter(writer)
+
+		err := processBuffer(scanner, bufferedWriter, mapping)
+		if err != nil {
+			t.Fatalf("Unexpected error (%s)", err)
+		}
+
+		bufferedWriter.Flush()
+		written := writer.Bytes()
+		if string(written) != content {
+			t.Errorf("Unexpected value written (got '%s')", written)
+		}
+	})
+	t.Run("Writing error", func(t *testing.T) {
+		content := "foobar"
+		if len(content) < 2 {
+			t.Fatal("Content must be at least 2 bytes to ensure the writer errors")
+		}
+
+		reader := stringsx.NewReader(content)
+		writer := iotest.TruncateWriter(os.Stdin, 1)
+		scanner := bufio.NewScanner(reader)
+		bufferedWriter := bufio.NewWriterSize(writer, 109)
+
+		err := processBuffer(scanner, bufferedWriter, mapping)
+		if err == nil {
+			t.Fatal("Expected an error but got none")
+		}
+	})
+}
+
 func TestProcessFile(t *testing.T) {
 	from0, to0 := "hello", "hey"
 	from1, to1 := "world", "planet"

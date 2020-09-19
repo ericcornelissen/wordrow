@@ -1,5 +1,7 @@
 package main
 
+import "os"
+
 // Handler represents a function to handle a (string) value and return an error.
 type handler func(value string) error
 
@@ -14,6 +16,18 @@ func forEach(values []string, fn handler) (errs []error) {
 	}
 
 	return errs
+}
+
+// Check if the program received input from STDIN.
+//
+// based on: https://stackoverflow.com/a/38612652
+func hasStdin() bool {
+	stdin, err := os.Stdin.Stat()
+	if err != nil {
+		return false
+	}
+
+	return (stdin.Mode() & os.ModeNamedPipe) != 0
 }
 
 // Invert the map `m`. I.e. swap each (key, value)-pair in the map.

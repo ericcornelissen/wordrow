@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"os"
 
 	"github.com/ericcornelissen/wordrow/internal/cli"
@@ -9,23 +10,35 @@ import (
 )
 
 func run(args *cli.Arguments) (errors []error) {
-	mapping, errs := getMapping(args.MapFiles, args.Mappings)
+	mapping, errs := getMapping(args.MapFiles, args.Mappings, args.Invert)
 	if check(&errors, errs) && args.Strict {
-		return errors
-	}
-
-	if args.Invert {
-		mapping = invert(mapping)
+		return errs
 	}
 
 	filePaths, errs := fs.ResolveGlobs(args.InputFiles...)
 	if check(&errors, errs) && args.Strict {
-		return errors
+		return errs
 	}
 
 	if !args.DryRun {
 		errs = processInputFiles(filePaths, mapping)
 		check(&errors, errs)
+	}
+
+	return errors
+}
+
+func runOnStdin(args *cli.Arguments) (errors []error) {
+	mapping, errs := getMapping(args.MapFiles, args.Mappings, args.Invert)
+	if check(&errors, errs) && args.Strict {
+		return errors
+	}
+
+	scanner := bufio.NewScanner(os.Stdin)
+	writer := bufio.NewWriter(os.Stdout)
+	err := processBuffer(scanner, writer, mapping)
+	if err != nil {
+		errors = append(errors, err)
 	}
 
 	return errors
@@ -51,7 +64,13 @@ func main() {
 		printVersion()
 	}
 
-	if shouldRun {
+	if hasStdin() {
+		logger.SetLogLevel(logger.FATAL)
+		err := runOnStdin(&args)
+		if err != nil {
+			panic(err)
+		}
+	} else if shouldRun {
 		setLogLevel(&args)
 
 		errs := run(&args)

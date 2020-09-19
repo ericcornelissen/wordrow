@@ -114,6 +114,7 @@ func processInlineMappingWith(mapping map[string]string) handler {
 func getMapping(
 	mapFiles []string,
 	inlineMappings []string,
+	invertMapping bool,
 ) (map[string]string, []error) {
 	mapping := make(map[string]string)
 
@@ -122,6 +123,10 @@ func getMapping(
 		errs,
 		forEach(inlineMappings, processInlineMappingWith(mapping))...,
 	)
+
+	if invertMapping {
+		mapping = invert(mapping)
+	}
 
 	return mapping, errs
 }
