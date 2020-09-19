@@ -1,4 +1,4 @@
-package mappings
+package common
 
 import "testing"
 
@@ -7,7 +7,7 @@ func TestAddToMapping(t *testing.T) {
 		from, to := "foo", "bar"
 		target := make(map[string]string, 1)
 
-		addToMapping(target, []string{from}, to)
+		AddToMapping(target, []string{from}, to)
 		if len(target) != 1 {
 			t.Fatalf("Unexpected size of map (got %d)", len(target))
 		}
@@ -20,7 +20,7 @@ func TestAddToMapping(t *testing.T) {
 		from1, from2, to := "bar", "baz", "foo"
 		target := make(map[string]string, 1)
 
-		addToMapping(target, []string{from1, from2}, to)
+		AddToMapping(target, []string{from1, from2}, to)
 		if len(target) != 2 {
 			t.Fatalf("Unexpected size of map (got %d)", len(target))
 		}
@@ -38,7 +38,7 @@ func TestAddToMapping(t *testing.T) {
 		target := make(map[string]string, 1)
 		target[from] = to1
 
-		addToMapping(target, []string{from}, to2)
+		AddToMapping(target, []string{from}, to2)
 		if len(target) != 1 {
 			t.Fatalf("Unexpected size of map (got %d)", len(target))
 		}

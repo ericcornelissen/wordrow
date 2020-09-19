@@ -1,10 +1,11 @@
-package mappings
+package markdown
 
 import (
 	"regexp"
 
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/mappings/common"
 )
 
 // Regular expression of a MarkDown table row.
@@ -25,13 +26,13 @@ func parseTableRow(row string) ([]string, error) {
 
 	rowValues := stringsx.Split(row, "|")
 	if len(rowValues) < rowValuesCount {
-		return nil, errors.Newf(incorrectFormat, row)
+		return nil, errors.Newf(common.IncorrectFormat, row)
 	}
 
 	rowValues = rowValues[1 : len(rowValues)-1]
 	rowValues = stringsx.MapAll(rowValues, stringsx.TrimSpace)
 	if stringsx.Any(rowValues, stringsx.IsEmpty) {
-		return nil, errors.Newf(missingValue, row)
+		return nil, errors.Newf(common.MissingValue, row)
 	}
 
 	return rowValues, nil
@@ -78,7 +79,7 @@ func parseTable(tableLines []string, mapping map[string]string) (int, error) {
 		}
 
 		last := len(rowValues) - 1
-		addToMapping(mapping, rowValues[0:last], rowValues[last])
+		common.AddToMapping(mapping, rowValues[0:last], rowValues[last])
 	}
 
 	return (tableHeadOffset + (len(mapping) - sizeBefore)), nil
@@ -105,7 +106,7 @@ func tryParseTable(tableLines []string, mapping map[string]string) (int, error) 
 // Parse a MarkDown (MD) formatted file into a map[string]string.
 //
 // The error will be set if any error occurred while parsing the MD file.
-func parseMarkDownFile(rawFileData *string) (map[string]string, error) {
+func Parse(rawFileData *string) (map[string]string, error) {
 	mapping := make(map[string]string, 1)
 
 	lines := stringsx.Split(*rawFileData, "\n")

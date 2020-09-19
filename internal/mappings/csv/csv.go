@@ -1,8 +1,9 @@
-package mappings
+package csv
 
 import (
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/mappings/common"
 )
 
 // Parse a single row of a CSV file and add it to the `mapping`.
@@ -14,23 +15,23 @@ func parseRow(row string, mapping map[string]string) error {
 
 	rowValues := stringsx.Split(row, ",")
 	if len(rowValues) < rowValuesCount {
-		return errors.Newf(incorrectFormat, row)
+		return errors.Newf(common.IncorrectFormat, row)
 	}
 
 	rowValues = stringsx.MapAll(rowValues, stringsx.TrimSpace)
 	if stringsx.Any(rowValues, stringsx.IsEmpty) {
-		return errors.Newf(missingValue, row)
+		return errors.Newf(common.MissingValue, row)
 	}
 
 	last := len(rowValues) - 1
-	addToMapping(mapping, rowValues[0:last], rowValues[last])
+	common.AddToMapping(mapping, rowValues[0:last], rowValues[last])
 	return nil
 }
 
 // Parse a Comma Separated Values (CSV) file into a map[string]string.
 //
 // The error will be set if any error occurred while parsing the CSV file.
-func parseCsvFile(rawFileData *string) (map[string]string, error) {
+func Parse(rawFileData *string) (map[string]string, error) {
 	mapping := make(map[string]string, 1)
 
 	lines := stringsx.Split(*rawFileData, "\n")
