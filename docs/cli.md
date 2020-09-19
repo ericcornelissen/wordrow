@@ -18,6 +18,7 @@ In this document you can read about:
 - [Converting Multiple Files](#converting-multiple-files)
 - [Inverting a Mapping File](#inverting-a-mapping-file)
 - [Controlling the Output](#controlling-the-output)
+- [Processing STDIN](#processing-stdin)
 
 ## The Basics
 
@@ -154,5 +155,19 @@ $ wordrow input.txt --map-file animals.csv --silent
 $ wordrow input.txt --map-file animals.csv --verbose
 ```
 
+## Processing STDIN
+
+You can also use *wordrow* by piping in text from [STDIN]. When input from STDIN
+is detected, *wordrow* will automatically output the converted text to STDOUT.
+
+```shell
+$ cat file_in.txt  |  wordrow --map dog,cat  >>  file_out.txt
+```
+
+Note, separate input files will not be processed when running on STDIN. Also,
+the `--verbose` and `--silent` flags don't have any effect as *wordrow* won't
+output anything except the processed input.
+
 [glob]: https://mincong.io/2019/04/16/glob-expression-understanding/
 [mapping file]: ./mapping-files.md
+[stdin]: https://en.wikipedia.org/wiki/Standard_streams
