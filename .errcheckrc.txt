@@ -1,3 +1,7 @@
+// bufio
+(*bufio.Writer).WriteString
+(*bufio.Writer).WriteRune
+
 // internal
 (github.com/ericcornelissen/wordrow/internal/fs.File).Close
 

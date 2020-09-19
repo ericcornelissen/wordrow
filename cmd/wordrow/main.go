@@ -36,7 +36,10 @@ func runOnStdin(args *cli.Arguments) (errors []error) {
 
 	scanner := bufio.NewScanner(os.Stdin)
 	writer := bufio.NewWriter(os.Stdout)
-	processBuffer(scanner, writer, mapping)
+	err := processBuffer(scanner, writer, mapping)
+	if err != nil {
+		errors = append(errors, err)
+	}
 
 	return errors
 }
