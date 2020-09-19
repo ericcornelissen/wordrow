@@ -118,9 +118,10 @@ func getMapping(
 	mapping := make(map[string]string)
 
 	errs := forEach(mapFiles, openAndProcessMapFileWith(mapping))
-
-	inlineErrors := forEach(inlineMappings, processInlineMappingWith(mapping))
-	errs = append(errs, inlineErrors...)
+	errs = append(
+		errs,
+		forEach(inlineMappings, processInlineMappingWith(mapping))...,
+	)
 
 	return mapping, errs
 }

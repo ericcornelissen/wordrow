@@ -11,7 +11,7 @@ import (
 func run(args *cli.Arguments) (errors []error) {
 	mapping, errs := getMapping(args.MapFiles, args.Mappings)
 	if check(&errors, errs) && args.Strict {
-		return errs
+		return errors
 	}
 
 	if args.Invert {
@@ -20,7 +20,7 @@ func run(args *cli.Arguments) (errors []error) {
 
 	filePaths, errs := fs.ResolveGlobs(args.InputFiles...)
 	if check(&errors, errs) && args.Strict {
-		return errs
+		return errors
 	}
 
 	if !args.DryRun {
