@@ -79,12 +79,8 @@ func maintainWhitespace(from, to string) (newTo string, offset int) {
 	fromWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(from, -1)
 	toWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(to, -1)
 
-	shortest := len(fromWhitespace)
-	if len(toWhitespace) < len(fromWhitespace) {
-		shortest = len(toWhitespace)
-	}
-
-	for i := 0; i < shortest; i++ {
+	shortestLen := lowestInt(len(fromWhitespace), len(toWhitespace))
+	for i := 0; i < shortestLen; i++ {
 		fromMatch, toMatch := fromWhitespace[i], toWhitespace[i]
 		fromStart, fromEnd := fromMatch[0], fromMatch[1]
 		toStart, toEnd := toMatch[0], toMatch[1]

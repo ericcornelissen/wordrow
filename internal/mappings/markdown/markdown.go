@@ -60,22 +60,18 @@ func verifyTableHeader(tableLines []string) (err error) {
 	return err
 }
 
-// Parse a MarkDown table and put its values into the `mapping`.
+// Parse a MarkDown table body and put its values into the `mapping`.
 //
 // The error will be set if any table row has an incorrect format.
-func parseTable(tableLines []string, mapping map[string]string) (int, error) {
-	sizeBefore := len(mapping)
-	tableHeadOffset := 2
-
-	for i := tableHeadOffset; i < len(tableLines); i++ {
-		row := tableLines[i]
+func parseTableBody(rows []string, mapping map[string]string) error {
+	for _, row := range rows {
 		if !isTableRow(row) {
 			break
 		}
 
 		rowValues, err := parseTableRow(row)
 		if err != nil {
-			return 0, err
+			return err
 		}
 
 		last := len(rowValues) - 1
@@ -83,25 +79,32 @@ func parseTable(tableLines []string, mapping map[string]string) (int, error) {
 		common.MergeMaps(mapping, additionalMappings)
 	}
 
-	return (tableHeadOffset + (len(mapping) - sizeBefore)), nil
+	return nil
 }
 
-// Try to parse a MarkDown table and put its values into the `mapping`.
+// Parse a MarkDown table and put its values into the `mapping`.
 //
 // The error will be set if the table head or any table row has an incorrect
 // format.
-func tryParseTable(tableLines []string, mapping map[string]string) (int, error) {
+func parseTable(lines []string, mapping map[string]string) (int, error) {
 	minRowCount := 3
+	tableHeadOffset := 2
+	sizeBefore := len(mapping)
 
-	if len(tableLines) < minRowCount {
-		return 0, errors.Newf("Incomplete table (starting at '%s')", tableLines[0])
+	if len(lines) < minRowCount {
+		return 0, errors.Newf("Incomplete table (starting at '%s')", lines[0])
 	}
 
-	if err := verifyTableHeader(tableLines); err != nil {
+	if err := verifyTableHeader(lines); err != nil {
 		return 0, err
 	}
 
-	return parseTable(tableLines, mapping)
+	err := parseTableBody(lines[tableHeadOffset:], mapping)
+	if err != nil {
+		return 0, err
+	}
+
+	return (tableHeadOffset + (len(mapping) - sizeBefore)), nil
 }
 
 // Parse a MarkDown (MD) formatted file into a map[string]string.
@@ -114,7 +117,7 @@ func Parse(rawFileData *string) (map[string]string, error) {
 	for i := 0; i < len(lines); i++ {
 		line := lines[i]
 		if isTableRow(line) {
-			tableLength, err := tryParseTable(lines[i:], mapping)
+			tableLength, err := parseTable(lines[i:], mapping)
 			if err != nil {
 				return mapping, err
 			}
