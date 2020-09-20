@@ -28,7 +28,10 @@ func dataToInputs(data []byte) ([]string, error) {
 func _processMapFile(s, format string, mapping map[string]string) {
 	s = stringsx.ReplaceAll(s, ";", "\n")
 	mapfileReader := stringsx.NewReader(s)
-	processMapFile(mapfileReader, format, mapping)
+	newMapping, err := processMapFile(mapfileReader, format)
+	if err == nil {
+		merge(mapping, newMapping)
+	}
 }
 
 func _doReplace(s string, mapping map[string]string) string {

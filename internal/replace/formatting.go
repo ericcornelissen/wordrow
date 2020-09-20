@@ -52,11 +52,7 @@ func maintainCapitalization(fromPhrase, toPhrase string) string {
 	fromWords := phraseToWordsExpr.FindAllStringSubmatch(fromPhrase, -1)
 	toWords := phraseToWordsExpr.FindAllStringSubmatch(toPhrase, -1)
 
-	shortestLen := len(fromWords)
-	if len(toWords) < len(fromWords) {
-		shortestLen = len(toWords)
-	}
-
+	shortestLen := lowestInt(len(fromWords), len(toWords))
 	for i := 0; i < shortestLen; i++ {
 		fromWord, toWord := fromWords[i][1], toWords[i][1]
 		toDivider := toWords[i][2]
@@ -69,10 +65,8 @@ func maintainCapitalization(fromPhrase, toPhrase string) string {
 		sb.WriteString(toDivider)
 	}
 
-	if len(toWords) > len(fromWords) {
-		for i := shortestLen; i < len(toWords); i++ {
-			sb.WriteString(toWords[i][0])
-		}
+	for i := shortestLen; i < len(toWords); i++ {
+		sb.WriteString(toWords[i][0])
 	}
 
 	return sb.String()
@@ -85,12 +79,8 @@ func maintainWhitespace(from, to string) (newTo string, offset int) {
 	fromWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(from, -1)
 	toWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(to, -1)
 
-	shortest := len(fromWhitespace)
-	if len(toWhitespace) < len(fromWhitespace) {
-		shortest = len(toWhitespace)
-	}
-
-	for i := 0; i < shortest; i++ {
+	shortestLen := lowestInt(len(fromWhitespace), len(toWhitespace))
+	for i := 0; i < shortestLen; i++ {
 		fromMatch, toMatch := fromWhitespace[i], toWhitespace[i]
 		fromStart, fromEnd := fromMatch[0], fromMatch[1]
 		toStart, toEnd := toMatch[0], toMatch[1]

@@ -1,10 +1,11 @@
-package mappings
+package markdown
 
 import (
 	"regexp"
 
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/mappings/common"
 )
 
 // Regular expression of a MarkDown table row.
@@ -25,13 +26,13 @@ func parseTableRow(row string) ([]string, error) {
 
 	rowValues := stringsx.Split(row, "|")
 	if len(rowValues) < rowValuesCount {
-		return nil, errors.Newf(incorrectFormat, row)
+		return nil, errors.Newf(common.IncorrectFormat, row)
 	}
 
 	rowValues = rowValues[1 : len(rowValues)-1]
 	rowValues = stringsx.MapAll(rowValues, stringsx.TrimSpace)
 	if stringsx.Any(rowValues, stringsx.IsEmpty) {
-		return nil, errors.Newf(missingValue, row)
+		return nil, errors.Newf(common.MissingValue, row)
 	}
 
 	return rowValues, nil
@@ -41,54 +42,66 @@ func parseTableRow(row string) ([]string, error) {
 //
 // The error will be set if the table header has an unexpected format, such as
 // an incorrect number of columns or a missing divider.
-func parseTableHeader(tableLines []string) (rerr error) {
+func verifyTableHeader(tableLines []string) (err error) {
 	headerLine := tableLines[0]
 	dividerLine := tableLines[1]
 	firstTableRow := tableLines[2]
 
-	if _, err := parseTableRow(headerLine); err != nil {
-		rerr = errors.Newf("Incorrect table header (in '%s')", headerLine)
-	} else if _, err = parseTableRow(dividerLine); err != nil {
-		rerr = errors.Newf("Missing table divider (in '%s')", dividerLine)
+	if _, e := parseTableRow(headerLine); e != nil {
+		err = errors.Newf("Incorrect table header (in '%s')", headerLine)
+	} else if _, e = parseTableRow(dividerLine); e != nil {
+		err = errors.Newf("Missing table divider (in '%s')", dividerLine)
 	} else if !tableDividerExpr.MatchString(dividerLine) {
-		rerr = errors.Newf("Incorrect table divider (in '%s')", dividerLine)
-	} else if _, err = parseTableRow(firstTableRow); err != nil {
-		rerr = errors.Newf("Missing table body (in '%s')", firstTableRow)
+		err = errors.Newf("Incorrect table divider (in '%s')", dividerLine)
+	} else if _, e = parseTableRow(firstTableRow); e != nil {
+		err = errors.Newf("Missing table body (in '%s')", firstTableRow)
 	}
 
-	return rerr
+	return err
+}
+
+// Parse a MarkDown table body and put its values into the `mapping`.
+//
+// The error will be set if any table row has an incorrect format.
+func parseTableBody(rows []string, mapping map[string]string) error {
+	for _, row := range rows {
+		if !isTableRow(row) {
+			break
+		}
+
+		rowValues, err := parseTableRow(row)
+		if err != nil {
+			return err
+		}
+
+		last := len(rowValues) - 1
+		additionalMappings := common.MapFrom(rowValues[0:last], rowValues[last])
+		common.MergeMaps(mapping, additionalMappings)
+	}
+
+	return nil
 }
 
 // Parse a MarkDown table and put its values into the `mapping`.
 //
 // The error will be set if the table head or any table row has an incorrect
 // format.
-func parseTable(tableLines []string, mapping map[string]string) (int, error) {
-	tableHeadOffset := 2
+func parseTable(lines []string, mapping map[string]string) (int, error) {
 	minRowCount := 3
+	tableHeadOffset := 2
+	sizeBefore := len(mapping)
 
-	if len(tableLines) < minRowCount {
-		return 0, errors.Newf("Incomplete table (starting at '%s')", tableLines[0])
+	if len(lines) < minRowCount {
+		return 0, errors.Newf("Incomplete table (starting at '%s')", lines[0])
 	}
 
-	if err := parseTableHeader(tableLines); err != nil {
+	if err := verifyTableHeader(lines); err != nil {
 		return 0, err
 	}
 
-	sizeBefore := len(mapping)
-	for i := tableHeadOffset; i < len(tableLines); i++ {
-		row := tableLines[i]
-		if !isTableRow(row) {
-			break // Table ended
-		}
-
-		rowValues, err := parseTableRow(row)
-		if err != nil {
-			return 0, err
-		}
-
-		last := len(rowValues) - 1
-		addToMapping(mapping, rowValues[0:last], rowValues[last])
+	err := parseTableBody(lines[tableHeadOffset:], mapping)
+	if err != nil {
+		return 0, err
 	}
 
 	return (tableHeadOffset + (len(mapping) - sizeBefore)), nil
@@ -97,7 +110,7 @@ func parseTable(tableLines []string, mapping map[string]string) (int, error) {
 // Parse a MarkDown (MD) formatted file into a map[string]string.
 //
 // The error will be set if any error occurred while parsing the MD file.
-func parseMarkDownFile(rawFileData *string) (map[string]string, error) {
+func Parse(rawFileData *string) (map[string]string, error) {
 	mapping := make(map[string]string, 1)
 
 	lines := stringsx.Split(*rawFileData, "\n")

@@ -67,14 +67,12 @@ func TestParseMapFileArgument(t *testing.T) {
 
 func TestProcessMapFile(t *testing.T) {
 	t.Run("Read something, correct format", func(t *testing.T) {
-		mapping := make(map[string]string, 1)
-
 		format := "csv"
 		expectedFrom, expectedTo := "foo", "bar"
 		content := fmt.Sprintf("%s,%s", expectedFrom, expectedTo)
 		handle := stringsx.NewReader(content)
 
-		err := processMapFile(handle, format, mapping)
+		mapping, err := processMapFile(handle, format)
 		if err != nil {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
@@ -94,13 +92,11 @@ func TestProcessMapFile(t *testing.T) {
 		}
 	})
 	t.Run("Read something, incorrect format", func(t *testing.T) {
-		mapping := make(map[string]string, 1)
-
 		format := "csv"
 		content := "foobar"
 		handle := stringsx.NewReader(content)
 
-		err := processMapFile(handle, format, mapping)
+		mapping, err := processMapFile(handle, format)
 		if err == nil {
 			t.Error("Expected an error but didn't get one")
 		}
@@ -111,13 +107,11 @@ func TestProcessMapFile(t *testing.T) {
 		}
 	})
 	t.Run("Read nothing", func(t *testing.T) {
-		mapping := make(map[string]string, 1)
-
 		format := "csv"
 		content := ""
 		handle := stringsx.NewReader(content)
 
-		err := processMapFile(handle, format, mapping)
+		mapping, err := processMapFile(handle, format)
 		if err != nil {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
@@ -128,13 +122,11 @@ func TestProcessMapFile(t *testing.T) {
 		}
 	})
 	t.Run("Reading error", func(t *testing.T) {
-		mapping := make(map[string]string, 1)
-
 		format := "csv"
 		content := "foo,bar"
 		handle := iotest.TimeoutReader(stringsx.NewReader(content))
 
-		err := processMapFile(handle, format, mapping)
+		mapping, err := processMapFile(handle, format)
 		if err == nil {
 			t.Error("Expected an error but didn't get one")
 		}
