@@ -32,17 +32,16 @@ func doWriteBack(writer fs.Writer, updatedContent string) error {
 	return err
 }
 
-// Process the `input` provided by scanner, changing that based on the
-// `mapping`, and writing the updated content back to the `output`.
-func processBuffer(
-	input *bufio.Scanner,
-	output *bufio.Writer,
-	mapping map[string]string,
-) error {
+// Process the `input` provided by the ReadWriter, changing that based on the
+// `mapping`, and write the updated content back to the ReadWriter.
+func processStdin(rw *bufio.ReadWriter, mapping map[string]string) error {
+	input := bufio.NewScanner(rw.Reader)
+	output := rw.Writer
+
 	for input.Scan() {
 		line := input.Text()
-		fixedInput := replace.All(line, mapping)
-		output.WriteString(fixedInput)
+		fixedLine := replace.All(line, mapping)
+		output.WriteString(fixedLine)
 		output.WriteRune('\n')
 	}
 

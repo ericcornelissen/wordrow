@@ -26,7 +26,7 @@ func run(args *cli.Arguments) {
 }
 
 func runOnFiles(args *cli.Arguments) (errors []error) {
-	mapping, errs := getMapping(args.MapFiles, args.Mappings, args.Invert)
+	mapping, errs := getMapping(args)
 	if check(&errors, errs) && args.Strict {
 		return errs
 	}
@@ -45,14 +45,17 @@ func runOnFiles(args *cli.Arguments) (errors []error) {
 }
 
 func runOnStdin(args *cli.Arguments) (errors []error) {
-	mapping, errs := getMapping(args.MapFiles, args.Mappings, args.Invert)
+	mapping, errs := getMapping(args)
 	if check(&errors, errs) && args.Strict {
 		return errors
 	}
 
-	scanner := bufio.NewScanner(os.Stdin)
-	writer := bufio.NewWriter(os.Stdout)
-	err := processBuffer(scanner, writer, mapping)
+	readWriter := bufio.NewReadWriter(
+		bufio.NewReader(os.Stdin),
+		bufio.NewWriter(os.Stdout),
+	)
+
+	err := processStdin(readWriter, mapping)
 	if err != nil {
 		errors = append(errors, err)
 	}

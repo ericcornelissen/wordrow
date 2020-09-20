@@ -24,7 +24,8 @@ func parseRow(row string, mapping map[string]string) error {
 	}
 
 	last := len(rowValues) - 1
-	common.AddToMapping(mapping, rowValues[0:last], rowValues[last])
+	additionalMappings := common.MapFrom(rowValues[0:last], rowValues[last])
+	common.MergeMaps(mapping, additionalMappings)
 	return nil
 }
 

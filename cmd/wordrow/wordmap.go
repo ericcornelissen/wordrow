@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 
 	"github.com/ericcornelissen/stringsx"
+	"github.com/ericcornelissen/wordrow/internal/cli"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
 	"github.com/ericcornelissen/wordrow/internal/mappings"
@@ -47,21 +48,19 @@ func parseMapFileArgument(argument string) (filePath, format string) {
 func processMapFile(
 	reader fs.Reader,
 	format string,
-	target map[string]string,
-) error {
+) (map[string]string, error) {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	content := string(data)
 	mapping, err := mappings.ParseFile(&content, format)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	merge(target, mapping)
-	return nil
+	return mapping, nil
 }
 
 // Opens the file provided by the handler and add its mapping to the `mapping`.
@@ -80,7 +79,13 @@ func openAndProcessMapFileWith(mapping map[string]string) handler {
 		defer handle.Close()
 
 		logger.Debugf("Processing '%s' as a map file", filePath)
-		return processMapFile(handle, format, mapping)
+		newMapping, err := processMapFile(handle, format)
+		if err != nil {
+			return err
+		}
+
+		merge(mapping, newMapping)
+		return nil
 	}
 }
 
@@ -111,20 +116,16 @@ func processInlineMappingWith(mapping map[string]string) handler {
 // that occurs is returned after both have been processed. In case of any error
 // the mapping that is returned represents only the arguments that could be
 // successfully processed.
-func getMapping(
-	mapFiles []string,
-	inlineMappings []string,
-	invertMapping bool,
-) (map[string]string, []error) {
+func getMapping(args *cli.Arguments) (map[string]string, []error) {
 	mapping := make(map[string]string)
 
-	errs := forEach(mapFiles, openAndProcessMapFileWith(mapping))
+	errs := forEach(args.MapFiles, openAndProcessMapFileWith(mapping))
 	errs = append(
 		errs,
-		forEach(inlineMappings, processInlineMappingWith(mapping))...,
+		forEach(args.Mappings, processInlineMappingWith(mapping))...,
 	)
 
-	if invertMapping {
+	if args.Invert {
 		mapping = invert(mapping)
 	}
 

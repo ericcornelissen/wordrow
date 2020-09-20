@@ -108,10 +108,12 @@ func TestProcessBuffer(t *testing.T) {
 
 		reader := stringsx.NewReader(content)
 		writer := new(bytes.Buffer)
-		scanner := bufio.NewScanner(reader)
-		bufferedWriter := bufio.NewWriter(writer)
+		readWriter := bufio.NewReadWriter(
+			bufio.NewReader(reader),
+			bufio.NewWriter(writer),
+		)
 
-		err := processBuffer(scanner, bufferedWriter, mapping)
+		err := processStdin(readWriter, mapping)
 		if err != nil {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
@@ -129,15 +131,16 @@ func TestProcessBuffer(t *testing.T) {
 
 		reader := stringsx.NewReader(content)
 		writer := new(bytes.Buffer)
-		scanner := bufio.NewScanner(reader)
-		bufferedWriter := bufio.NewWriter(writer)
+		readWriter := bufio.NewReadWriter(
+			bufio.NewReader(reader),
+			bufio.NewWriter(writer),
+		)
 
-		err := processBuffer(scanner, bufferedWriter, mapping)
+		err := processStdin(readWriter, mapping)
 		if err != nil {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
 
-		bufferedWriter.Flush()
 		written := writer.Bytes()
 		if string(written) != content {
 			t.Errorf("Unexpected value written (got '%s')", written)
@@ -151,10 +154,12 @@ func TestProcessBuffer(t *testing.T) {
 
 		reader := stringsx.NewReader(content)
 		writer := iotest.TruncateWriter(os.Stdin, 1)
-		scanner := bufio.NewScanner(reader)
-		bufferedWriter := bufio.NewWriterSize(writer, 109)
+		readWriter := bufio.NewReadWriter(
+			bufio.NewReader(reader),
+			bufio.NewWriterSize(writer, 1),
+		)
 
-		err := processBuffer(scanner, bufferedWriter, mapping)
+		err := processStdin(readWriter, mapping)
 		if err == nil {
 			t.Fatal("Expected an error but got none")
 		}
