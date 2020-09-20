@@ -17,6 +17,18 @@ const (
 	contextMapping
 )
 
+// Parse an argument that is not in option within a certain argument context.
+func (context argContext) parseValue(value string, arguments *Arguments) {
+	switch context {
+	case contextDefault:
+		arguments.InputFiles = append(arguments.InputFiles, value)
+	case contextMapFile:
+		arguments.MapFiles = append(arguments.MapFiles, value)
+	case contextMapping:
+		arguments.Mappings = append(arguments.Mappings, value)
+	}
+}
+
 // Get an argContext as a human readable string.
 func (context argContext) String() string {
 	template := "%s/%s"

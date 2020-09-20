@@ -74,22 +74,6 @@ func parseArgumentAsOption(
 	return newContext, nil
 }
 
-// Parse an argument that is not in option within a certain argument context.
-func parseArgumentAsValue(
-	value string,
-	context argContext,
-	arguments *Arguments,
-) {
-	switch context {
-	case contextDefault:
-		arguments.InputFiles = append(arguments.InputFiles, value)
-	case contextMapFile:
-		arguments.MapFiles = append(arguments.MapFiles, value)
-	case contextMapping:
-		arguments.Mappings = append(arguments.Mappings, value)
-	}
-}
-
 // Parse a single argument as an option or flag.
 //
 // The function sets the error if the argument could not be parsed (in the
@@ -129,7 +113,7 @@ func doParseOneArgument(
 
 		newContext, err = doParseOneOption(arg, arguments)
 	} else {
-		parseArgumentAsValue(arg, context, arguments)
+		context.parseValue(arg, arguments)
 		newContext = contextDefault
 	}
 

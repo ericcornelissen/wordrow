@@ -3,6 +3,9 @@ package mappings
 import (
 	"reflect"
 	"testing"
+
+	"github.com/ericcornelissen/wordrow/internal/mappings/csv"
+	"github.com/ericcornelissen/wordrow/internal/mappings/markdown"
 )
 
 func TestGetParserForUnknownFileType(t *testing.T) {
@@ -22,7 +25,7 @@ func TestGetParserForMarkDownFile(t *testing.T) {
 		}
 
 		actual := reflect.ValueOf(parseFn)
-		expected := reflect.ValueOf(parseMarkDownFile)
+		expected := reflect.ValueOf(markdown.Parse)
 		if actual.Pointer() != expected.Pointer() {
 			t.Error("The parser function should be the MarkDown parse function")
 		}
@@ -75,7 +78,7 @@ func TestGetParserForCSVFile(t *testing.T) {
 		}
 
 		actual := reflect.ValueOf(parseFn)
-		expected := reflect.ValueOf(parseCsvFile)
+		expected := reflect.ValueOf(csv.Parse)
 		if actual.Pointer() != expected.Pointer() {
 			t.Error("The parser function should be the CSV parse function")
 		}

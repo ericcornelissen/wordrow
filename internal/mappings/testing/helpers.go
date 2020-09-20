@@ -1,11 +1,17 @@
-package mappings
+package testing
 
-import "testing"
+type testingT interface {
+	Errorf(format string, args ...interface{})
 
-// Helper function to check if a mapping is of the correct size and contains the
-// correct values.
-func checkMapping(
-	t *testing.T,
+	Fatalf(format string, args ...interface{})
+
+	Helper()
+}
+
+// CheckMapping checks if a mapping is of the correct size and contains the
+// correct values. This is a test helper (i.e. it will call t.Helper()).
+func CheckMapping(
+	t testingT,
 	mapping map[string]string,
 	expected [][]string,
 ) {
@@ -21,6 +27,7 @@ func checkMapping(
 		actualTo, ok := mapping[from]
 		if !ok {
 			t.Errorf("Missing from-value '%s'", from)
+			continue
 		}
 
 		if actualTo != to {
