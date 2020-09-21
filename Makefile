@@ -113,6 +113,7 @@ analysis:
 
 format:
 	go fmt ./...
+	go mod tidy
 	goimports -w .
 
 lint: lint-go lint-md
