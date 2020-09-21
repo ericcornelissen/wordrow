@@ -33,40 +33,76 @@ type match struct {
 	end int
 }
 
+func detectAffix(s string) (prefix, suffix bool) {
+	if stringsx.HasPrefix(s, `-`) {
+		prefix = true
+	}
+
+	if stringsx.HasSuffix(s, `-`) && !stringsx.HasSuffix(s, `\-`) {
+		suffix = true
+	}
+
+	return prefix, suffix
+}
+
 // Get `s` as a safe regular expression, as well as an indication of whether or
 // not `s` allows prefixes and suffixes.
-func getRawExpr(s string) (pattern string, prefix, suffix bool) {
-	escapedHyphen := `\\-`
-
-	withPrefix, withSuffix := false, false
-	pattern = regexp.QuoteMeta(stringsx.ReplaceAll(s, `\\`, `\`))
-
-	if stringsx.HasPrefix(pattern, escapedHyphen) {
-		pattern = pattern[2:]
-	} else if stringsx.HasPrefix(pattern, `-`) {
-		withPrefix = true
-		pattern = pattern[1:]
+func toSafeString(s string) (safeString string) {
+	prefix, suffix := detectAffix(s)
+	if prefix {
+		s = s[1:]
+	}
+	if suffix {
+		s = s[:len(s)-1]
 	}
 
-	if stringsx.HasSuffix(pattern, escapedHyphen) {
-		pattern = pattern[:len(pattern)-3] + "-"
-	} else if stringsx.HasSuffix(pattern, `-`) {
-		withSuffix = true
-		pattern = pattern[:len(pattern)-1]
+	safeString = stringsx.ReplaceAll(s, `\\`, `\`)
+	safeString = stringsx.ReplaceAll(safeString, `\-`, `-`)
+	safeString = regexp.QuoteMeta(safeString)
+	return whitespaceExpr.ReplaceAllString(safeString, `\s+`)
+}
+
+// Check if a given match `m` is valid for the query string `s`. I.e. if the
+// match includes a prefix and/or suffix, is this supported by the query string.`
+func isValidFor(m match, s string) bool {
+	withPrefix, withSuffix := detectAffix(s)
+
+	if !withPrefix && m.prefix != "" {
+		return false
 	}
 
-	return whitespaceExpr.ReplaceAllString(pattern, `\s+`), withPrefix, withSuffix
+	if !withSuffix && m.suffix != "" {
+		return false
+	}
+
+	return true
+}
+
+// Get the replacement string including prefix/suffix given the match `m`.
+func getReplacement(m match, s string) string {
+	keepPrefix, keepSuffix := detectAffix(s)
+
+	replacement := s
+	if keepPrefix {
+		replacement = m.prefix + replacement[1:]
+	}
+
+	if keepSuffix {
+		replacement = replacement[:len(replacement)-1] + m.suffix
+	}
+
+	return replacement
 }
 
 // Find all matches of `substr` in a target string `s`.
 //
 // This function will panic if any non-UTF8 characters are used.
-func allMatches(s, expr string) chan match {
+func findAllMatches(s, substr string) chan match {
 	ch := make(chan match)
 	go func() {
 		defer close(ch)
 
-		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, expr)
+		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, substr)
 		expr := regexp.MustCompile(rawExpr)
 		for _, indices := range expr.FindAllStringSubmatchIndex(s, -1) {
 			matchstart, matchend := indices[0], indices[1]
@@ -88,32 +124,6 @@ func allMatches(s, expr string) chan match {
 	return ch
 }
 
-// Find all matches of `substr` in a target string `s` excluding those instances
-// where `from` has a prefix/suffix in `s` when this is not allowed.
-//
-// This function will panic if any non-UTF8 characters are used.
-func findMatches(s, substr string) chan match {
-	ch := make(chan match)
-	go func() {
-		defer close(ch)
-
-		rawExpr, withPrefix, withSuffix := getRawExpr(substr)
-		for match := range allMatches(s, rawExpr) {
-			if !withPrefix && match.prefix != "" {
-				continue
-			}
-
-			if !withSuffix && match.suffix != "" {
-				continue
-			}
-
-			ch <- match
-		}
-	}()
-
-	return ch
-}
-
 // Find all matches of the `from` string in a target string `s` with the correct
 // replacement based on the `to` string.
 //
@@ -129,18 +139,13 @@ func matches(s, from, to string) chan match {
 			return
 		}
 
-		for match := range findMatches(s, from) {
-			replacement := to
-
-			_, keepPrefix, keepSuffix := getRawExpr(to)
-			if keepPrefix {
-				replacement = match.prefix + replacement[1:]
-			}
-			if keepSuffix {
-				replacement = replacement[:len(replacement)-1] + match.suffix
+		safeSubstr := toSafeString(from)
+		for match := range findAllMatches(s, safeSubstr) {
+			if !isValidFor(match, from) {
+				continue
 			}
 
-			match.replacement = replacement
+			match.replacement = getReplacement(match, to)
 			ch <- match
 		}
 	}()
