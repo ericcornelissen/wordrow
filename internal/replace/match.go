@@ -64,7 +64,7 @@ func toSafeString(s string) (safeString string) {
 
 // Check if a given match `m` is valid for the query string `s`. I.e. if the
 // match includes a prefix and/or suffix, is this supported by the query string.`
-func isValidFor(m match, s string) bool {
+func isValidFor(m *match, s string) bool {
 	withPrefix, withSuffix := detectAffix(s)
 
 	if !withPrefix && m.prefix != "" {
@@ -79,7 +79,7 @@ func isValidFor(m match, s string) bool {
 }
 
 // Get the replacement string including prefix/suffix given the match `m`.
-func getReplacement(m match, s string) string {
+func getReplacement(m *match, s string) string {
 	keepPrefix, keepSuffix := detectAffix(s)
 
 	replacement := s
@@ -141,11 +141,12 @@ func matches(s, from, to string) chan match {
 
 		safeSubstr := toSafeString(from)
 		for match := range findAllMatches(s, safeSubstr) {
-			if !isValidFor(match, from) {
+			m := match
+			if !isValidFor(&m, from) {
 				continue
 			}
 
-			match.replacement = getReplacement(match, to)
+			match.replacement = getReplacement(&m, to)
 			ch <- match
 		}
 	}()
