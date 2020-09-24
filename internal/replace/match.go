@@ -17,9 +17,6 @@ type match struct {
 	// The matched word as it appears in the original string.
 	word string
 
-	// The replacement of the word based on the Mapping that created the Match.
-	replacement string
-
 	// The prefix of the matched word.
 	prefix string
 
@@ -33,6 +30,15 @@ type match struct {
 	end int
 }
 
+// Get an empty channel of matches.
+func emptyChannel() chan *match {
+	ch := make(chan *match)
+	close(ch)
+	return ch
+}
+
+// Detect whether the string `s` contains the *wordrow* syntax for prefixes
+// and/or suffixes.
 func detectAffix(s string) (prefix, suffix bool) {
 	if stringsx.HasPrefix(s, `-`) {
 		prefix = true
@@ -45,8 +51,8 @@ func detectAffix(s string) (prefix, suffix bool) {
 	return prefix, suffix
 }
 
-// Get `s` as a safe regular expression, as well as an indication of whether or
-// not `s` allows prefixes and suffixes.
+// Get string `s` as a safe regular expression (escaping special characters) as
+// well as removing any *wordrow* specific syntax.
 func toSafeString(s string) (safeString string) {
 	prefix, suffix := detectAffix(s)
 	if prefix {
@@ -62,11 +68,10 @@ func toSafeString(s string) (safeString string) {
 	return whitespaceExpr.ReplaceAllString(safeString, `\s+`)
 }
 
-// Check if a given match `m` is valid for the query string `s`. I.e. if the
-// match includes a prefix and/or suffix, is this supported by the query string.`
-func isValidFor(m *match, s string) bool {
-	withPrefix, withSuffix := detectAffix(s)
-
+// Check if a given match `m` is valid for the `query` string. I.e. if the match
+// includes a prefix and/or suffix, is this allowed by the query string.
+func isValidFor(m *match, query string) bool {
+	withPrefix, withSuffix := detectAffix(query)
 	if !withPrefix && m.prefix != "" {
 		return false
 	}
@@ -78,45 +83,40 @@ func isValidFor(m *match, s string) bool {
 	return true
 }
 
-// Get the replacement string including prefix/suffix given the match `m`.
-func getReplacement(m *match, s string) string {
-	keepPrefix, keepSuffix := detectAffix(s)
+// Convert a slice of 8 indices (in the range of `s`) and turn it into a match
+// struct.
+func indicesToMatch(s string, indices []int) *match {
+	matchStart, matchEnd := indices[0], indices[1]
+	prefixStart, prefixEnd := indices[2], indices[3]
+	wordStart, wordEnd := indices[4], indices[5]
+	suffixStart, suffixEnd := indices[6], indices[7]
 
-	replacement := s
-	if keepPrefix {
-		replacement = m.prefix + replacement[1:]
+	return &match{
+		full:   s[matchStart:matchEnd],
+		word:   s[wordStart:wordEnd],
+		prefix: s[prefixStart:prefixEnd],
+		suffix: s[suffixStart:suffixEnd],
+		start:  matchStart,
+		end:    matchEnd,
 	}
-
-	if keepSuffix {
-		replacement = replacement[:len(replacement)-1] + m.suffix
-	}
-
-	return replacement
 }
 
-// Find all matches of `substr` in a target string `s`.
+// Find all matches of a `query` string in a target string `s`.
 //
-// This function will panic if any non-UTF8 characters are used.
-func findAllMatches(s, substr string) chan match {
-	ch := make(chan match)
+// Note that non-UTF8 characters are not allowed, if any non-UTF characters are
+// detected the function will panic.
+func findMatches(s, query string) chan *match {
+	ch := make(chan *match)
 	go func() {
 		defer close(ch)
 
-		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, substr)
+		safeQuery := toSafeString(query)
+		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, safeQuery)
 		expr := regexp.MustCompile(rawExpr)
 		for _, indices := range expr.FindAllStringSubmatchIndex(s, -1) {
-			matchstart, matchend := indices[0], indices[1]
-			prefixstart, prefixend := indices[2], indices[3]
-			wordstart, wordend := indices[4], indices[5]
-			suffixstart, suffixend := indices[6], indices[7]
-
-			ch <- match{
-				full:   s[matchstart:matchend],
-				word:   s[wordstart:wordend],
-				prefix: s[prefixstart:prefixend],
-				suffix: s[suffixstart:suffixend],
-				start:  matchstart,
-				end:    matchend,
+			m := indicesToMatch(s, indices)
+			if isValidFor(m, query) {
+				ch <- m
 			}
 		}
 	}()
@@ -124,32 +124,15 @@ func findAllMatches(s, substr string) chan match {
 	return ch
 }
 
-// Find all matches of the `from` string in a target string `s` with the correct
-// replacement based on the `to` string.
+// Find all matches of a `query` string in a target string `s`.
 //
-// Note that non-UTF8 characters are not allowed, if any non-UTF* characters are
+// Note that non-UTF8 characters are not allowed, if any non-UTF characters are
 // detected no matches will be returned.
-func matches(s, from, to string) chan match {
-	ch := make(chan match)
-	go func() {
-		defer close(ch)
+func matches(s, query string) chan *match {
+	if !stringsx.IsValidUTF8(query) || stringsx.IsEmpty(query) {
+		logger.Warningf("Invalid mapping value '%s'", query)
+		return emptyChannel()
+	}
 
-		if !stringsx.IsValidUTF8(from) || stringsx.IsEmpty(from) {
-			logger.Warningf("Invalid mapping value '%s'", from)
-			return
-		}
-
-		safeSubstr := toSafeString(from)
-		for match := range findAllMatches(s, safeSubstr) {
-			m := match
-			if !isValidFor(&m, from) {
-				continue
-			}
-
-			match.replacement = getReplacement(&m, to)
-			ch <- match
-		}
-	}()
-
-	return ch
+	return findMatches(s, query)
 }

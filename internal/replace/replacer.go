@@ -17,13 +17,30 @@ package replace
 
 import "github.com/ericcornelissen/stringsx"
 
+// Get the replacement string including prefix/suffix given the match `m`.
+func getReplacement(m *match, s string) string {
+	keepPrefix, keepSuffix := detectAffix(s)
+
+	replacement := s
+	if keepPrefix {
+		replacement = m.prefix + replacement[1:]
+	}
+
+	if keepSuffix {
+		replacement = replacement[:len(replacement)-1] + m.suffix
+	}
+
+	return replacement
+}
+
 // Replace all instances of `from` by `to` in `s`.
 func replaceOne(s, from, to string) string {
 	var sb stringsx.Builder
 
 	lastIndex := 0
-	for match := range matches(s, from, to) {
-		replacement, offset := maintainFormatting(match.full, match.replacement)
+	for match := range matches(s, from) {
+		replacement := getReplacement(match, to)
+		replacement, offset := maintainFormatting(match.full, replacement)
 
 		sb.WriteString(s[lastIndex:match.start])
 		sb.WriteString(replacement)
