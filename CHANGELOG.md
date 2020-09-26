@@ -8,6 +8,7 @@ Versioning].
 ## [Unreleased]
 
 - Run on STDIN. ([#119])
+- Process input files in parallel. ([#132])
 
 ## [0.6.0-beta] - 2020-08-18
 
@@ -149,3 +150,4 @@ Versioning].
 [#116]: https://github.com/ericcornelissen/wordrow/pull/116
 [#118]: https://github.com/ericcornelissen/wordrow/pull/118
 [#119]: https://github.com/ericcornelissen/wordrow/pull/119
+[#132]: https://github.com/ericcornelissen/wordrow/pull/132

@@ -68,20 +68,23 @@ func processFile(file fs.ReadWriter, mapping map[string]string) error {
 }
 
 // Opens the file provided by the handler and process it using the `mapping`. If
-// opening the file fails or a reading or writing error occurs this function
-// returns an error.
-func openAndProcessFileWith(mapping map[string]string) handler {
-	return func(filePath string) error {
+// opening the file fails or a reading or writing error occurs the error is
+// outputted to the channel `ch`.
+func openAndProcessFileWith(
+	ch chan error,
+	mapping map[string]string,
+) func(value string) {
+	return func(filePath string) {
 		logger.Debugf("Opening '%s'", filePath)
 		handle, err := fs.OpenFile(filePath, fs.OReadWrite)
 		if err != nil {
-			return err
+			ch <- err
 		}
 
 		defer handle.Close()
 
 		logger.Debugf("Processing '%s'", filePath)
-		return processFile(handle, mapping)
+		ch <- processFile(handle, mapping)
 	}
 }
 
@@ -92,5 +95,13 @@ func processInputFiles(
 	filePaths []string,
 	mapping map[string]string,
 ) (errs []error) {
-	return forEach(filePaths, openAndProcessFileWith(mapping))
+	ch := make(chan error, len(filePaths))
+	defer close(ch)
+
+	openAndProcessFile := openAndProcessFileWith(ch, mapping)
+	for _, filePath := range filePaths {
+		go openAndProcessFile(filePath)
+	}
+
+	return drain(ch, len(filePaths))
 }
