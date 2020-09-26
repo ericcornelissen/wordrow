@@ -92,5 +92,20 @@ func processInputFiles(
 	filePaths []string,
 	mapping map[string]string,
 ) (errs []error) {
-	return forEach(filePaths, openAndProcessFileWith(mapping))
+	ch := make(chan error)
+	defer close(ch)
+
+	for _, filePath := range filePaths {
+		go func(filePath string) {
+			ch <- openAndProcessFileWith(mapping)(filePath)
+		}(filePath)
+	}
+
+	for range filePaths {
+		if err := <-ch; err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	return errs
 }
