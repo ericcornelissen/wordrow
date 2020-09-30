@@ -50,11 +50,3 @@ func invert(m map[string]string) map[string]string {
 
 	return inverted
 }
-
-// Merge the maps `target` and `other` into map `target`. Keys present in both
-// `target` and `other` will end up with the value of `other`.
-func merge(target, other map[string]string) {
-	for key, value := range other {
-		target[key] = value
-	}
-}
