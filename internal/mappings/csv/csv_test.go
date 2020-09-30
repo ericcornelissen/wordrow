@@ -1,10 +1,13 @@
 package csv
 
 import (
+	"bufio"
 	"fmt"
+	"io/ioutil"
 	"strings"
 	"testing"
 
+	"github.com/ericcornelissen/stringsx"
 	. "github.com/ericcornelissen/wordrow/internal/mappings/testing"
 )
 
@@ -131,16 +134,37 @@ func TestCsvToFewColumns(t *testing.T) {
 }
 
 func BenchmarkParseCsvWithString(b *testing.B) {
-	s := []byte("Hello,World\nfoo,bar\n3,4")
 	for n := 0; n < b.N; n++ {
+		reader := stringsx.NewReader("Hello,World\nfoo,bar\n3,4")
+		r := bufio.NewReader(reader)
+		s, _ := ioutil.ReadAll(r)
 		x := string(s)
-		Parse(&x)
+		_, err := Parse(&x)
+		if err != nil {
+			b.Errorf("Unexpected error: %s", err)
+		}
 	}
 }
 
 func BenchmarkParseCsvWithBytes(b *testing.B) {
-	s := []byte("Hello,World\nfoo,bar\n3,4")
 	for n := 0; n < b.N; n++ {
-		_parseCsvFile(s)
+		reader := stringsx.NewReader("Hello,World\nfoo,bar\n3,4")
+		r := bufio.NewReader(reader)
+		s, _ := ioutil.ReadAll(r)
+		_, err := _parseCsvFile(s)
+		if err != nil {
+			b.Errorf("Unexpected error: %s", err)
+		}
+	}
+}
+
+func BenchmarkParseCsvWithReader(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		reader := stringsx.NewReader("Hello,World\nfoo,bar\n3,4")
+		r := bufio.NewReader(reader)
+		_, err := __parseCsvFile(r)
+		if err != nil {
+			b.Errorf("Unexpected error: %s", err)
+		}
 	}
 }

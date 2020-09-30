@@ -1,6 +1,7 @@
 package csv
 
 import (
+	"bufio"
 	"bytes"
 
 	"github.com/ericcornelissen/stringsx"
@@ -85,6 +86,25 @@ func _parseCsvFile(rawFileData []byte) (ByteMap, error) {
 	lines := bytes.Split(rawFileData, []byte("\n"))
 	for i := 0; i < len(lines); i++ {
 		line := lines[i]
+		if len(bytes.TrimSpace(line)) == 0 {
+			continue
+		}
+
+		err := _parseRow(line, &wm)
+		if err != nil {
+			return wm, err
+		}
+	}
+
+	return wm, nil
+}
+
+func __parseCsvFile(r *bufio.Reader) (ByteMap, error) {
+	var wm ByteMap
+
+	var line []byte
+	var err error
+	for ; err == nil; line, _, err = r.ReadLine() {
 		if len(bytes.TrimSpace(line)) == 0 {
 			continue
 		}
