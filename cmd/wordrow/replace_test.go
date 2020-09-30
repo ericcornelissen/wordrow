@@ -9,18 +9,17 @@ import (
 	"testing/iotest"
 
 	"github.com/ericcornelissen/stringsx"
-	"github.com/ericcornelissen/wordrow/internal/wordmaps"
 )
 
 func TestDoReplace(t *testing.T) {
-	var wordmap wordmaps.WordMap
-	wordmap.AddOne("foo", "bar")
+	mapping := make(map[string]string, 1)
+	mapping["foo"] = "bar"
 
 	t.Run("Replace something", func(t *testing.T) {
 		content := "Foo Bar"
 		handle := stringsx.NewReader(content)
 
-		fixed, err := doReplace(handle, &wordmap)
+		fixed, err := doReplace(handle, mapping)
 		if err != nil {
 			t.Fatalf("Unexpected error for reader (%s)", err)
 		}
@@ -33,7 +32,7 @@ func TestDoReplace(t *testing.T) {
 		content := "Bar"
 		handle := stringsx.NewReader(content)
 
-		fixed, err := doReplace(handle, &wordmap)
+		fixed, err := doReplace(handle, mapping)
 		if err != nil {
 			t.Fatalf("Unexpected error for reader (%s)", err)
 		}
@@ -46,7 +45,7 @@ func TestDoReplace(t *testing.T) {
 		content := "Hello world"
 		handle := iotest.TimeoutReader(stringsx.NewReader(content))
 
-		_, err := doReplace(handle, &wordmap)
+		_, err := doReplace(handle, mapping)
 		if err == nil {
 			t.Error("Expected an error but didn't get one")
 		}
@@ -54,7 +53,7 @@ func TestDoReplace(t *testing.T) {
 	t.Run("Empty reader", func(t *testing.T) {
 		handle := stringsx.NewReader("")
 
-		fixed, err := doReplace(handle, &wordmap)
+		fixed, err := doReplace(handle, mapping)
 		if err != nil {
 			t.Fatalf("Unexpected error for reader (%s)", err)
 		}
@@ -95,14 +94,85 @@ func TestDoWriteBack(t *testing.T) {
 	})
 }
 
-func TestProcessFile(t *testing.T) {
-	var wordmap wordmaps.WordMap
-
+func TestProcessBuffer(t *testing.T) {
 	from0, to0 := "hello", "hey"
-	wordmap.AddOne(from0, to0)
-
 	from1, to1 := "world", "planet"
-	wordmap.AddOne(from1, to1)
+
+	mapping := make(map[string]string, 2)
+	mapping[from0] = to0
+	mapping[from1] = to1
+
+	t.Run("Replace something", func(t *testing.T) {
+		content := fmt.Sprintf("%s %s", from0, from1)
+		expectedWritten := fmt.Sprintf("%s %s\n", to0, to1)
+
+		reader := stringsx.NewReader(content)
+		writer := new(bytes.Buffer)
+		readWriter := bufio.NewReadWriter(
+			bufio.NewReader(reader),
+			bufio.NewWriter(writer),
+		)
+
+		err := processStdin(readWriter, mapping)
+		if err != nil {
+			t.Fatalf("Unexpected error (%s)", err)
+		}
+
+		written := writer.Bytes()
+		if string(written) != expectedWritten {
+			t.Errorf("Unexpected value written (got '%s')", written)
+		}
+	})
+	t.Run("Replace nothing", func(t *testing.T) {
+		content := "foobar\n"
+		if stringsx.Contains(content, from0) || stringsx.Contains(content, from1) {
+			t.Fatal("Content cannot contain a string that may be replaced")
+		}
+
+		reader := stringsx.NewReader(content)
+		writer := new(bytes.Buffer)
+		readWriter := bufio.NewReadWriter(
+			bufio.NewReader(reader),
+			bufio.NewWriter(writer),
+		)
+
+		err := processStdin(readWriter, mapping)
+		if err != nil {
+			t.Fatalf("Unexpected error (%s)", err)
+		}
+
+		written := writer.Bytes()
+		if string(written) != content {
+			t.Errorf("Unexpected value written (got '%s')", written)
+		}
+	})
+	t.Run("Writing error", func(t *testing.T) {
+		content := "foobar"
+		if len(content) < 2 {
+			t.Fatal("Content must be at least 2 bytes to ensure the writer errors")
+		}
+
+		reader := stringsx.NewReader(content)
+		writer := iotest.TruncateWriter(os.Stdin, 1)
+		readWriter := bufio.NewReadWriter(
+			bufio.NewReader(reader),
+			bufio.NewWriterSize(writer, 1),
+		)
+
+		err := processStdin(readWriter, mapping)
+		if err == nil {
+			t.Fatal("Expected an error but got none")
+		}
+	})
+}
+
+func TestProcessFile(t *testing.T) {
+	from0, to0 := "hello", "hey"
+	from1, to1 := "world", "planet"
+
+	mapping := make(map[string]string, 2)
+	mapping[from0] = to0
+	mapping[from1] = to1
 
 	t.Run("Replace something", func(t *testing.T) {
 		content := fmt.Sprintf("%s %s", from0, from1)
@@ -114,7 +184,7 @@ func TestProcessFile(t *testing.T) {
 		bufferedWriter := bufio.NewWriter(writer)
 		handle := bufio.NewReadWriter(bufferedReader, bufferedWriter)
 
-		err := processFile(handle, &wordmap)
+		err := processFile(handle, mapping)
 		if err != nil {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
@@ -137,7 +207,7 @@ func TestProcessFile(t *testing.T) {
 		bufferedWriter := bufio.NewWriter(writer)
 		handle := bufio.NewReadWriter(bufferedReader, bufferedWriter)
 
-		err := processFile(handle, &wordmap)
+		err := processFile(handle, mapping)
 		if err != nil {
 			t.Fatalf("Unexpected error (%s)", err)
 		}
@@ -157,7 +227,7 @@ func TestProcessFile(t *testing.T) {
 		bufferedWriter := bufio.NewWriter(writer)
 		handle := bufio.NewReadWriter(bufferedReader, bufferedWriter)
 
-		err := processFile(handle, &wordmap)
+		err := processFile(handle, mapping)
 		if err == nil {
 			t.Fatal("Expected an error but got none")
 		}
@@ -180,7 +250,7 @@ func TestProcessFile(t *testing.T) {
 		bufferedWriter := bufio.NewWriterSize(writer, 1)
 		handle := bufio.NewReadWriter(bufferedReader, bufferedWriter)
 
-		err := processFile(handle, &wordmap)
+		err := processFile(handle, mapping)
 		if err == nil {
 			t.Fatal("Expected an error but got none")
 		}

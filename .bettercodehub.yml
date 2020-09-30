@@ -1,0 +1,5 @@
+exclude:
+  # Code quality of testing utilities is not relevant.
+  - .*/testing/.*
+  # Code quality of fuzz code is not relevant.
+  - .*_fuzz.go

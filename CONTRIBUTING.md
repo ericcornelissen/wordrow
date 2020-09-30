@@ -16,6 +16,7 @@ of this document. In this document you can read about:
   - [Prerequisites](#prerequisites)
   - [Commands](#commands)
   - [Git Hooks](#git-hooks)
+  - [Docker](#docker)
 - [Testing](#testing)
   - [Fuzzing](#fuzzing)
 
@@ -92,10 +93,8 @@ The prerequisites for contributing to this project are:
 - Go; version `1.13`
 - Git
 - [GNU Make] (_Windows users can use [Make by GNUWin32]_)
-- [golint]
-- [gosec]
 - [go-fuzz] (_only for fuzzing_)
-- [NodeJS]; version `>=10` (_only needed for [markdownlint]_)
+- [NodeJS]; version `>=10` (_only for [markdownlint]_)
 
 ### Commands
 
@@ -104,10 +103,12 @@ of this project. Note that the table is (intentionally) incomplete.
 
 | Command          | Description                                          |
 | ---------------- | ---------------------------------------------------- |
-| `make`           | Compile a binary for the current OS called `wordrow` |
-| `make format`    | Format the source files of the project               |
+| `make`           | Compile a binary called `wordrow` for the current OS |
+| `make init`      | Initialize the development environment               |
+| `make install`   | Install all dependencies for the project             |
 | `make test`      | Run all test suites for the project                  |
 | `make coverage`  | Run all test suites and show the coverage results    |
+| `make format`    | Format the source files of the project               |
 | `make lint`      | Lint the source files of the project                 |
 | `make analysis`  | Run static analysis tools on the code base           |
 | `make build-all` | Compile all target binaries for the project          |
@@ -116,31 +117,23 @@ of this project. Note that the table is (intentionally) incomplete.
 ### Git Hooks
 
 We recommend [setting up a Git hook](https://githooks.com) on commits or pushes
-to make sure your changes don't include any accidental mistakes. You can use the
-following shell script as a template.
+to make sure your changes don't include any accidental mistakes. If you run
+`make hooks` (or `make init`) the recommended hooks will be installed for you.
+The source of these hooks can be found in [the `scripts/` directory](/scripts).
+
+### Docker
+
+You can use the Dockerfile found in this repository to create a [Docker] image
+for development purposes. This image will include all development prerequisites.
+Follow the instructions below to get started.
 
 ```shell
-#!/bin/sh
+# Build the image
+$ cd /path/to/wordrow
+$ docker build -t wordrow-dev .
 
-set -e
-
-# Stash unstaged changes
-git stash -q --keep-index
-
-# See if the project can be build and all tests pass.
-make
-make test
-
-# Format the codebase and include (relevant) formatting changes in the commit.
-make format
-git update-index --again
-
-# Check other formatting things. You can use `make lint-go` if you don't have
-# NodeJS on your system.
-make lint
-
-# Restore unstaged changes
-git stash pop -q
+# Start a container with the local project mounted
+$ docker run --rm -it -v "$PWD":/go/src/wordrow -w /go/src/wordrow wordrow-dev
 ```
 
 ---
@@ -175,7 +168,7 @@ $ make fuzz PKG=internal/cli
 
 # If there are multiple fuzzing functions for the package you must specify the
 # function name (including the "Fuzz" prefix) using "FUNC".
-$ make fuzz PKG=internal/wordmaps FUNC=FuzzMarkDown
+$ make fuzz PKG=internal/mappings/markdown FUNC=Fuzz
 ```
 
 In this project, fuzzing logic must be located in a file with the `_fuzz.go`
@@ -195,7 +188,6 @@ func Fuzz(data []byte) int {
 	// 4. Fuzz!
 	return 0
 }
-
 ```
 
 You are welcome to use existing fuzzing functions to discover bugs. You can also
@@ -204,11 +196,11 @@ improving any of the existing fuzzing functions. If you discover a bug while
 fuzzing, please submit a [Bug Report].
 
 [Bug Report]: https://github.com/ericcornelissen/wordrow/issues/new?labels=bug&template=bug_report.md
+[Docker]: https://www.docker.com/
 [Feature Request]: https://github.com/ericcornelissen/wordrow/issues/new?labels=enhancement&template=feature_request.md
 [go-fuzz]: https://github.com/dvyukov/go-fuzz
 [gofmt]: https://golang.org/cmd/gofmt/
 [golint]: https://github.com/golang/lint
-[gosec]: https://github.com/securego/gosec
 [GNU Make]: https://www.gnu.org/software/make/
 [Make by GNUWin32]: http://gnuwin32.sourceforge.net/packages/make.htm
 [markdownlint]: https://github.com/DavidAnson/markdownlint

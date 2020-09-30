@@ -1,8 +1,11 @@
-package wordmaps
+package mappings
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/ericcornelissen/wordrow/internal/mappings/csv"
+	"github.com/ericcornelissen/wordrow/internal/mappings/markdown"
 )
 
 func TestGetParserForUnknownFileType(t *testing.T) {
@@ -22,7 +25,7 @@ func TestGetParserForMarkDownFile(t *testing.T) {
 		}
 
 		actual := reflect.ValueOf(parseFn)
-		expected := reflect.ValueOf(parseMarkDownFile)
+		expected := reflect.ValueOf(markdown.Parse)
 		if actual.Pointer() != expected.Pointer() {
 			t.Error("The parser function should be the MarkDown parse function")
 		}
@@ -75,7 +78,7 @@ func TestGetParserForCSVFile(t *testing.T) {
 		}
 
 		actual := reflect.ValueOf(parseFn)
-		expected := reflect.ValueOf(parseCsvFile)
+		expected := reflect.ValueOf(csv.Parse)
 		if actual.Pointer() != expected.Pointer() {
 			t.Error("The parser function should be the CSV parse function")
 		}
@@ -96,53 +99,49 @@ func TestGetParserForCSVFile(t *testing.T) {
 }
 
 func TestParseFileNoParser(t *testing.T) {
-	var wm WordMap
 	content := "Hello world!"
 
-	err := parseFile(&content, ".bar", &wm)
+	_, err := ParseFile(&content, ".bar")
 	if err == nil {
 		t.Fatal("The error should set for this test")
 	}
 }
 
-func TestParseFileUpdatesWordMap(t *testing.T) {
-	var wm WordMap
+func TestParseFileFormatError(t *testing.T) {
 	content := "this is definitely not a real CSV file"
 
-	err := parseFile(&content, ".csv", &wm)
+	_, err := ParseFile(&content, ".csv")
 	if err == nil {
 		t.Fatal("The error should set for this test")
 	}
 }
 
 func TestParseFileParseCSV(t *testing.T) {
-	var wm WordMap
 	content := "foo,bar"
 
-	err := parseFile(&content, ".csv", &wm)
+	mapping, err := ParseFile(&content, ".csv")
 	if err != nil {
 		t.Fatalf("The error should not be set for this test (got '%s')", err)
 	}
 
-	if wm.Size() == 0 {
-		t.Error("The size of the WordMap should be greater than 0")
+	if len(mapping) == 0 {
+		t.Error("The size of the mapping should be greater than 0")
 	}
 }
 
 func TestParseFileParseMarkDown(t *testing.T) {
-	var wm WordMap
 	content := `
 		| From | To  |
 		| ---- | --- |
 		| foo  | bar |
 	`
 
-	err := parseFile(&content, ".md", &wm)
+	mapping, err := ParseFile(&content, ".md")
 	if err != nil {
 		t.Fatalf("The error should not be set for this test (got '%s')", err)
 	}
 
-	if wm.Size() == 0 {
-		t.Error("The size of the WordMap should be greater than 0")
+	if len(mapping) == 0 {
+		t.Error("The size of the mapping should be greater than 0")
 	}
 }

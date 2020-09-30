@@ -1,37 +1,41 @@
-package wordmaps
+package csv
 
 import (
 	"bytes"
 
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/mappings/common"
 )
 
-// Parse a single row of a CSV file and add it to the WordMap.
+// Parse a single row of a CSV file and add it to the `mapping`.
 //
 // The error will be set if the row has an unexpected format, for example an
 // incorrect number of columns.
-func parseRow(row string, wm *WordMap) error {
+func parseRow(row string, mapping map[string]string) error {
+	rowValuesCount := 2
+
 	rowValues := stringsx.Split(row, ",")
-	if len(rowValues) < 2 {
-		return errors.Newf("Unexpected row format (in '%s')", row)
+	if len(rowValues) < rowValuesCount {
+		return errors.Newf(common.IncorrectFormat, row)
 	}
 
 	rowValues = stringsx.MapAll(rowValues, stringsx.TrimSpace)
 	if stringsx.Any(rowValues, stringsx.IsEmpty) {
-		return errors.Newf("Missing value (in '%s')", row)
+		return errors.Newf(common.MissingValue, row)
 	}
 
 	last := len(rowValues) - 1
-	wm.AddMany(rowValues[0:last], rowValues[last])
+	additionalMappings := common.MapFrom(rowValues[0:last], rowValues[last])
+	common.MergeMaps(mapping, additionalMappings)
 	return nil
 }
 
-// Parse a Comma Separated Values (CSV) file into a WordMap.
+// Parse a Comma Separated Values (CSV) file into a map[string]string.
 //
 // The error will be set if any error occurred while parsing the CSV file.
-func parseCsvFile(rawFileData *string) (WordMap, error) {
-	var wm WordMap
+func Parse(rawFileData *string) (map[string]string, error) {
+	mapping := make(map[string]string, 1)
 
 	lines := stringsx.Split(*rawFileData, "\n")
 	for i := 0; i < len(lines); i++ {
@@ -40,13 +44,13 @@ func parseCsvFile(rawFileData *string) (WordMap, error) {
 			continue
 		}
 
-		err := parseRow(line, &wm)
+		err := parseRow(line, mapping)
 		if err != nil {
-			return wm, err
+			return mapping, err
 		}
 	}
 
-	return wm, nil
+	return mapping, nil
 }
 
 // Parse a single row of a CSV file and add it to the WordMap.
@@ -54,8 +58,10 @@ func parseCsvFile(rawFileData *string) (WordMap, error) {
 // The error will be set if the row has an unexpected format, for example an
 // incorrect number of columns.
 func _parseRow(row []byte, wm *ByteMap) error {
+	rowValuesCount := 2
+
 	rowValues := bytes.Split(row, []byte(","))
-	if len(rowValues) < 2 {
+	if len(rowValues) < rowValuesCount {
 		return errors.Newf("Unexpected row format (in '%s')", row)
 	}
 

@@ -4,16 +4,12 @@ import "testing"
 
 // CreateArgs creates a list of arguments in the same fashion as `os.Args`.
 func createArgs(args ...string) []string {
-	cliArgs := []string{"wordrow"}
-	for _, arg := range args {
-		cliArgs = append(cliArgs, arg)
-	}
-
-	return cliArgs
+	baseArg := []string{"wordrow"}
+	return append(baseArg, args...)
 }
 
 // Test if DryRun has the default value.
-func testDefaultDryRun(t *testing.T, arguments Arguments) {
+func testDefaultDryRun(t *testing.T, arguments *Arguments) {
 	t.Helper()
 
 	if arguments.DryRun == true {
@@ -22,7 +18,7 @@ func testDefaultDryRun(t *testing.T, arguments Arguments) {
 }
 
 // Test if Invert has the default value.
-func testDefaultInvert(t *testing.T, arguments Arguments) {
+func testDefaultInvert(t *testing.T, arguments *Arguments) {
 	t.Helper()
 
 	if arguments.Invert == true {
@@ -31,7 +27,7 @@ func testDefaultInvert(t *testing.T, arguments Arguments) {
 }
 
 // Test if Silent has the default value.
-func testDefaultSilent(t *testing.T, arguments Arguments) {
+func testDefaultSilent(t *testing.T, arguments *Arguments) {
 	t.Helper()
 
 	if arguments.Silent == true {
@@ -40,7 +36,7 @@ func testDefaultSilent(t *testing.T, arguments Arguments) {
 }
 
 // Test if Verbose has the default value.
-func testDefaultVerbose(t *testing.T, arguments Arguments) {
+func testDefaultVerbose(t *testing.T, arguments *Arguments) {
 	t.Helper()
 
 	if arguments.Verbose == true {
@@ -49,7 +45,7 @@ func testDefaultVerbose(t *testing.T, arguments Arguments) {
 }
 
 // Test if Strict has the default value.
-func testDefaultStrict(t *testing.T, arguments Arguments) {
+func testDefaultStrict(t *testing.T, arguments *Arguments) {
 	t.Helper()
 
 	if arguments.Strict == true {
@@ -58,7 +54,7 @@ func testDefaultStrict(t *testing.T, arguments Arguments) {
 }
 
 // Test if MapFiles has the default value.
-func testDefaultMapFiles(t *testing.T, arguments Arguments) {
+func testDefaultMapFiles(t *testing.T, arguments *Arguments) {
 	t.Helper()
 
 	if len(arguments.MapFiles) != 0 {
@@ -67,7 +63,7 @@ func testDefaultMapFiles(t *testing.T, arguments Arguments) {
 }
 
 // Test if Mappings has the default value.
-func testDefaultMappings(t *testing.T, arguments Arguments) {
+func testDefaultMappings(t *testing.T, arguments *Arguments) {
 	t.Helper()
 
 	if len(arguments.Mappings) != 0 {
@@ -76,7 +72,7 @@ func testDefaultMappings(t *testing.T, arguments Arguments) {
 }
 
 // Test if all default values of an Arguments instance except one.
-func testDefaultsExcept(t *testing.T, arguments Arguments, exclude string) {
+func testDefaultsExcept(t *testing.T, arguments *Arguments, exclude string) {
 	t.Helper()
 
 	if exclude != "dryrun" {

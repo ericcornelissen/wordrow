@@ -4,10 +4,10 @@ import (
 	"io/ioutil"
 
 	"github.com/ericcornelissen/stringsx"
-	"github.com/ericcornelissen/wordrow/internal/errors"
+	"github.com/ericcornelissen/wordrow/internal/cli"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
-	"github.com/ericcornelissen/wordrow/internal/wordmaps"
+	"github.com/ericcornelissen/wordrow/internal/mappings"
 )
 
 // Parse a --map-file argument into its component parts.
@@ -29,7 +29,7 @@ import (
 //
 // In the former the file explicitly stated format, in the latter no format is
 // returned.
-func parseMapFileArgument(argument string) (filePath string, format string) {
+func parseMapFileArgument(argument string) (filePath, format string) {
 	fileExtension := fs.GetExt(argument)
 
 	explicitFormatSplit := stringsx.Split(argument, ":")
@@ -42,75 +42,92 @@ func parseMapFileArgument(argument string) (filePath string, format string) {
 	return argument, fileExtension
 }
 
-// Add the mapping of `reader` to the `wordmap`. The `format` argument
+// Add the mapping of the `reader` to the `target`. The `format` argument
 // determines how the contents of the file are parsed. This function returns an
 // error if either the reading or parsing fails.
 func processMapFile(
 	reader fs.Reader,
 	format string,
-	wordmap *wordmaps.WordMap,
-) error {
+) (map[string]string, error) {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	content := string(data)
-	return wordmap.AddFile(&content, format)
+	mapping, err := mappings.ParseFile(&content, format)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapping, nil
 }
 
-// Opens the file provided by the handler and add its mapping to the `wordmap`.
-// If the file cannot be opened or processing failed the function returns an
+// Opens the file provided by the handler and add its mapping to the `mapping`.
+// If the file cannot be opened or processing failed the handler returns an
 // error.
-func openAndProcessMapFileWith(wordmap *wordmaps.WordMap) fileHandler {
+func openAndProcessMapFileWith(mapping map[string]string) handler {
 	return func(fileArgument string) error {
 		filePath, format := parseMapFileArgument(fileArgument)
 
 		logger.Debugf("Opening '%s' as a '%s' formatted map file", filePath, format)
 		handle, err := fs.OpenFile(filePath, fs.OReadOnly)
 		if err != nil {
-			return errors.Newf("Could not open '%s' (%s mode)", filePath, fs.OReadOnly)
+			return err
 		}
 
 		defer handle.Close()
 
 		logger.Debugf("Processing '%s' as a map file", filePath)
-		return processMapFile(handle, format, wordmap)
-	}
-}
-
-// Add a CLI defined mapping to the `wordmap`. If the mapping is invalid this
-// function returns an error (and leave `wordmap` unchanged).
-func processInlineMapping(mapping string, wordmap *wordmaps.WordMap) error {
-	return wordmap.AddFile(&mapping, "csv")
-}
-
-// Add all CLI defined mappings to the `wordmap`. Any error that occurs is
-// returned after all mappings have been processed.
-func processInlineMappings(
-	mappings []string,
-	wordmap *wordmaps.WordMap,
-) (errs []error) {
-	for _, mapping := range mappings {
-		logger.Debugf("Processing '%s' as a CLI specified mapping", mapping)
-		err := processInlineMapping(mapping, wordmap)
+		newMapping, err := processMapFile(handle, format)
 		if err != nil {
-			errs = append(errs, err)
+			return err
 		}
-	}
 
-	return errs
+		merge(mapping, newMapping)
+		return nil
+	}
 }
 
-// Get a WordMap for the specified `mapFiles` and `inlineMappings`. Any error
+// Processes the value provided by the handler and add its mapping to the
+// `target`. Of the value cannot be parsed as a CSV mapping the handler returns
+// an error.
+func processInlineMapping(value string, target map[string]string) error {
+	mapping, err := mappings.ParseFile(&value, "csv")
+	if err != nil {
+		return err
+	}
+
+	merge(target, mapping)
+	return nil
+}
+
+// Processes the value provided by the handler and add its mapping to the
+// `mapping`. Of the value cannot be parsed as a CSV mapping the handler returns
+// an error.
+func processInlineMappingWith(mapping map[string]string) handler {
+	return func(value string) error {
+		logger.Debugf("Processing '%s' as a CLI specified mapping", value)
+		return processInlineMapping(value, mapping)
+	}
+}
+
+// Get a mapping for the specified `mapFiles` and `inlineMappings`. Any error
 // that occurs is returned after both have been processed. In case of any error
-// the `wordmap` that is returned represents only the arguments that could be
+// the mapping that is returned represents only the arguments that could be
 // successfully processed.
-func getWordMap(
-	mapFiles []string,
-	inlineMappings []string,
-) (wordmap wordmaps.WordMap, errs []error) {
-	errs = forEach(mapFiles, openAndProcessMapFileWith(&wordmap))
-	errs = append(errs, processInlineMappings(inlineMappings, &wordmap)...)
-	return wordmap, errs
+func getMapping(args *cli.Arguments) (map[string]string, []error) {
+	mapping := make(map[string]string)
+
+	errs := forEach(args.MapFiles, openAndProcessMapFileWith(mapping))
+	errs = append(
+		errs,
+		forEach(args.Mappings, processInlineMappingWith(mapping))...,
+	)
+
+	if args.Invert {
+		mapping = invert(mapping)
+	}
+
+	return mapping, errs
 }

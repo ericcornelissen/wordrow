@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"os"
 
 	"github.com/ericcornelissen/wordrow/internal/cli"
@@ -8,14 +9,26 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/logger"
 )
 
-func run(args cli.Arguments) (errors []error) {
-	wordmap, errs := getWordMap(args.MapFiles, args.Mappings)
+func run(args *cli.Arguments) {
+	if hasStdin() {
+		logger.SetLogLevel(logger.FATAL)
+		errors := runOnStdin(args)
+		if errors != nil {
+			panic(errors)
+		}
+	} else {
+		setLogLevel(args)
+		errors := runOnFiles(args)
+		for _, err := range errors {
+			logger.Error(err)
+		}
+	}
+}
+
+func runOnFiles(args *cli.Arguments) (errors []error) {
+	mapping, errs := getMapping(args)
 	if check(&errors, errs) && args.Strict {
 		return errs
-	}
-
-	if args.Invert {
-		wordmap.Invert()
 	}
 
 	filePaths, errs := fs.ResolveGlobs(args.InputFiles...)
@@ -24,19 +37,38 @@ func run(args cli.Arguments) (errors []error) {
 	}
 
 	if !args.DryRun {
-		errs = processInputFiles(filePaths, &wordmap)
+		errs = processInputFiles(filePaths, mapping)
 		check(&errors, errs)
 	}
 
 	return errors
 }
 
-func check(errors *[]error, errs []error) bool {
-	*errors = append(*errors, errs...)
+func runOnStdin(args *cli.Arguments) (errors []error) {
+	mapping, errs := getMapping(args)
+	if check(&errors, errs) && args.Strict {
+		return errors
+	}
+
+	readWriter := bufio.NewReadWriter(
+		bufio.NewReader(os.Stdin),
+		bufio.NewWriter(os.Stdout),
+	)
+
+	err := processStdin(readWriter, mapping)
+	if err != nil {
+		errors = append(errors, err)
+	}
+
+	return errors
+}
+
+func check(errors *[]error, newErrors []error) bool {
+	*errors = append(*errors, newErrors...)
 	return len(*errors) > 0
 }
 
-func setLogLevel(args cli.Arguments) {
+func setLogLevel(args *cli.Arguments) {
 	if args.Silent {
 		logger.SetLogLevel(logger.ERROR)
 	} else if args.Verbose {
@@ -46,17 +78,11 @@ func setLogLevel(args cli.Arguments) {
 
 func main() {
 	shouldRun, args := cli.ParseArgs(os.Args)
-
 	if args.Version {
 		printVersion()
 	}
 
-	if shouldRun {
-		setLogLevel(args)
-
-		errs := run(args)
-		for _, err := range errs {
-			logger.Error(err)
-		}
+	if shouldRun || hasStdin() {
+		run(&args)
 	}
 }

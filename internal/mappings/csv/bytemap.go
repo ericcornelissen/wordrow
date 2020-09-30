@@ -1,8 +1,6 @@
-package wordmaps
+package csv
 
-import (
-	"bytes"
-)
+import "bytes"
 
 // The ByteMap type provides a guaranteed mapping from one set of strings to
 // another set of strings.
