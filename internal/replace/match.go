@@ -12,16 +12,16 @@ import (
 // Mapping, possibly including a prefix and/or suffix.
 type match struct {
 	// The full match, i.e. the word including prefix and suffix.
-	full string
+	full []byte
 
 	// The matched word as it appears in the original string.
-	word string
+	word []byte
 
 	// The prefix of the matched word.
-	prefix string
+	prefix []byte
 
 	// The suffix of the matched word.
-	suffix string
+	suffix []byte
 
 	// The starting index of the (full) match in the original string.
 	start int
@@ -72,11 +72,11 @@ func toSafeString(s string) (safeString string) {
 // includes a prefix and/or suffix, is this allowed by the query string.
 func isValidFor(m *match, query string) bool {
 	withPrefix, withSuffix := detectAffix(query)
-	if !withPrefix && m.prefix != "" {
+	if !withPrefix && len(m.prefix) != 0 {
 		return false
 	}
 
-	if !withSuffix && m.suffix != "" {
+	if !withSuffix && len(m.suffix) != 0 {
 		return false
 	}
 
@@ -85,7 +85,7 @@ func isValidFor(m *match, query string) bool {
 
 // Convert a slice of 8 indices (in the range of `s`) and turn it into a match
 // struct.
-func indicesToMatch(s string, indices []int) *match {
+func indicesToMatch(s []byte, indices []int) *match {
 	matchStart, matchEnd := indices[0], indices[1]
 	prefixStart, prefixEnd := indices[2], indices[3]
 	wordStart, wordEnd := indices[4], indices[5]
@@ -105,7 +105,7 @@ func indicesToMatch(s string, indices []int) *match {
 //
 // Note that non-UTF8 characters are not allowed, if any non-UTF characters are
 // detected the function will panic.
-func findMatches(s, query string) chan *match {
+func findMatches(s []byte, query string) chan *match {
 	ch := make(chan *match)
 	go func() {
 		defer close(ch)
@@ -113,7 +113,7 @@ func findMatches(s, query string) chan *match {
 		safeQuery := toSafeString(query)
 		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, safeQuery)
 		expr := regexp.MustCompile(rawExpr)
-		for _, indices := range expr.FindAllStringSubmatchIndex(s, -1) {
+		for _, indices := range expr.FindAllSubmatchIndex(s, -1) {
 			m := indicesToMatch(s, indices)
 			if isValidFor(m, query) {
 				ch <- m
@@ -128,7 +128,7 @@ func findMatches(s, query string) chan *match {
 //
 // Note that non-UTF8 characters are not allowed, if any non-UTF characters are
 // detected no matches will be returned.
-func matches(s, query string) chan *match {
+func matches(s []byte, query string) chan *match {
 	if !stringsx.IsValidUTF8(query) || stringsx.IsEmpty(query) {
 		logger.Warningf("Invalid mapping value '%s'", query)
 		return emptyChannel()
