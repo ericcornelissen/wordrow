@@ -7,6 +7,7 @@ import (
 
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/cli"
+	"github.com/ericcornelissen/wordrow/internal/common"
 )
 
 const (
@@ -30,7 +31,7 @@ func _processMapFile(s, format string, mapping map[string]string) {
 	mapfileReader := stringsx.NewReader(s)
 	newMapping, err := processMapFile(mapfileReader, format)
 	if err == nil {
-		merge(mapping, newMapping)
+		common.MergeMaps(mapping, newMapping)
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/cli"
+	"github.com/ericcornelissen/wordrow/internal/common"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
 	"github.com/ericcornelissen/wordrow/internal/mappings"
@@ -84,7 +85,7 @@ func openAndProcessMapFileWith(mapping map[string]string) handler {
 			return err
 		}
 
-		merge(mapping, newMapping)
+		common.MergeMaps(mapping, newMapping)
 		return nil
 	}
 }
@@ -98,7 +99,7 @@ func processInlineMapping(value string, target map[string]string) error {
 		return err
 	}
 
-	merge(target, mapping)
+	common.MergeMaps(target, mapping)
 	return nil
 }
 
