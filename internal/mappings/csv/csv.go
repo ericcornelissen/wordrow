@@ -58,7 +58,7 @@ func Parse(rawFileData *string) (map[string]string, error) {
 //
 // The error will be set if the row has an unexpected format, for example an
 // incorrect number of columns.
-func _parseRow(row []byte, wm *ByteMap) error {
+func parseRowAsBytes(row []byte, wm *ByteMap) error {
 	rowValuesCount := 2
 
 	rowValues := bytes.Split(row, []byte(","))
@@ -77,29 +77,11 @@ func _parseRow(row []byte, wm *ByteMap) error {
 	return nil
 }
 
-// Parse a Comma Separated Values (CSV) file into a WordMap.
+// ParseReader parses a Comma Separated Values (CSV) file from a reader into a
+// ByteMap.
 //
 // The error will be set if any error occurred while parsing the CSV file.
-func _parseCsvFile(rawFileData []byte) (ByteMap, error) {
-	var wm ByteMap
-
-	lines := bytes.Split(rawFileData, []byte("\n"))
-	for i := 0; i < len(lines); i++ {
-		line := lines[i]
-		if len(bytes.TrimSpace(line)) == 0 {
-			continue
-		}
-
-		err := _parseRow(line, &wm)
-		if err != nil {
-			return wm, err
-		}
-	}
-
-	return wm, nil
-}
-
-func __parseCsvFile(r *bufio.Reader) (ByteMap, error) {
+func ParseReader(r *bufio.Reader) (ByteMap, error) {
 	var wm ByteMap
 
 	var line []byte
@@ -109,7 +91,7 @@ func __parseCsvFile(r *bufio.Reader) (ByteMap, error) {
 			continue
 		}
 
-		err := _parseRow(line, &wm)
+		err := parseRowAsBytes(line, &wm)
 		if err != nil {
 			return wm, err
 		}

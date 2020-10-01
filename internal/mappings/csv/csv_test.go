@@ -146,23 +146,11 @@ func BenchmarkParseCsvWithString(b *testing.B) {
 	}
 }
 
-func BenchmarkParseCsvWithBytes(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		reader := stringsx.NewReader("Hello,World\nfoo,bar\n3,4")
-		r := bufio.NewReader(reader)
-		s, _ := ioutil.ReadAll(r)
-		_, err := _parseCsvFile(s)
-		if err != nil {
-			b.Errorf("Unexpected error: %s", err)
-		}
-	}
-}
-
 func BenchmarkParseCsvWithReader(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		reader := stringsx.NewReader("Hello,World\nfoo,bar\n3,4")
 		r := bufio.NewReader(reader)
-		_, err := __parseCsvFile(r)
+		_, err := ParseReader(r)
 		if err != nil {
 			b.Errorf("Unexpected error: %s", err)
 		}
