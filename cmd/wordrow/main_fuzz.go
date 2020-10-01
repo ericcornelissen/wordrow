@@ -7,7 +7,7 @@ import (
 
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/cli"
-	"github.com/ericcornelissen/wordrow/internal/mappings/common"
+	"github.com/ericcornelissen/wordrow/internal/common"
 )
 
 const (

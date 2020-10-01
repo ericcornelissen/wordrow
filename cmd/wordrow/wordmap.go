@@ -5,10 +5,10 @@ import (
 
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/cli"
+	"github.com/ericcornelissen/wordrow/internal/common"
 	"github.com/ericcornelissen/wordrow/internal/fs"
 	"github.com/ericcornelissen/wordrow/internal/logger"
 	"github.com/ericcornelissen/wordrow/internal/mappings"
-	"github.com/ericcornelissen/wordrow/internal/mappings/common"
 )
 
 // Parse a --map-file argument into its component parts.
