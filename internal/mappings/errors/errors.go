@@ -22,7 +22,7 @@ func NewIncorrectFormat(s string) error {
 	return errors.Newf(incorrectFormat, s)
 }
 
-// NewMissingValue returns a new error for an missing value.
+// NewMissingValue returns a new error for a missing value.
 func NewMissingValue(s string) error {
 	return errors.Newf(missingValue, s)
 }

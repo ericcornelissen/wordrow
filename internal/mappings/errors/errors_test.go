@@ -1,8 +1,6 @@
 package errors
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func ExampleNewf() {
 	err := Newf("foo%s", "bar")
