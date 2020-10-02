@@ -402,6 +402,9 @@ func TestMappingOption(t *testing.T) {
 			t.Errorf("First mapping was incorrect (was '%s')", arguments.Mappings[0])
 		}
 	})
+}
+
+func TestMappingOptionWithAffixNotation(t *testing.T) {
 	t.Run("prefix notation", func(t *testing.T) {
 		mapping := "-bar,-baz"
 
