@@ -559,7 +559,7 @@ func TestToSafeString(t *testing.T) {
 			t.Errorf("Unexpected regular expression (%s != %s)", actual, expected)
 		}
 	})
-	t.Run("escape paranthesis", func(t *testing.T) {
+	t.Run("escape parenthesis", func(t *testing.T) {
 		substr := fmt.Sprintf(`(%s`, base)
 		actual := toSafeString(substr)
 
