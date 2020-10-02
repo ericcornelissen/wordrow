@@ -1,42 +1,24 @@
 package fs
 
 import (
-	"os"
 	"path/filepath"
 	"regexp"
 
 	"github.com/ericcornelissen/wordrow/internal/errors"
-	"github.com/ericcornelissen/wordrow/internal/logger"
 	"github.com/yargevad/filepathx"
 )
 
 // Regular expression for glob strings.
 var globExpr = regexp.MustCompile(`[\*\?\[\]]`)
 
-// Get the (current) working directory.
-//
-// The function panics if the (current) working directory could not be found.
-func getCwd() string {
-	cwd, err := os.Getwd()
-	if err != nil {
-		logger.Fatal("Current working directory could not be obtained")
-		panic(1)
-	}
-
-	return cwd
-}
-
 // GetExt returns the extension of a given file path.
 func GetExt(path string) string {
 	return filepath.Ext(path)
 }
 
-// ResolveGlobs resolves any number of globs or file paths into distinct file paths.
-//
-// The function sets the error if at least one malformed pattern is found. Only
-// the last malformed pattern is reported. The list of paths will contain all
-// paths for valid not-malformed patterns.
-func ResolveGlobs(patterns ...string) (paths []string, rerr error) {
+// ResolveGlobs resolves any number of globs or file paths into distinct file
+// paths. The function returns an error for every invalid pattern.
+func ResolveGlobs(patterns ...string) (paths []string, errs []error) {
 	for _, pattern := range patterns {
 		if !globExpr.MatchString(pattern) {
 			paths = append(paths, pattern)
@@ -45,11 +27,11 @@ func ResolveGlobs(patterns ...string) (paths []string, rerr error) {
 
 		matches, err := filepathx.Glob(pattern)
 		if err != nil {
-			rerr = errors.Newf("Malformed pattern (%s)", pattern)
+			errs = append(errs, errors.Newf("Malformed pattern (%s)", pattern))
 		} else {
 			paths = append(paths, matches...)
 		}
 	}
 
-	return paths, rerr
+	return paths, errs
 }

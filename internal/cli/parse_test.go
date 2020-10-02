@@ -62,7 +62,7 @@ func TestDefaultOptions(t *testing.T) {
 		t.Fatal("The first return value should be true for this test")
 	}
 
-	testDefaultsExcept(t, arguments, "")
+	testDefaultsExcept(t, &arguments, "")
 
 	if len(arguments.InputFiles) != 1 {
 		t.Error("The list of InputFiles should contain a single file")
@@ -77,7 +77,7 @@ func TestDryRunFlag(t *testing.T) {
 		t.Fatal("The first return value should be true for this test")
 	}
 
-	testDefaultsExcept(t, arguments, "dryrun")
+	testDefaultsExcept(t, &arguments, "dryrun")
 
 	if arguments.DryRun != true {
 		t.Errorf("The DryRun value should be true if %s is an argument", dryRunFlag)
@@ -93,7 +93,7 @@ func TestInvertFlag(t *testing.T) {
 			t.Fatal("The first return value should be true for this test")
 		}
 
-		testDefaultsExcept(t, arguments, "invert")
+		testDefaultsExcept(t, &arguments, "invert")
 
 		if arguments.Invert != true {
 			t.Errorf("The Invert value should be true if %s is an argument", invertFlag)
@@ -107,7 +107,7 @@ func TestInvertFlag(t *testing.T) {
 			t.Fatal("The first return value should be true for this test")
 		}
 
-		testDefaultsExcept(t, arguments, "invert")
+		testDefaultsExcept(t, &arguments, "invert")
 
 		if arguments.Invert != true {
 			t.Errorf("The Invert value should be true if %s is an argument", invertFlag.alias)
@@ -124,7 +124,7 @@ func TestSilentFlag(t *testing.T) {
 			t.Fatal("The first return value should be true for this test")
 		}
 
-		testDefaultsExcept(t, arguments, "silent")
+		testDefaultsExcept(t, &arguments, "silent")
 
 		if arguments.Silent != true {
 			t.Errorf("The Silent value should be true if %s is an argument", silentFlag)
@@ -138,7 +138,7 @@ func TestSilentFlag(t *testing.T) {
 			t.Fatal("The first return value should be true for this test")
 		}
 
-		testDefaultsExcept(t, arguments, "silent")
+		testDefaultsExcept(t, &arguments, "silent")
 
 		if arguments.Silent != true {
 			t.Errorf("The Silent value should be true if %s is an argument", silentFlag.alias)
@@ -155,7 +155,7 @@ func TestVerboseFlag(t *testing.T) {
 			t.Fatal("The first return value should be true for this test")
 		}
 
-		testDefaultsExcept(t, arguments, "verbose")
+		testDefaultsExcept(t, &arguments, "verbose")
 
 		if arguments.Verbose != true {
 			t.Errorf("The Verbose value should be true if %s is an argument", verboseFlag)
@@ -169,10 +169,41 @@ func TestVerboseFlag(t *testing.T) {
 			t.Fatal("The first return value should be true for this test")
 		}
 
-		testDefaultsExcept(t, arguments, "verbose")
+		testDefaultsExcept(t, &arguments, "verbose")
 
 		if arguments.Verbose != true {
 			t.Errorf("The Verbose value should be true if %s is an argument", verboseFlag.alias)
+		}
+	})
+}
+
+func TestStrictFlag(t *testing.T) {
+	t.Run(strictFlag.name, func(t *testing.T) {
+		args := createArgs(strictFlag.name, "foo.bar")
+		run, arguments := ParseArgs(args)
+
+		if run != true {
+			t.Fatal("The first return value should be true for this test")
+		}
+
+		testDefaultsExcept(t, &arguments, "strict")
+
+		if arguments.Strict != true {
+			t.Errorf("The Strict value should be true if %s is an argument", strictFlag)
+		}
+	})
+	t.Run(strictFlag.alias, func(t *testing.T) {
+		args := createArgs(strictFlag.alias, "foo.bar")
+		run, arguments := ParseArgs(args)
+
+		if run != true {
+			t.Fatal("The first return value should be true for this test")
+		}
+
+		testDefaultsExcept(t, &arguments, "strict")
+
+		if arguments.Strict != true {
+			t.Errorf("The Strict value should be true if %s is an argument", strictFlag.alias)
 		}
 	})
 }
@@ -224,74 +255,6 @@ func TestCombinedFlags(t *testing.T) {
 	})
 }
 
-func TestConfigFileOption(t *testing.T) {
-	configFile := "config.json"
-
-	t.Run(configOption.name, func(t *testing.T) {
-		args := createArgs(configOption.name, configFile, "foo.bar")
-		run, arguments := ParseArgs(args)
-
-		if run != true {
-			t.Fatal("The first return value should be true for this test")
-		}
-
-		testDefaultsExcept(t, arguments, "config file")
-
-		if arguments.ConfigFile != configFile {
-			t.Errorf("The config file was incorrect (was '%s')", arguments.ConfigFile)
-		}
-	})
-	t.Run(configOption.alias, func(t *testing.T) {
-		args := createArgs(configOption.alias, configFile, "foo.bar")
-		run, arguments := ParseArgs(args)
-
-		if run != true {
-			t.Fatal("The first return value should be true for this test")
-		}
-
-		testDefaultsExcept(t, arguments, "config file")
-
-		if arguments.ConfigFile != configFile {
-			t.Errorf("The config file was incorrect (was '%s')", arguments.ConfigFile)
-		}
-	})
-	t.Run("multiple configuration files (overrides)", func(t *testing.T) {
-		otherConfigFile := "foobar.json"
-
-		args := createArgs(configOption.name, configFile, configOption.name, otherConfigFile, "foo.bar")
-		run, arguments := ParseArgs(args)
-
-		if run != true {
-			t.Fatal("The first return value should be true for this test")
-		}
-
-		testDefaultsExcept(t, arguments, "config file")
-
-		if arguments.ConfigFile != otherConfigFile {
-			t.Errorf("The config file was incorrect (was '%s')", arguments.ConfigFile)
-		}
-	})
-}
-
-func TestConfigFileOptionIncorrect(t *testing.T) {
-	t.Run("value missing", func(t *testing.T) {
-		args := createArgs(configOption.name)
-		run, _ := ParseArgs(args)
-
-		if run != false {
-			t.Error("The first return value should be false if there is an error in the args")
-		}
-	})
-	t.Run("other flag", func(t *testing.T) {
-		args := createArgs(configOption.name, silentFlag.name)
-		run, _ := ParseArgs(args)
-
-		if run != false {
-			t.Error("The first return value should be false if there is an error in the args")
-		}
-	})
-}
-
 func TestMapFileOption(t *testing.T) {
 	mapFile := "foo.map"
 
@@ -303,7 +266,7 @@ func TestMapFileOption(t *testing.T) {
 			t.Fatal("The first return value should be true for this test")
 		}
 
-		testDefaultsExcept(t, arguments, "map files")
+		testDefaultsExcept(t, &arguments, "map files")
 
 		if len(arguments.MapFiles) != 1 {
 			t.Fatalf("The MapFiles list have length 1 (was %d)", len(arguments.MapFiles))
@@ -321,7 +284,7 @@ func TestMapFileOption(t *testing.T) {
 			t.Fatal("The first return value should be true for this test")
 		}
 
-		testDefaultsExcept(t, arguments, "map files")
+		testDefaultsExcept(t, &arguments, "map files")
 
 		if len(arguments.MapFiles) != 1 {
 			t.Fatalf("The MapFiles list have length 1 (was %d)", len(arguments.MapFiles))
@@ -341,7 +304,7 @@ func TestMapFileOption(t *testing.T) {
 			t.Fatal("The first return value should be true for this test")
 		}
 
-		testDefaultsExcept(t, arguments, "map files")
+		testDefaultsExcept(t, &arguments, "map files")
 
 		if len(arguments.MapFiles) != 2 {
 			t.Fatalf("The MapFiles list have length 2 (was %d)", len(arguments.MapFiles))
@@ -387,7 +350,7 @@ func TestMappingOption(t *testing.T) {
 			t.Fatal("The first return value should be true for this test")
 		}
 
-		testDefaultsExcept(t, arguments, "mappings")
+		testDefaultsExcept(t, &arguments, "mappings")
 
 		if len(arguments.Mappings) != 1 {
 			t.Fatalf("The Mappings list have length 1 (was %d)", len(arguments.Mappings))
@@ -405,7 +368,7 @@ func TestMappingOption(t *testing.T) {
 			t.Fatal("The first return value should be true for this test")
 		}
 
-		testDefaultsExcept(t, arguments, "mappings")
+		testDefaultsExcept(t, &arguments, "mappings")
 
 		if len(arguments.Mappings) != 1 {
 			t.Fatalf("The Mappings list have length 1 (was %d)", len(arguments.Mappings))
@@ -425,7 +388,7 @@ func TestMappingOption(t *testing.T) {
 			t.Fatal("The first return value should be true for this test")
 		}
 
-		testDefaultsExcept(t, arguments, "mappings")
+		testDefaultsExcept(t, &arguments, "mappings")
 
 		if len(arguments.Mappings) != 2 {
 			t.Fatalf("The Mappings list have length 1 (was %d)", len(arguments.Mappings))
@@ -456,6 +419,59 @@ func TestMappingOptionIncorrect(t *testing.T) {
 
 		if run != false {
 			t.Error("The first return value should be false if there is an error in the args")
+		}
+	})
+}
+
+func TestArgumentWithEquals(t *testing.T) {
+	t.Run("Valid option", func(t *testing.T) {
+		args := createArgs("--map=foo,bar")
+		run, arguments := ParseArgs(args)
+
+		if run != false {
+			t.Fatal("The first return value should be false without input file")
+		}
+
+		testDefaultsExcept(t, &arguments, "mappings")
+
+		if mappingsCount := len(arguments.Mappings); mappingsCount != 1 {
+			t.Fatalf("Expected one mapping to be set (got %d)", mappingsCount)
+		}
+
+		if mapping := arguments.Mappings[0]; mapping != "foo,bar" {
+			t.Errorf("Unexpected first mapping (got '%s')", mapping)
+		}
+	})
+	t.Run("Valid option, multiple equals", func(t *testing.T) {
+		args := createArgs("--map=1=2,1=1")
+		run, arguments := ParseArgs(args)
+
+		if run != false {
+			t.Fatal("The first return value should be false without input file")
+		}
+
+		testDefaultsExcept(t, &arguments, "mappings")
+
+		if mappingsCount := len(arguments.Mappings); mappingsCount != 1 {
+			t.Fatalf("Expected one mapping to be set (got %d)", mappingsCount)
+		}
+
+		if mapping := arguments.Mappings[0]; mapping != "1=2,1=1" {
+			t.Errorf("Unexpected first mapping (got '%s')", mapping)
+		}
+	})
+	t.Run("Invalid option", func(t *testing.T) {
+		args := createArgs("--lolwat=foo,bar")
+		run, arguments := ParseArgs(args)
+
+		if run != false {
+			t.Fatal("The first return value should be false without input file")
+		}
+
+		testDefaultsExcept(t, &arguments, "no exceptions")
+
+		if inputCount := len(arguments.InputFiles); inputCount != 0 {
+			t.Fatalf("Expected no input files (got %d)", inputCount)
 		}
 	})
 }

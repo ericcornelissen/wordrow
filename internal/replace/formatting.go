@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"unicode"
 
-	"github.com/ericcornelissen/wordrow/internal/strings"
+	"github.com/ericcornelissen/stringsx"
 )
 
 // A Regular Expression that matches newlines.
@@ -27,14 +27,14 @@ func startsWithCapital(s string) bool {
 // Convert a string to sentence case. I.e. make the first letter in the string
 // uppercase.
 func toSentenceCase(s string) string {
-	return strings.ToUpper(s[:1]) + s[1:]
+	return stringsx.ToUpper(s[:1]) + s[1:]
 }
 
 // If the `from` string is all caps, it will return `to` as all caps as well.
 // Otherwise, the `to` string is returned unchanged.
 func maintainAllCaps(from, to string) string {
-	if strings.ToUpper(from) == from {
-		return strings.ToUpper(to)
+	if stringsx.ToUpper(from) == from {
+		return stringsx.ToUpper(to)
 	}
 
 	return to
@@ -47,16 +47,12 @@ func maintainAllCaps(from, to string) string {
 // If the `from` string consists of multiple words, the capitalization will be
 // maintained for every word in the string.
 func maintainCapitalization(fromPhrase, toPhrase string) string {
-	var sb strings.Builder
+	var sb stringsx.Builder
 
 	fromWords := phraseToWordsExpr.FindAllStringSubmatch(fromPhrase, -1)
 	toWords := phraseToWordsExpr.FindAllStringSubmatch(toPhrase, -1)
 
-	shortestLen := len(fromWords)
-	if len(toWords) < len(fromWords) {
-		shortestLen = len(toWords)
-	}
-
+	shortestLen := lowestInt(len(fromWords), len(toWords))
 	for i := 0; i < shortestLen; i++ {
 		fromWord, toWord := fromWords[i][1], toWords[i][1]
 		toDivider := toWords[i][2]
@@ -69,10 +65,8 @@ func maintainCapitalization(fromPhrase, toPhrase string) string {
 		sb.WriteString(toDivider)
 	}
 
-	if len(toWords) > len(fromWords) {
-		for i := shortestLen; i < len(toWords); i++ {
-			sb.WriteString(toWords[i][0])
-		}
+	for i := shortestLen; i < len(toWords); i++ {
+		sb.WriteString(toWords[i][0])
 	}
 
 	return sb.String()
@@ -81,18 +75,12 @@ func maintainCapitalization(fromPhrase, toPhrase string) string {
 // If the `from` phrase contains whitespace (spaces, tabs, newlines), it will
 // return the `to` phrase with the same kinds of whitespace. Otherwise, the `to`
 // string is returned unchanged.
-func maintainWhitespace(from, to string) (string, int) {
-	offset := 0
-
+func maintainWhitespace(from, to string) (newTo string, offset int) {
 	fromWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(from, -1)
 	toWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(to, -1)
 
-	shortest := len(fromWhitespace)
-	if len(toWhitespace) < len(fromWhitespace) {
-		shortest = len(toWhitespace)
-	}
-
-	for i := 0; i < shortest; i++ {
+	shortestLen := lowestInt(len(fromWhitespace), len(toWhitespace))
+	for i := 0; i < shortestLen; i++ {
 		fromMatch, toMatch := fromWhitespace[i], toWhitespace[i]
 		fromStart, fromEnd := fromMatch[0], fromMatch[1]
 		toStart, toEnd := toMatch[0], toMatch[1]
@@ -118,15 +106,27 @@ func maintainWhitespace(from, to string) (string, int) {
 	return to, offset
 }
 
+// changesFormattingOnly checks whether the from and to values are the same
+// except for their formatting, e.g. different capitalization and whitespace.
+func changesFormattingOnly(from, to string) bool {
+	normalizedFrom := whitespaceExpr.ReplaceAllString(from, " ")
+	normalizedTo := whitespaceExpr.ReplaceAllString(to, " ")
+	return stringsx.ToLower(normalizedFrom) == stringsx.ToLower(normalizedTo)
+}
+
 // Format the `to` string based on the format of the `from` string.
 //
 // This function does the following:
 //  - Maintain all caps.
 //  - Maintain first letter capitalization.
 //  - Maintain newlines, tabs, etc.
-func maintainFormatting(from, to string) (string, int) {
-	to = maintainAllCaps(from, to)
-	to = maintainCapitalization(from, to)
-	to, offset := maintainWhitespace(from, to)
+func maintainFormatting(from, to string) (newTo string, offset int) {
+	if !changesFormattingOnly(from, to) {
+		to = stringsx.ToLower(to)
+		to = maintainAllCaps(from, to)
+		to = maintainCapitalization(from, to)
+	}
+
+	to, offset = maintainWhitespace(from, to)
 	return to, offset
 }

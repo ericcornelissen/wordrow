@@ -8,23 +8,50 @@ fuzz_dir:=./_fuzz
 
 markdown_files:=./*.md ./docs/*.md ./.github/**/*.md
 
-go_nomod:=GO111MODULE=off
+go_install:=GO111MODULE=on go get -u
 
 
 default: build
 
+init: hooks install
+
+hooks:
+	@echo SETTING UP GIT HOOKS...
+	@cp ./scripts/pre-commit.sh ./.git/hooks/pre-commit
+
 install: install-deps install-dev-deps
 
 install-deps:
-	@echo "INSTALLLING DEPENDENCIES"
-	go get -u github.com/yargevad/filepathx
+	@echo INSTALLING DEPENDENCIES...
+	$(go_install) github.com/yargevad/filepathx
+	$(go_install) github.com/ericcornelissen/stringsx
 
 install-dev-deps:
-	@echo "INSTALLLING STATIC ANALYSIS TOOLS"
-	$(go_nomod) go get -u golang.org/x/lint/golint
-	curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b ${GOPATH}/bin v2.3.0
-	@echo "INSTALLLING MANUAL ANALYSIS TOOLS"
-	$(go_nomod) go get -u github.com/dvyukov/go-fuzz/go-fuzz github.com/dvyukov/go-fuzz/go-fuzz-build
+	@echo INSTALLING DEVELOPMENT TOOLS...
+	$(go_install) golang.org/x/tools/cmd/goimports
+	@echo INSTALLING STATIC ANALYSIS TOOLS...
+	$(go_install) 4d63.com/gochecknoinits
+	$(go_install) gitlab.com/opennota/check/cmd/aligncheck
+	$(go_install) gitlab.com/opennota/check/cmd/structcheck
+	$(go_install) gitlab.com/opennota/check/cmd/varcheck
+	$(go_install) github.com/alexkohler/dogsled/cmd/dogsled
+	$(go_install) github.com/alexkohler/nakedret
+	$(go_install) github.com/alexkohler/prealloc
+	$(go_install) github.com/alexkohler/unimport
+	$(go_install) github.com/go-critic/go-critic/cmd/gocritic
+	$(go_install) github.com/gordonklaus/ineffassign
+	$(go_install) github.com/jgautheron/goconst/cmd/goconst
+	$(go_install) github.com/kisielk/errcheck
+	$(go_install) github.com/kyoh86/looppointer/cmd/looppointer
+	$(go_install) github.com/mdempsky/unconvert
+	$(go_install) github.com/nishanths/exhaustive/...
+	$(go_install) github.com/remyoudompheng/go-misc/deadcode
+	$(go_install) github.com/tommy-muehle/go-mnd/cmd/mnd
+	$(go_install) golang.org/x/lint/golint
+	$(go_install) honnef.co/go/tools/cmd/staticcheck
+	$(go_install) mvdan.cc/unparam
+	@echo INSTALLING MANUAL ANALYSIS TOOLS...
+	$(go_install) github.com/dvyukov/go-fuzz/go-fuzz github.com/dvyukov/go-fuzz/go-fuzz-build
 
 build:
 	go build -o $(executable_file) $(program_main)
@@ -49,37 +76,63 @@ fuzz%: FUNC?=Fuzz  # Set default fuzzing function to "Fuzz"
 fuzz: fuzz-build fuzz-run
 
 fuzz-build:
-	cd ${PKG}; \
-	go-fuzz-build
+	@echo BUILDING FUZZING BINARY FOR ${PKG}...
+	@cd ${PKG}; go-fuzz-build
 
 fuzz-run:
-	cd ${PKG}; \
-	go-fuzz -func ${FUNC} -workdir ${fuzz_dir}
+	@echo FUZZING ${PKG}::${FUNC}...
+	@cd ${PKG}; go-fuzz -func ${FUNC} -workdir ${fuzz_dir}
 
 benchmark:
 	go test $(test_root) -bench=. -run=XXX
 
 analysis:
-	@echo "VETTING"
-	go vet ./...
-	@echo "SECURITY SCAN"
-	gosec -quiet ./...
+	@echo VETTING...
+	@go vet ./...
+	@aligncheck ./...
+	@dogsled -n 1 -set_exit_status ./...
+	@exhaustive -maps ./...
+	@goconst -ignore-tests -set-exit-status ./...
+	@gocritic check -enableAll ./...
+	@looppointer ./...
+	@mnd -ignored-numbers "0,1" ./...
+	@prealloc -set_exit_status ./...
+	@staticcheck -show-ignored ./...
+	@structcheck -a -e -t ./...
+	@unconvert -v ./...
+	@unparam -exported -tests ./...
+	@varcheck -e ./...
+
+	@echo VERIFYING ERRORS ARE CHECKED...
+	@errcheck -asserts -blank -ignoretests -exclude .errcheckrc.txt ./...
+
+	@echo CHECKING FOR DEAD CODE...
+	@ineffassign ./*
+	@deadcode ./internal/*
+	@deadcode ./cmd/*
 
 format:
 	go fmt ./...
+	go mod tidy
+	goimports -w .
 
 lint: lint-go lint-md
 
 lint-go:
-	golint -set_exit_status ./...
+	@echo LINTING GO...
+	@golint -set_exit_status ./...
+	@gochecknoinits ./...
+	@nakedret -l 0 ./...
+	@unimport ./...
 
 lint-md:
-	npx markdownlint-cli -c .markdownlintrc.yml $(markdown_files)
+	@echo LINTING MARKDOWN...
+	@npx markdownlint-cli -c .markdownlintrc.yml $(markdown_files)
 
 clean:
 	rm -rf $(executable_file)*
 	rm -rf $(coverage_file)
-	rm -rf **/*/*-fuzz.zip
-	rm -rf **/*/_fuzz/
+	rm `find ./ -name '_fuzz'` -rf
+	rm `find ./ -name '*-fuzz.zip'` -rf
 
-.PHONY: default install build clean format lint analysis test fuzz
+.PHONY: default init hooks install build clean format lint analysis test fuzz

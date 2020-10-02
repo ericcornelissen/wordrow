@@ -28,6 +28,8 @@ jobs:
       run: make build
 
     # Testing
+    - name: Test (all)
+      run: make test
     - name: Test (with coverage)
       run: make coverage
     - name: Publish code coverage
@@ -53,10 +55,14 @@ jobs:
         node-version: 12.x
     - uses: actions/checkout@v2
     - name: Get dependencies
-      run: go get -u golang.org/x/lint/golint
+      run: make install-dev-deps
 
     # Linting
     - name: Lint Go
       run: make lint-go
     - name: Lint MarkDown
       run: make lint-md
+
+    # Analysis
+    - name: Analysis
+      run: make analysis

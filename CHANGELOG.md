@@ -9,12 +9,53 @@ Versioning].
 
 ### Features
 
-- Add functionality to map many words to one word. ([#65])
-- Add option to specify multiple flags at once. ([#72])
+- Run on STDIN. ([#119])
+- Process input files in parallel. ([#132])
+
+### Miscellaneous
+
+- Log when a mapping is overwritten. ([#134])
+
+## [0.6.0-beta] - 2020-08-18
+
+### Breaking Changes
+
+- Continue on non-blocking errors. ([#112])
+
+### Features
+
+- Add support for CLI arguments with "=". ([#102])
+- Add support for many-to-one mapping syntax on the CLI. ([#118])
+- Add `--strict`/`-S` flag to stop for any error. ([#112])
 
 ### Bug Fixes
 
-- Remove double newline in program logs. ([#78])
+- Fix bug preventing the usage of map files without file extension. ([#101])
+- Fix logs of incorrect level being logged. ([#107], [#108])
+- Fix crash due to empty values in the `--map` option. ([#110])
+- Fix mistakes in the program help message. ([#114], [#115], [#116])
+
+### Miscellaneous
+
+- Removed (unused) `--config` option. ([#107])
+
+## [0.5.0-beta] - 2020-07-24
+
+### Features
+
+- Add functionality to map many words to one word. ([#65])
+- Add support for multiple flags in one CLI argument. ([#72])
+- Allow mappings that change capitalization. ([#98])
+
+### Bug Fixes
+
+- Fix double newline in program logs. ([#78])
+- Fix bug for mappings with Regular Expression syntax. ([#96])
+- Avoid crash due to non UTF-8 characters in mappings. ([#96])
+
+### Security
+
+- Clean provided file paths before opening. ([#99])
 
 ### Documentation
 
@@ -101,3 +142,19 @@ Versioning].
 [#71]: https://github.com/ericcornelissen/wordrow/pull/71
 [#72]: https://github.com/ericcornelissen/wordrow/pull/72
 [#78]: https://github.com/ericcornelissen/wordrow/pull/78
+[#96]: https://github.com/ericcornelissen/wordrow/pull/96
+[#98]: https://github.com/ericcornelissen/wordrow/pull/98
+[#99]: https://github.com/ericcornelissen/wordrow/pull/99
+[#101]: https://github.com/ericcornelissen/wordrow/pull/101
+[#102]: https://github.com/ericcornelissen/wordrow/pull/102
+[#107]: https://github.com/ericcornelissen/wordrow/pull/107
+[#108]: https://github.com/ericcornelissen/wordrow/pull/108
+[#110]: https://github.com/ericcornelissen/wordrow/pull/110
+[#112]: https://github.com/ericcornelissen/wordrow/pull/112
+[#114]: https://github.com/ericcornelissen/wordrow/pull/114
+[#115]: https://github.com/ericcornelissen/wordrow/pull/115
+[#116]: https://github.com/ericcornelissen/wordrow/pull/116
+[#118]: https://github.com/ericcornelissen/wordrow/pull/118
+[#119]: https://github.com/ericcornelissen/wordrow/pull/119
+[#132]: https://github.com/ericcornelissen/wordrow/pull/132
+[#134]: https://github.com/ericcornelissen/wordrow/pull/134

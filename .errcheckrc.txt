@@ -1,0 +1,10 @@
+// bufio
+(*bufio.Writer).WriteString
+(*bufio.Writer).WriteRune
+
+// internal
+(github.com/ericcornelissen/wordrow/internal/fs.File).Close
+
+// stringsx
+(*github.com/ericcornelissen/stringsx.Builder).WriteString
+(*github.com/ericcornelissen/stringsx.Builder).WriteRune

@@ -4,8 +4,8 @@ this end it provides one function that accepts a string and a mapping and
 returns the string with all words of the mapping replaced.
 
 	var s string
-	var m WordMap
-	ReplaceAll(s, m)
+	var m map[string]string
+	All(s, m)
 
 The replacement will do some clever things to maintain the formatting of the
 original text. Namely:
@@ -15,22 +15,36 @@ original text. Namely:
 */
 package replace
 
-import (
-	"github.com/ericcornelissen/wordrow/internal/strings"
-	"github.com/ericcornelissen/wordrow/internal/wordmaps"
-)
+import "github.com/ericcornelissen/stringsx"
+
+// Get the replacement string including prefix/suffix given the match `m`.
+func getReplacement(m *match, s string) string {
+	keepPrefix, keepSuffix := detectAffix(s)
+
+	replacement := s
+	if keepPrefix {
+		replacement = m.prefix + replacement[1:]
+	}
+
+	if keepSuffix {
+		replacement = replacement[:len(replacement)-1] + m.suffix
+	}
+
+	return replacement
+}
 
 // Replace all instances of `from` by `to` in `s`.
-func replaceOne(s string, mapping wordmaps.Mapping) string {
-	var sb strings.Builder
+func replaceOne(s, from, to string) string {
+	var sb stringsx.Builder
 
 	lastIndex := 0
-	for match := range mapping.Match(s) {
-		replacement, offset := maintainFormatting(match.Full, match.Replacement)
+	for match := range matches(s, from) {
+		replacement := getReplacement(match, to)
+		replacement, offset := maintainFormatting(match.full, replacement)
 
-		sb.WriteString(s[lastIndex:match.Start])
+		sb.WriteString(s[lastIndex:match.start])
 		sb.WriteString(replacement)
-		lastIndex = match.End + offset
+		lastIndex = match.end + offset
 	}
 
 	if lastIndex < len(s) {
@@ -40,10 +54,10 @@ func replaceOne(s string, mapping wordmaps.Mapping) string {
 	return sb.String()
 }
 
-// All replaces substrings of `s` according to the mapping in `wordmap`.
-func All(s string, wordmap wordmaps.WordMap) string {
-	for mapping := range wordmap.Iter() {
-		s = replaceOne(s, mapping)
+// All replaces substrings of `s` according to the mapping defined by `m`.
+func All(s string, m map[string]string) string {
+	for from, to := range m {
+		s = replaceOne(s, from, to)
 	}
 
 	return s

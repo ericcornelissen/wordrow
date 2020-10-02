@@ -1,0 +1,14 @@
+{
+  "G104": {
+    "bufio.Writer": [
+      "WriteString",
+      "WriteRune"
+    ],
+    "github.com/ericcornelissen/stringsx.Builder": [
+      "Write",
+      "WriteByte",
+      "WriteRune",
+      "WriteString"
+    ]
+  }
+}

@@ -21,8 +21,8 @@ type Arguments struct {
 	// Flag indicating if the program should be verbose.
 	Verbose bool
 
-	// The config file.
-	ConfigFile string
+	// Flag indicating if the program should halt on non-blocking errors.
+	Strict bool
 
 	// List of files to be processed.
 	InputFiles []string
