@@ -5,6 +5,17 @@ import "os"
 // Handler represents a function to handle a (string) value and return an error.
 type handler func(value string) error
 
+// Drains `n` items from channel `ch` and returns all non-null errors.
+func drain(ch chan error, n int) (errs []error) {
+	for i := 0; i < n; i++ {
+		if err := <-ch; err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	return errs
+}
+
 // ForEach executes a handler for each of the provided values. Any error that
 // occurs is accumulated and only returned once all values are handled.
 func forEach(values []string, fn handler) (errs []error) {
@@ -38,12 +49,4 @@ func invert(m map[string]string) map[string]string {
 	}
 
 	return inverted
-}
-
-// Merge the maps `target` and `other` into map `target`. Keys present in both
-// `target` and `other` will end up with the value of `other`.
-func merge(target, other map[string]string) {
-	for key, value := range other {
-		target[key] = value
-	}
 }

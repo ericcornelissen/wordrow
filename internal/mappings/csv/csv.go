@@ -2,8 +2,8 @@ package csv
 
 import (
 	"github.com/ericcornelissen/stringsx"
-	"github.com/ericcornelissen/wordrow/internal/errors"
-	"github.com/ericcornelissen/wordrow/internal/mappings/common"
+	"github.com/ericcornelissen/wordrow/internal/common"
+	"github.com/ericcornelissen/wordrow/internal/mappings/errors"
 )
 
 // Parse a single row of a CSV file and add it to the `mapping`.
@@ -15,12 +15,12 @@ func parseRow(row string, mapping map[string]string) error {
 
 	rowValues := stringsx.Split(row, ",")
 	if len(rowValues) < rowValuesCount {
-		return errors.Newf(common.IncorrectFormat, row)
+		return errors.NewIncorrectFormat(row)
 	}
 
 	rowValues = stringsx.MapAll(rowValues, stringsx.TrimSpace)
 	if stringsx.Any(rowValues, stringsx.IsEmpty) {
-		return errors.Newf(common.MissingValue, row)
+		return errors.NewMissingValue(row)
 	}
 
 	last := len(rowValues) - 1

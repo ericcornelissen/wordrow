@@ -4,8 +4,8 @@ import (
 	"regexp"
 
 	"github.com/ericcornelissen/stringsx"
-	"github.com/ericcornelissen/wordrow/internal/errors"
-	"github.com/ericcornelissen/wordrow/internal/mappings/common"
+	"github.com/ericcornelissen/wordrow/internal/common"
+	"github.com/ericcornelissen/wordrow/internal/mappings/errors"
 )
 
 // Regular expression of a MarkDown table row.
@@ -26,13 +26,13 @@ func parseTableRow(row string) ([]string, error) {
 
 	rowValues := stringsx.Split(row, "|")
 	if len(rowValues) < rowValuesCount {
-		return nil, errors.Newf(common.IncorrectFormat, row)
+		return nil, errors.NewIncorrectFormat(row)
 	}
 
 	rowValues = rowValues[1 : len(rowValues)-1]
 	rowValues = stringsx.MapAll(rowValues, stringsx.TrimSpace)
 	if stringsx.Any(rowValues, stringsx.IsEmpty) {
-		return nil, errors.Newf(common.MissingValue, row)
+		return nil, errors.NewMissingValue(row)
 	}
 
 	return rowValues, nil

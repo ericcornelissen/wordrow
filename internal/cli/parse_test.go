@@ -404,6 +404,69 @@ func TestMappingOption(t *testing.T) {
 	})
 }
 
+func TestMappingOptionWithAffixNotation(t *testing.T) {
+	t.Run("prefix notation", func(t *testing.T) {
+		mapping := "-bar,-baz"
+
+		args := createArgs(mappingOption.name, mapping, "foo.bar")
+		run, arguments := ParseArgs(args)
+
+		if run != true {
+			t.Fatal("The first return value should be true for this test")
+		}
+
+		testDefaultsExcept(t, &arguments, "mappings")
+
+		if len(arguments.Mappings) != 1 {
+			t.Fatalf("The Mappings list must have length 1 (was %d)", len(arguments.Mappings))
+		}
+
+		if arguments.Mappings[0] != mapping {
+			t.Errorf("First mapping was incorrect (was '%s')", arguments.Mappings[0])
+		}
+	})
+	t.Run("suffix notation", func(t *testing.T) {
+		mapping := "foo-,zoo-"
+
+		args := createArgs(mappingOption.name, mapping, "foo.bar")
+		run, arguments := ParseArgs(args)
+
+		if run != true {
+			t.Fatal("The first return value should be true for this test")
+		}
+
+		testDefaultsExcept(t, &arguments, "mappings")
+
+		if len(arguments.Mappings) != 1 {
+			t.Fatalf("The Mappings list must have length 1 (was %d)", len(arguments.Mappings))
+		}
+
+		if arguments.Mappings[0] != mapping {
+			t.Errorf("First mapping was incorrect (was '%s')", arguments.Mappings[0])
+		}
+	})
+	t.Run("prefix & suffix notation", func(t *testing.T) {
+		mapping := "-bloody-,-freaking-"
+
+		args := createArgs(mappingOption.name, mapping, "foo.bar")
+		run, arguments := ParseArgs(args)
+
+		if run != true {
+			t.Fatal("The first return value should be true for this test")
+		}
+
+		testDefaultsExcept(t, &arguments, "mappings")
+
+		if len(arguments.Mappings) != 1 {
+			t.Fatalf("The Mappings list must have length 1 (was %d)", len(arguments.Mappings))
+		}
+
+		if arguments.Mappings[0] != mapping {
+			t.Errorf("First mapping was incorrect (was '%s')", arguments.Mappings[0])
+		}
+	})
+}
+
 func TestMappingOptionIncorrect(t *testing.T) {
 	t.Run("value missing", func(t *testing.T) {
 		args := createArgs(mappingOption.name)
