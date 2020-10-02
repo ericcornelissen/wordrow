@@ -21,7 +21,8 @@ written in [Go].
 Everything *wordrow* does can be achieved with existing tools, e.g. with [sed],
 simple scripts, or even just a text editor. However, *wordrow* aims to make it
 easy to do text replacements in batch and continuously. Using a simple syntax
-to define mappings, you can improve what you writing quickly and continuously.
+to define mappings, you can improve what you write quickly and every time you
+safe a file.
 
 ## Usage
 
@@ -29,8 +30,8 @@ First, download the [latest release] for your system and add the *wordrow*
 binary to your PATH.
 
 To get started, you can read [how to use the CLI](./docs/cli.md) and [how to
-define a mapping](./docs/mapping-files.md). For quick access to help on the CLI
-use:
+define a mapping](./docs/mapping-files.md). For quick access to help on the
+command line use:
 
 ```shell
 $ wordrow --help
