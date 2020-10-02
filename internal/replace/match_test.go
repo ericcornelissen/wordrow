@@ -107,7 +107,7 @@ func TestDetectAffix(t *testing.T) {
 	})
 }
 
-func TestIsValidFor(t *testing.T) {
+func TestIsValidForNoPrefixNoSuffix(t *testing.T) {
 	t.Run("match w/o prefix or suffix, query w/o prefix or suffix", func(t *testing.T) {
 		query := "foobar"
 		full := query
@@ -172,7 +172,10 @@ func TestIsValidFor(t *testing.T) {
 			t.Error("Expected match to be invalid for query")
 		}
 	})
-	t.Run("match w/o prefix or suffix, query with prefix w/o suffix", func(t *testing.T) {
+}
+
+func TestIsValidForWithPrefixNoSuffix(t *testing.T) {
+	t.Run("match w/o prefix or suffix", func(t *testing.T) {
 		query := "-bar"
 		full := query[1:]
 		m := &match{
@@ -188,7 +191,7 @@ func TestIsValidFor(t *testing.T) {
 			t.Error("Expected match to be valid for query")
 		}
 	})
-	t.Run("match with prefix w/o suffix, query with prefix w/o suffix", func(t *testing.T) {
+	t.Run("match with prefix w/o suffix", func(t *testing.T) {
 		query := "-bar"
 		full := fmt.Sprintf("foo%s", query[1:])
 		m := &match{
@@ -204,7 +207,7 @@ func TestIsValidFor(t *testing.T) {
 			t.Error("Expected match to be valid for query")
 		}
 	})
-	t.Run("match w/o prefix with suffix, query with prefix w/o suffix", func(t *testing.T) {
+	t.Run("match w/o prefix with suffix", func(t *testing.T) {
 		query := "-bar"
 		full := fmt.Sprintf("%sbar", query[1:])
 		m := &match{
@@ -220,7 +223,7 @@ func TestIsValidFor(t *testing.T) {
 			t.Error("Expected match to be invalid for query")
 		}
 	})
-	t.Run("match with prefix and suffix, query with prefix w/o suffix", func(t *testing.T) {
+	t.Run("match with prefix and suffix", func(t *testing.T) {
 		query := "-freaking"
 		full := fmt.Sprintf("foo%sbar", query[1:])
 		m := &match{
@@ -236,7 +239,10 @@ func TestIsValidFor(t *testing.T) {
 			t.Error("Expected match to be invalid for query")
 		}
 	})
-	t.Run("match w/o prefix or suffix, query w/o prefix with suffix", func(t *testing.T) {
+}
+
+func TestIsValidForNoPrefixWithSuffix(t *testing.T) {
+	t.Run("match w/o prefix or suffix", func(t *testing.T) {
 		query := "foo-"
 		full := query[:len(query)-1]
 		m := &match{
@@ -252,7 +258,7 @@ func TestIsValidFor(t *testing.T) {
 			t.Error("Expected match to be valid for query")
 		}
 	})
-	t.Run("match with prefix w/o suffix, query w/o prefix with suffix", func(t *testing.T) {
+	t.Run("match with prefix w/o suffix", func(t *testing.T) {
 		query := "foo-"
 		full := fmt.Sprintf("foo%s", query[:len(query)-1])
 		m := &match{
@@ -268,7 +274,7 @@ func TestIsValidFor(t *testing.T) {
 			t.Error("Expected match to be invalid for query")
 		}
 	})
-	t.Run("match w/o prefix with suffix, query w/o prefix with suffix", func(t *testing.T) {
+	t.Run("match w/o prefix with suffix", func(t *testing.T) {
 		query := "foo-"
 		full := fmt.Sprintf("%sbar", query[:len(query)-1])
 		m := &match{
@@ -284,7 +290,7 @@ func TestIsValidFor(t *testing.T) {
 			t.Error("Expected match to be valid for query")
 		}
 	})
-	t.Run("match with prefix and suffix, query w/o prefix with suffix", func(t *testing.T) {
+	t.Run("match with prefix and suffix", func(t *testing.T) {
 		query := "freaking-"
 		full := fmt.Sprintf("foo%sbar", query[:len(query)-1])
 		m := &match{
@@ -300,7 +306,10 @@ func TestIsValidFor(t *testing.T) {
 			t.Error("Expected match to be invalid for query")
 		}
 	})
-	t.Run("match w/o prefix or suffix, query with prefix and suffix", func(t *testing.T) {
+}
+
+func TestIsValidForWithPrefixWithSuffix(t *testing.T) {
+	t.Run("match w/o prefix or suffix", func(t *testing.T) {
 		query := "-freaking-"
 		full := query[1 : len(query)-1]
 		m := &match{
@@ -316,7 +325,7 @@ func TestIsValidFor(t *testing.T) {
 			t.Error("Expected match to be valid for query")
 		}
 	})
-	t.Run("match with prefix w/o suffix, query w/o prefix with suffix", func(t *testing.T) {
+	t.Run("match with prefix w/o suffix", func(t *testing.T) {
 		query := "-freaking-"
 		full := fmt.Sprintf("foo%s", query[1:len(query)-1])
 		m := &match{
@@ -332,7 +341,7 @@ func TestIsValidFor(t *testing.T) {
 			t.Error("Expected match to be valid for query")
 		}
 	})
-	t.Run("match w/o prefix with suffix, query w/o prefix with suffix", func(t *testing.T) {
+	t.Run("match w/o prefix with suffix", func(t *testing.T) {
 		query := "-freaking-"
 		full := fmt.Sprintf("%sbar", query[1:len(query)-1])
 		m := &match{
@@ -348,7 +357,7 @@ func TestIsValidFor(t *testing.T) {
 			t.Error("Expected match to be valid for query")
 		}
 	})
-	t.Run("match with prefix and suffix, query w/o prefix with suffix", func(t *testing.T) {
+	t.Run("match with prefix and suffix", func(t *testing.T) {
 		query := "-freaking-"
 		full := fmt.Sprintf("foo%sbar", query[1:len(query)-1])
 		m := &match{
@@ -366,131 +375,133 @@ func TestIsValidFor(t *testing.T) {
 	})
 }
 
-func TestIndicesToMatch(t *testing.T) {
+func TestIndicesToMatchAtStartOfString(t *testing.T) {
 	s := "Lorem ipsum dolor sit amet"
-	t.Run("start at 0", func(t *testing.T) {
-		if len(s) < 11 {
-			t.Fatal("Test string is too short")
-		}
+	if len(s) < 11 {
+		t.Fatal("Test string is too short")
+	}
 
-		indices := []int{
-			0,
-			11,
-			0,
-			2,
-			2,
-			8,
-			9,
-			11,
-		}
+	indices := []int{
+		0,
+		11,
+		0,
+		2,
+		2,
+		8,
+		9,
+		11,
+	}
 
-		result := indicesToMatch(s, indices)
-		if result.full != s[indices[0]:indices[1]] {
-			t.Errorf("Full match incorrect (got '%s')", result.full)
-		}
+	result := indicesToMatch(s, indices)
+	if result.full != s[indices[0]:indices[1]] {
+		t.Errorf("Full match incorrect (got '%s')", result.full)
+	}
 
-		if result.word != s[indices[4]:indices[5]] {
-			t.Errorf("Full match incorrect (got '%s')", result.word)
-		}
+	if result.word != s[indices[4]:indices[5]] {
+		t.Errorf("Full match incorrect (got '%s')", result.word)
+	}
 
-		if result.prefix != s[indices[2]:indices[3]] {
-			t.Errorf("Full match incorrect (got '%s')", result.prefix)
-		}
+	if result.prefix != s[indices[2]:indices[3]] {
+		t.Errorf("Full match incorrect (got '%s')", result.prefix)
+	}
 
-		if result.suffix != s[indices[6]:indices[7]] {
-			t.Errorf("Full match incorrect (got '%s')", result.suffix)
-		}
+	if result.suffix != s[indices[6]:indices[7]] {
+		t.Errorf("Full match incorrect (got '%s')", result.suffix)
+	}
 
-		if result.start != indices[0] {
-			t.Errorf("Full match incorrect (got '%s')", result.suffix)
-		}
+	if result.start != indices[0] {
+		t.Errorf("Full match incorrect (got '%s')", result.suffix)
+	}
 
-		if result.end != indices[7] {
-			t.Errorf("Full match incorrect (got '%s')", result.suffix)
-		}
-	})
-	t.Run("in the middle", func(t *testing.T) {
-		if len(s) < 18 {
-			t.Fatal("Test string is too short")
-		}
+	if result.end != indices[7] {
+		t.Errorf("Full match incorrect (got '%s')", result.suffix)
+	}
+}
 
-		indices := []int{
-			6,
-			17,
-			6,
-			8,
-			8,
-			14,
-			15,
-			17,
-		}
+func TestIndicesToMatchInMiddleOfString(t *testing.T) {
+	s := "Lorem ipsum dolor sit amet"
+	if len(s) < 18 {
+		t.Fatal("Test string is too short")
+	}
 
-		result := indicesToMatch(s, indices)
-		if result.full != s[indices[0]:indices[1]] {
-			t.Errorf("Full match incorrect (got '%s')", result.full)
-		}
+	indices := []int{
+		6,
+		17,
+		6,
+		8,
+		8,
+		14,
+		15,
+		17,
+	}
 
-		if result.word != s[indices[4]:indices[5]] {
-			t.Errorf("Full match incorrect (got '%s')", result.word)
-		}
+	result := indicesToMatch(s, indices)
+	if result.full != s[indices[0]:indices[1]] {
+		t.Errorf("Full match incorrect (got '%s')", result.full)
+	}
 
-		if result.prefix != s[indices[2]:indices[3]] {
-			t.Errorf("Full match incorrect (got '%s')", result.prefix)
-		}
+	if result.word != s[indices[4]:indices[5]] {
+		t.Errorf("Full match incorrect (got '%s')", result.word)
+	}
 
-		if result.suffix != s[indices[6]:indices[7]] {
-			t.Errorf("Full match incorrect (got '%s')", result.suffix)
-		}
+	if result.prefix != s[indices[2]:indices[3]] {
+		t.Errorf("Full match incorrect (got '%s')", result.prefix)
+	}
 
-		if result.start != indices[0] {
-			t.Errorf("Full match incorrect (got '%s')", result.suffix)
-		}
+	if result.suffix != s[indices[6]:indices[7]] {
+		t.Errorf("Full match incorrect (got '%s')", result.suffix)
+	}
 
-		if result.end != indices[7] {
-			t.Errorf("Full match incorrect (got '%s')", result.suffix)
-		}
-	})
-	t.Run("end at `len(s)`", func(t *testing.T) {
-		if len(s) < 14 {
-			t.Fatal("Test string is too short")
-		}
+	if result.start != indices[0] {
+		t.Errorf("Full match incorrect (got '%s')", result.suffix)
+	}
 
-		indices := []int{
-			len(s) - 14,
-			len(s),
-			len(s) - 14,
-			len(s) - 10,
-			len(s) - 10,
-			len(s) - 3,
-			len(s) - 2,
-			len(s),
-		}
+	if result.end != indices[7] {
+		t.Errorf("Full match incorrect (got '%s')", result.suffix)
+	}
+}
 
-		result := indicesToMatch(s, indices)
-		if result.full != s[indices[0]:indices[1]] {
-			t.Errorf("Full match incorrect (got '%s')", result.full)
-		}
+func TestIndicesToMatchAtEndOfString(t *testing.T) {
+	s := "Lorem ipsum dolor sit amet"
+	if len(s) < 14 {
+		t.Fatal("Test string is too short")
+	}
 
-		if result.word != s[indices[4]:indices[5]] {
-			t.Errorf("Full match incorrect (got '%s')", result.word)
-		}
+	indices := []int{
+		len(s) - 14,
+		len(s),
+		len(s) - 14,
+		len(s) - 10,
+		len(s) - 10,
+		len(s) - 3,
+		len(s) - 2,
+		len(s),
+	}
 
-		if result.prefix != s[indices[2]:indices[3]] {
-			t.Errorf("Full match incorrect (got '%s')", result.prefix)
-		}
+	result := indicesToMatch(s, indices)
+	if result.full != s[indices[0]:indices[1]] {
+		t.Errorf("Full match incorrect (got '%s')", result.full)
+	}
 
-		if result.suffix != s[indices[6]:indices[7]] {
-			t.Errorf("Full match incorrect (got '%s')", result.suffix)
-		}
+	if result.word != s[indices[4]:indices[5]] {
+		t.Errorf("Full match incorrect (got '%s')", result.word)
+	}
 
-		if result.start != indices[0] {
-			t.Errorf("Full match incorrect (got '%s')", result.suffix)
-		}
+	if result.prefix != s[indices[2]:indices[3]] {
+		t.Errorf("Full match incorrect (got '%s')", result.prefix)
+	}
 
-		if result.end != indices[7] {
-			t.Errorf("Full match incorrect (got '%s')", result.suffix)
-		}
-	})
+	if result.suffix != s[indices[6]:indices[7]] {
+		t.Errorf("Full match incorrect (got '%s')", result.suffix)
+	}
+
+	if result.start != indices[0] {
+		t.Errorf("Full match incorrect (got '%s')", result.suffix)
+	}
+
+	if result.end != indices[7] {
+		t.Errorf("Full match incorrect (got '%s')", result.suffix)
+	}
 }
 
 func TestToSafeString(t *testing.T) {
@@ -595,183 +606,137 @@ func TestToSafeString(t *testing.T) {
 	})
 }
 
-func TestMatches(t *testing.T) {
+func TestMatchesCornerCases(t *testing.T) {
 	t.Run("empty search string", func(t *testing.T) {
-		for match := range matches("", "bar") {
-			t.Fatalf("Expected no matches (got '%+v')", match)
+		ch := matches("", "bar")
+		result := drain(ch)
+		if len(result) > 0 {
+			t.Fatalf("Expected no matches (got %d)", len(result))
 		}
 	})
-	t.Run("search string not containing substring", func(t *testing.T) {
-		t.Run("not at all", func(t *testing.T) {
-			for match := range matches("hello world!", "bar") {
-				t.Fatalf("Expected no matches (got '%+v')", match)
-			}
-		})
-		t.Run("present, but with prefix", func(t *testing.T) {
-			for match := range matches("hello world!", "ello") {
-				t.Fatalf("Expected no matches (got '%+v')", match)
-			}
-		})
-		t.Run("present, but with suffix", func(t *testing.T) {
-			for match := range matches("hello world!", "hell") {
-				t.Fatalf("Expected no matches (got '%+v')", match)
-			}
-		})
-		t.Run("present, but with prefix & suffix", func(t *testing.T) {
-			for match := range matches("hello world!", "ell") {
-				t.Fatalf("Expected no matches (got '%+v')", match)
-			}
-		})
-	})
-	t.Run("search string containing substring once", func(t *testing.T) {
-		t.Run("match with no prefix or suffix", func(t *testing.T) {
-			for actualMatch := range matches("hello world!", "hello") {
-				expectedMatch := match{
-					full:   "hello",
-					word:   "hello",
-					prefix: "",
-					suffix: "",
-					start:  0,
-					end:    5,
-				}
-
-				if *actualMatch != expectedMatch {
-					t.Errorf("Unexpected match (got '%+v')", actualMatch)
-				}
-			}
-		})
-		t.Run("match with prefix", func(t *testing.T) {
-			for actualMatch := range matches("hello world!", "-ello") {
-				expectedMatch := match{
-					full:   "hello",
-					word:   "ello",
-					prefix: "h",
-					suffix: "",
-					start:  0,
-					end:    5,
-				}
-
-				if *actualMatch != expectedMatch {
-					t.Errorf("Unexpected match (got '%+v')", actualMatch)
-				}
-			}
-		})
-		t.Run("match with suffix", func(t *testing.T) {
-			for actualMatch := range matches("hello world!", "hell-") {
-				expectedMatch := match{
-					full:   "hello",
-					word:   "hell",
-					prefix: "",
-					suffix: "o",
-					start:  0,
-					end:    5,
-				}
-
-				if *actualMatch != expectedMatch {
-					t.Errorf("Unexpected match (got '%+v')", actualMatch)
-				}
-			}
-		})
-		t.Run("match with prefix & suffix", func(t *testing.T) {
-			for actualMatch := range matches("hello world!", "-ell-") {
-				expectedMatch := match{
-					full:   "hello",
-					word:   "ell",
-					prefix: "h",
-					suffix: "o",
-					start:  0,
-					end:    5,
-				}
-
-				if *actualMatch != expectedMatch {
-					t.Errorf("Unexpected match (got '%+v')", actualMatch)
-				}
-			}
-		})
-		t.Run("match with prefix, keep prefix", func(t *testing.T) {
-			for actualMatch := range matches("hello world!", "-ello") {
-				expectedMatch := match{
-					full:   "hello",
-					word:   "ello",
-					prefix: "h",
-					suffix: "",
-					start:  0,
-					end:    5,
-				}
-
-				if *actualMatch != expectedMatch {
-					t.Errorf("Unexpected match (got '%+v')", actualMatch)
-				}
-			}
-		})
-		t.Run("match with suffix, keep suffix", func(t *testing.T) {
-			for actualMatch := range matches("hello world!", "hell-") {
-				expectedMatch := match{
-					full:   "hello",
-					word:   "hell",
-					prefix: "",
-					suffix: "o",
-					start:  0,
-					end:    5,
-				}
-
-				if *actualMatch != expectedMatch {
-					t.Errorf("Unexpected match (got '%+v')", actualMatch)
-				}
-			}
-		})
-		t.Run("match with prefix & suffix, keep prefix", func(t *testing.T) {
-			for actualMatch := range matches("hello world!", "-ell-") {
-				expectedMatch := match{
-					full:   "hello",
-					word:   "ell",
-					prefix: "h",
-					suffix: "o",
-					start:  0,
-					end:    5,
-				}
-
-				if *actualMatch != expectedMatch {
-					t.Errorf("Unexpected match (got '%+v')", actualMatch)
-				}
-			}
-		})
-		t.Run("match with prefix & suffix, keep suffix", func(t *testing.T) {
-			for actualMatch := range matches("hello world!", "-ell-") {
-				expectedMatch := match{
-					full:   "hello",
-					word:   "ell",
-					prefix: "h",
-					suffix: "o",
-					start:  0,
-					end:    5,
-				}
-
-				if *actualMatch != expectedMatch {
-					t.Errorf("Unexpected match (got '%+v')", actualMatch)
-				}
-			}
-		})
-		t.Run("match with prefix & suffix, keep both", func(t *testing.T) {
-			for actualMatch := range matches("hello world!", "-ell-") {
-				expectedMatch := match{
-					full:   "hello",
-					word:   "ell",
-					prefix: "h",
-					suffix: "o",
-					start:  0,
-					end:    5,
-				}
-
-				if *actualMatch != expectedMatch {
-					t.Errorf("Unexpected match (got '%+v')", actualMatch)
-				}
-			}
-		})
-	})
 	t.Run("search string contains UTF-8 character", func(t *testing.T) {
-		for match := range matches("foobar", "\xbf") {
-			t.Fatalf("Expected no matches (got '%+v')", match)
+		ch := matches("foobar", "\xbf")
+		result := drain(ch)
+		if len(result) > 0 {
+			t.Fatalf("Expected no matches (got %d)", len(result))
+		}
+	})
+}
+
+func TestMatchesFindNothing(t *testing.T) {
+	t.Run("not at all", func(t *testing.T) {
+		ch := matches("hello world!", "bar")
+		result := drain(ch)
+		if len(result) > 0 {
+			t.Fatalf("Expected no matches (got %d)", len(result))
+		}
+	})
+	t.Run("present, but with prefix", func(t *testing.T) {
+		ch := matches("hello world!", "ello")
+		result := drain(ch)
+		if len(result) > 0 {
+			t.Fatalf("Expected no matches (got %d)", len(result))
+		}
+	})
+	t.Run("present, but with suffix", func(t *testing.T) {
+		ch := matches("hello world!", "hell")
+		result := drain(ch)
+		if len(result) > 0 {
+			t.Fatalf("Expected no matches (got %d)", len(result))
+		}
+	})
+	t.Run("present, but with prefix & suffix", func(t *testing.T) {
+		ch := matches("hello world!", "ell")
+		result := drain(ch)
+		if len(result) > 0 {
+			t.Fatalf("Expected no matches (got %d)", len(result))
+		}
+	})
+}
+
+func TestMatchesFindSomething(t *testing.T) {
+	t.Run("match without prefix or suffix", func(t *testing.T) {
+		ch := matches("hello world!", "hello")
+		result := drain(ch)
+		if len(result) != 1 {
+			t.Fatalf("Expected one match (got %d)", len(result))
+		}
+
+		actualMatch := result[0]
+		expectedMatch := match{
+			full:   "hello",
+			word:   "hello",
+			prefix: "",
+			suffix: "",
+			start:  0,
+			end:    5,
+		}
+
+		if actualMatch != expectedMatch {
+			t.Errorf("Unexpected match (got '%+v')", actualMatch)
+		}
+	})
+	t.Run("match with prefix", func(t *testing.T) {
+		ch := matches("hello world!", "-ello")
+		result := drain(ch)
+		if len(result) != 1 {
+			t.Fatalf("Expected one match (got %d)", len(result))
+		}
+
+		actualMatch := result[0]
+		expectedMatch := match{
+			full:   "hello",
+			word:   "ello",
+			prefix: "h",
+			suffix: "",
+			start:  0,
+			end:    5,
+		}
+
+		if actualMatch != expectedMatch {
+			t.Errorf("Unexpected match (got '%+v')", actualMatch)
+		}
+	})
+	t.Run("match with suffix", func(t *testing.T) {
+		ch := matches("hello world!", "hell-")
+		result := drain(ch)
+		if len(result) != 1 {
+			t.Fatalf("Expected one match (got %d)", len(result))
+		}
+
+		actualMatch := result[0]
+		expectedMatch := match{
+			full:   "hello",
+			word:   "hell",
+			prefix: "",
+			suffix: "o",
+			start:  0,
+			end:    5,
+		}
+
+		if actualMatch != expectedMatch {
+			t.Errorf("Unexpected match (got '%+v')", actualMatch)
+		}
+	})
+	t.Run("match with prefix & suffix", func(t *testing.T) {
+		ch := matches("hello world!", "-ell-")
+		result := drain(ch)
+		if len(result) != 1 {
+			t.Fatalf("Expected one match (got %d)", len(result))
+		}
+
+		actualMatch := result[0]
+		expectedMatch := match{
+			full:   "hello",
+			word:   "ell",
+			prefix: "h",
+			suffix: "o",
+			start:  0,
+			end:    5,
+		}
+
+		if actualMatch != expectedMatch {
+			t.Errorf("Unexpected match (got '%+v')", actualMatch)
 		}
 	})
 }
