@@ -38,6 +38,7 @@ install-dev-deps:
 	$(go_install) github.com/alexkohler/nakedret
 	$(go_install) github.com/alexkohler/prealloc
 	$(go_install) github.com/alexkohler/unimport
+	$(go_install) github.com/client9/misspell/cmd/misspell
 	$(go_install) github.com/ericcornelissen/goparamcount
 	$(go_install) github.com/fzipp/gocyclo
 	$(go_install) github.com/go-critic/go-critic/cmd/gocritic
@@ -118,6 +119,9 @@ analysis:
 	@ineffassign ./*
 	@deadcode ./internal/*
 	@deadcode ./cmd/*
+
+	@echo CHECKING SPELLING...
+	@misspell -error .
 
 format:
 	go fmt ./...
