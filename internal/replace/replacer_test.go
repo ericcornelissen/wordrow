@@ -669,7 +669,7 @@ func TestReplaceEscapeEscapeCharacter(t *testing.T) {
 	})
 }
 
-func TestEmptyFromValue(t *testing.T) {
+func TestReplaceEmptyFromValue(t *testing.T) {
 	mapping := make(map[string]string)
 	mapping[""] = "foobar"
 
@@ -679,4 +679,82 @@ func TestEmptyFromValue(t *testing.T) {
 	if result != s {
 		t.Errorf("Unexpected result (got '%s')", result)
 	}
+}
+
+func TestKeepNonExistentAffix(t *testing.T) {
+	t.Run("keep non-existent prefix", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`r`] = `-x`
+
+		source := `foo r bar`
+		result := All(source, mapping)
+
+		expected := `foo x bar`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("keep non-existent suffix", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`b`] = `x-`
+
+		source := `foo b bar`
+		result := All(source, mapping)
+
+		expected := `foo x bar`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("keep non-existent prefix and suffix", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`a`] = `-x-`
+
+		source := `foo a bar`
+		result := All(source, mapping)
+
+		expected := `foo x bar`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+}
+
+func TestReplaceAffixCornerCases(t *testing.T) {
+	t.Run("only a dash", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`-`] = `x`
+
+		source := `Hello world!`
+		result := All(source, mapping)
+
+		expected := `Hello world!`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("only two dashes", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`--`] = `x`
+
+		source := `Hello world!`
+		result := All(source, mapping)
+
+		expected := `Hello world!`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("two dashes with a space", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`- -`] = `-`
+
+		source := `Hello world!`
+		result := All(source, mapping)
+
+		expected := `Hello world!`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
 }

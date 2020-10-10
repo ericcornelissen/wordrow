@@ -51,18 +51,24 @@ func detectAffix(s string) (prefix, suffix bool) {
 	return prefix, suffix
 }
 
-// Get string `s` as a safe regular expression (escaping special characters) as
-// well as removing any *wordrow* specific syntax.
-func toSafeString(s string) (safeString string) {
+// Remove from the string `s` the *wordrow* syntax for prefixes and/or suffixes.
+func removeAffixNotation(s string) string {
 	prefix, suffix := detectAffix(s)
-	if prefix {
+	if prefix && !stringsx.IsEmpty(s) {
 		s = s[1:]
 	}
-	if suffix {
+	if suffix && !stringsx.IsEmpty(s) {
 		s = s[:len(s)-1]
 	}
 
-	safeString = stringsx.ReplaceAll(s, `\\`, `\`)
+	return s
+}
+
+// Get string `s` as a safe regular expression (escaping special characters) as
+// well as removing any *wordrow* specific syntax.
+func toSafeString(s string) (safeString string) {
+	safeString = removeAffixNotation(s)
+	safeString = stringsx.ReplaceAll(safeString, `\\`, `\`)
 	safeString = stringsx.ReplaceAll(safeString, `\-`, `-`)
 	safeString = regexp.QuoteMeta(safeString)
 	return whitespaceExpr.ReplaceAllString(safeString, `\s+`)
@@ -129,7 +135,8 @@ func findMatches(s, query string) chan *match {
 // Note that non-UTF8 characters are not allowed, if any non-UTF characters are
 // detected no matches will be returned.
 func matches(s, query string) chan *match {
-	if !stringsx.IsValidUTF8(query) || stringsx.IsEmpty(query) {
+	cleanQuery := stringsx.TrimSpace(removeAffixNotation(query))
+	if !stringsx.IsValidUTF8(query) || stringsx.IsEmpty(cleanQuery) {
 		logger.Warningf("Invalid mapping value '%s'", query)
 		return emptyChannel()
 	}
