@@ -45,7 +45,7 @@ func replaceOne(s, from, to string) string {
 		replacement := getReplacement(match, to)
 		replacement, offset := maintainFormatting(match.full, replacement)
 
-		sb.WriteString(s[lastIndex:match.start])
+		sb.WriteString(s[lastIndex:maxInt(match.start, lastIndex)])
 		sb.WriteString(replacement)
 		lastIndex = match.end + offset
 	}

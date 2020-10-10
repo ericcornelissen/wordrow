@@ -844,3 +844,30 @@ func TestReplaceAffixInToCornerCases(t *testing.T) {
 		}
 	})
 }
+
+func TestDoublePrefixSuffixMatch(t *testing.T) {
+	t.Run("double prefix", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping["b -"] = "bulbasaur"
+
+		source := "b b\nfoobar"
+		result := All(source, mapping)
+
+		expected := "bulbasaur\nfoobar"
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("double suffix", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping["- b"] = "bulbasaur"
+
+		source := "a\nb b"
+		result := All(source, mapping)
+
+		expected := "bulbasaur\nbulbasaur"
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+}

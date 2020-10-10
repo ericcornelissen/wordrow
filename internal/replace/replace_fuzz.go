@@ -17,11 +17,11 @@ func FuzzReplaceAll(data []byte) int {
 
 	mapping := make(map[string]string, 1)
 	for i := 0; i < len(mappings); i += 2 {
-		from := mappings[i]
+		from := stringsx.TrimSpace(mappings[i])
 
 		to := "charmander"
 		if i+1 < len(mappings) {
-			to = mappings[i+1]
+			to = stringsx.TrimSpace(mappings[i+1])
 		}
 
 		mapping[from] = to
