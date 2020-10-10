@@ -15,6 +15,7 @@ Versioning].
 ### Bug Fixes
 
 - Allow for prefix notation in inline mappings. ([#136])
+- Prevent runtime error due to invalid mappings. ([#138])
 
 ### Miscellaneous
 
@@ -163,3 +164,4 @@ Versioning].
 [#132]: https://github.com/ericcornelissen/wordrow/pull/132
 [#134]: https://github.com/ericcornelissen/wordrow/pull/134
 [#136]: https://github.com/ericcornelissen/wordrow/pull/136
+[#138]: https://github.com/ericcornelissen/wordrow/pull/138

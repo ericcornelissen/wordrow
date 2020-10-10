@@ -52,7 +52,7 @@ func maintainCapitalization(fromPhrase, toPhrase string) string {
 	fromWords := phraseToWordsExpr.FindAllStringSubmatch(fromPhrase, -1)
 	toWords := phraseToWordsExpr.FindAllStringSubmatch(toPhrase, -1)
 
-	shortestLen := lowestInt(len(fromWords), len(toWords))
+	shortestLen := minInt(len(fromWords), len(toWords))
 	for i := 0; i < shortestLen; i++ {
 		fromWord, toWord := fromWords[i][1], toWords[i][1]
 		toDivider := toWords[i][2]
@@ -79,7 +79,7 @@ func maintainWhitespace(from, to string) (newTo string, offset int) {
 	fromWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(from, -1)
 	toWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(to, -1)
 
-	shortestLen := lowestInt(len(fromWhitespace), len(toWhitespace))
+	shortestLen := minInt(len(fromWhitespace), len(toWhitespace))
 	for i := 0; i < shortestLen; i++ {
 		fromMatch, toMatch := fromWhitespace[i], toWhitespace[i]
 		fromStart, fromEnd := fromMatch[0], fromMatch[1]
