@@ -9,31 +9,27 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/logger"
 )
 
-func run(args *cli.Arguments) {
+func run(args *cli.Arguments) (errors, warnings []error) {
 	if hasStdin() {
 		logger.SetLogLevel(logger.FATAL)
-		errors := runOnStdin(args)
-		if errors != nil {
-			panic(errors)
-		}
+		errors, warnings = runOnStdin(args)
 	} else {
 		setLogLevel(args)
-		errors := runOnFiles(args)
-		for _, err := range errors {
-			logger.Error(err)
-		}
+		errors, warnings = runOnFiles(args)
 	}
+
+	return errors, warnings
 }
 
-func runOnFiles(args *cli.Arguments) (errors []error) {
+func runOnFiles(args *cli.Arguments) (errors, warnings []error) {
 	mapping, errs := getMapping(args)
-	if check(&errors, errs) && args.Strict {
-		return errs
+	if check(&warnings, errs) && args.Strict {
+		return nil, warnings
 	}
 
 	filePaths, errs := fs.ResolveGlobs(args.InputFiles...)
-	if check(&errors, errs) && args.Strict {
-		return errs
+	if check(&warnings, errs) && args.Strict {
+		return nil, errs
 	}
 
 	if !args.DryRun {
@@ -41,13 +37,13 @@ func runOnFiles(args *cli.Arguments) (errors []error) {
 		check(&errors, errs)
 	}
 
-	return errors
+	return errors, warnings
 }
 
-func runOnStdin(args *cli.Arguments) (errors []error) {
+func runOnStdin(args *cli.Arguments) (errors, warnings []error) {
 	mapping, errs := getMapping(args)
-	if check(&errors, errs) && args.Strict {
-		return errors
+	if check(&warnings, errs) && args.Strict {
+		return nil, warnings
 	}
 
 	readWriter := bufio.NewReadWriter(
@@ -60,7 +56,7 @@ func runOnStdin(args *cli.Arguments) (errors []error) {
 		errors = append(errors, err)
 	}
 
-	return errors
+	return errors, warnings
 }
 
 func check(errors *[]error, newErrors []error) bool {
@@ -76,13 +72,28 @@ func setLogLevel(args *cli.Arguments) {
 	}
 }
 
+func exit(errors, warnings []error, strict bool) {
+	if len(errors) > 0 {
+		os.Exit(runtimeErrorExitCode)
+	}
+
+	if len(warnings) > 0 && strict {
+		os.Exit(runtimeWarningExitCode)
+	}
+
+	os.Exit(0)
+}
+
 func main() {
 	shouldRun, args := cli.ParseArgs(os.Args)
 	if args.Version {
 		printVersion()
 	}
 
-	if shouldRun || hasStdin() {
-		run(&args)
+	if !shouldRun && !hasStdin() {
+		os.Exit(missingArgumentExitCode)
 	}
+
+	errors, warnings := run(&args)
+	exit(errors, warnings, args.Strict)
 }
