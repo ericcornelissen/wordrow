@@ -11,6 +11,7 @@ Versioning].
 
 - Run on STDIN. ([#119])
 - Process input files in parallel. ([#132])
+- Exit with a non-zero code on errors. ([#139])
 
 ### Bug Fixes
 
@@ -163,3 +164,4 @@ Versioning].
 [#132]: https://github.com/ericcornelissen/wordrow/pull/132
 [#134]: https://github.com/ericcornelissen/wordrow/pull/134
 [#136]: https://github.com/ericcornelissen/wordrow/pull/136
+[#139]: https://github.com/ericcornelissen/wordrow/pull/139
