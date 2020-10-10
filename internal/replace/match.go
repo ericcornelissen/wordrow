@@ -5,7 +5,6 @@ import (
 	"regexp"
 
 	"github.com/ericcornelissen/stringsx"
-	"github.com/ericcornelissen/wordrow/internal/logger"
 )
 
 // The match type represents a matching substring in a larger string of a
@@ -28,13 +27,6 @@ type match struct {
 
 	// The ending index of the (full) match in the original string.
 	end int
-}
-
-// Get an empty channel of matches.
-func emptyChannel() chan *match {
-	ch := make(chan *match)
-	close(ch)
-	return ch
 }
 
 // Detect whether the string `s` contains the *wordrow* syntax for prefixes
@@ -111,7 +103,7 @@ func indicesToMatch(s string, indices []int) *match {
 //
 // Note that non-UTF8 characters are not allowed, if any non-UTF characters are
 // detected the function will panic.
-func findMatches(s, query string) chan *match {
+func matches(s, query string) chan *match {
 	ch := make(chan *match)
 	go func() {
 		defer close(ch)
@@ -128,18 +120,4 @@ func findMatches(s, query string) chan *match {
 	}()
 
 	return ch
-}
-
-// Find all matches of a `query` string in a target string `s`.
-//
-// Note that non-UTF8 characters are not allowed, if any non-UTF characters are
-// detected no matches will be returned.
-func matches(s, query string) chan *match {
-	cleanQuery := stringsx.TrimSpace(removeAffixNotation(query))
-	if !stringsx.IsValidUTF8(query) || stringsx.IsEmpty(cleanQuery) {
-		logger.Warningf("Invalid mapping value '%s'", query)
-		return emptyChannel()
-	}
-
-	return findMatches(s, query)
 }

@@ -720,8 +720,55 @@ func TestKeepNonExistentAffix(t *testing.T) {
 	})
 }
 
-func TestReplaceAffixCornerCases(t *testing.T) {
-	t.Run("only a dash", func(t *testing.T) {
+func TestReplaceCornerCases(t *testing.T) {
+	t.Run("empty search string", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping["foo"] = "bar"
+
+		source := ""
+		result := All(source, mapping)
+
+		if result != source {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+	t.Run("empty from string", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[""] = "bar"
+
+		source := "foobar"
+		result := All(source, mapping)
+
+		if result != source {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+	t.Run("empty to string", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping["foo"] = ""
+
+		source := "foo bar foo"
+		result := All(source, mapping)
+
+		if result != source {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+	t.Run("search string contains UTF-8 character", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping["\xbf"] = "pikachu"
+
+		source := "foobar"
+		result := All(source, mapping)
+
+		if result != source {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+}
+
+func TestReplaceAffixInFromCornerCases(t *testing.T) {
+	t.Run("only a hyphen", func(t *testing.T) {
 		mapping := make(map[string]string)
 		mapping[`-`] = `x`
 
@@ -733,7 +780,7 @@ func TestReplaceAffixCornerCases(t *testing.T) {
 			reportIncorrectReplacement(t, expected, result)
 		}
 	})
-	t.Run("only two dashes", func(t *testing.T) {
+	t.Run("only two hyphens", func(t *testing.T) {
 		mapping := make(map[string]string)
 		mapping[`--`] = `x`
 
@@ -745,9 +792,48 @@ func TestReplaceAffixCornerCases(t *testing.T) {
 			reportIncorrectReplacement(t, expected, result)
 		}
 	})
-	t.Run("two dashes with a space", func(t *testing.T) {
+	t.Run("two hyphens with a space", func(t *testing.T) {
 		mapping := make(map[string]string)
 		mapping[`- -`] = `-`
+
+		source := `Hello world!`
+		result := All(source, mapping)
+
+		expected := `Hello world!`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+}
+
+func TestReplaceAffixInToCornerCases(t *testing.T) {
+	t.Run("only a hyphen", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`world`] = `-`
+
+		source := `Hello world!`
+		result := All(source, mapping)
+
+		expected := `Hello world!`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("only two hyphens", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`hello`] = `--`
+
+		source := `Hello world!`
+		result := All(source, mapping)
+
+		expected := `Hello world!`
+		if result != expected {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("two hyphens with a space", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`hello`] = `- -`
 
 		source := `Hello world!`
 		result := All(source, mapping)

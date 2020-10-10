@@ -15,7 +15,10 @@ original text. Namely:
 */
 package replace
 
-import "github.com/ericcornelissen/stringsx"
+import (
+	"github.com/ericcornelissen/stringsx"
+	"github.com/ericcornelissen/wordrow/internal/logger"
+)
 
 // Get the replacement string including prefix/suffix given the match `m`.
 func getReplacement(m *match, s string) string {
@@ -54,10 +57,28 @@ func replaceOne(s, from, to string) string {
 	return sb.String()
 }
 
+// Replace all instances of `from` by `to` in `s`, or return the original string
+// if the mapping is invalid.
+func safeReplaceOne(s, from, to string) string {
+	if !stringsx.IsValidUTF8(from) {
+		logger.Warningf("Invalid character in mapping '%s'", from)
+		return s
+	}
+
+	cleanFrom := stringsx.TrimSpace(removeAffixNotation(from))
+	cleanTo := stringsx.TrimSpace(removeAffixNotation(to))
+	if stringsx.IsEmpty(cleanFrom) || stringsx.IsEmpty(cleanTo) {
+		logger.Warningf("Invalid mapping value '%s,%s'", from, to)
+		return s
+	}
+
+	return replaceOne(s, from, to)
+}
+
 // All replaces substrings of `s` according to the mapping defined by `m`.
 func All(s string, m map[string]string) string {
 	for from, to := range m {
-		s = replaceOne(s, from, to)
+		s = safeReplaceOne(s, from, to)
 	}
 
 	return s

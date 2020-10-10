@@ -5,19 +5,6 @@ import (
 	"testing"
 )
 
-func TestEmptyChannel(t *testing.T) {
-	i := 0
-
-	ch := emptyChannel()
-	for range ch {
-		i++
-	}
-
-	if i != 0 {
-		t.Errorf("Empty channel outputted %d values", i)
-	}
-}
-
 func TestDetectAffix(t *testing.T) {
 	base := "foobar"
 
@@ -602,23 +589,6 @@ func TestToSafeString(t *testing.T) {
 		expected := fmt.Sprintf(`\\%s`, base)
 		if actual != expected {
 			t.Errorf("Unexpected regular expression (%s != %s)", actual, expected)
-		}
-	})
-}
-
-func TestMatchesCornerCases(t *testing.T) {
-	t.Run("empty search string", func(t *testing.T) {
-		ch := matches("", "bar")
-		result := drain(ch)
-		if len(result) > 0 {
-			t.Fatalf("Expected no matches (got %d)", len(result))
-		}
-	})
-	t.Run("search string contains UTF-8 character", func(t *testing.T) {
-		ch := matches("foobar", "\xbf")
-		result := drain(ch)
-		if len(result) > 0 {
-			t.Fatalf("Expected no matches (got %d)", len(result))
 		}
 	})
 }
