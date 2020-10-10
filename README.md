@@ -3,7 +3,6 @@
 [![GitHub Actions][ci-image]][ci-url]
 [![Test Coverage][coverage-image]][coverage-url]
 [![Maintainability][maintainability-image]][maintainability-url]
-[![LGTM Alerts][lgtm-image]][lgtm-url]
 [![BCH Compliance][bch-image]][bch-url]
 [![Go Report Card][grc-image]][grc-url]
 
@@ -51,8 +50,6 @@ $ wordrow --help
 [coverage-image]: https://api.codeclimate.com/v1/badges/36d32594ea2274cbf972/test_coverage
 [maintainability-url]: https://codeclimate.com/github/ericcornelissen/wordrow/maintainability
 [maintainability-image]: https://api.codeclimate.com/v1/badges/36d32594ea2274cbf972/maintainability
-[lgtm-url]: https://lgtm.com/projects/g/ericcornelissen/wordrow/alerts/
-[lgtm-image]: https://img.shields.io/lgtm/alerts/g/ericcornelissen/wordrow.svg?logo=lgtm&logoWidth=18
 [bch-url]: https://bettercodehub.com/results/ericcornelissen/wordrow
 [bch-image]: https://bettercodehub.com/edge/badge/ericcornelissen/wordrow?branch=master
 [grc-url]: https://goreportcard.com/report/github.com/ericcornelissen/wordrow
