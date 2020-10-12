@@ -6,7 +6,7 @@ set -e
 git stash -q -u --keep-index
 
 # See if the project can be build and tests pass.
-make
+make build
 make test
 
 # Format the code base and include (relevant) formatting changes in the commit.
