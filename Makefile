@@ -40,7 +40,7 @@ install-dev-deps:
 	$(go_install) github.com/alexkohler/unimport
 	$(go_install) github.com/client9/misspell/cmd/misspell
 	$(go_install) github.com/ericcornelissen/goparamcount
-	$(go_install) github.com/fzipp/gocyclo
+	$(go_install) github.com/fzipp/gocyclo/cmd/gocyclo
 	$(go_install) github.com/go-critic/go-critic/cmd/gocritic
 	$(go_install) github.com/gordonklaus/ineffassign
 	$(go_install) github.com/jgautheron/goconst/cmd/goconst
