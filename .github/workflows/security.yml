@@ -2,11 +2,11 @@ name: Security
 on:
   pull_request:
     branches:
-      - master
+    - master
   push:
     branches:
-      - master
-      - 'sec**'
+    - master
+    - 'sec**'
 
 jobs:
   codeql:

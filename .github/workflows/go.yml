@@ -1,7 +1,7 @@
 name: wordrow CI
 on:
-  - push
-  - pull_request
+- push
+- pull_request
 
 jobs:
   build:
@@ -10,18 +10,14 @@ jobs:
     steps:
 
     # Setup
+    - name: Checkout repository
+      uses: actions/checkout@v2
     - name: Set up Go 1.13
       uses: actions/setup-go@v2
       with:
         go-version: 1.13
-    - uses: actions/checkout@v2
     - name: Get dependencies
-      run: |
-        go get -v -t -d ./...
-        if [ -f Gopkg.toml ]; then
-            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-            dep ensure
-        fi
+      run: go get -v -t -d ./...
 
     # Building
     - name: Build
@@ -45,15 +41,16 @@ jobs:
     steps:
 
     # Setup
-    - name: Set up Go 1.13
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.13
+    - name: Checkout repository
+      uses: actions/checkout@v2
     - name: Set up NodeJS  # NodeJS required for MarkDown linting
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - uses: actions/checkout@v2
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.13
     - name: Get dependencies
       run: make install-dev-deps
 
