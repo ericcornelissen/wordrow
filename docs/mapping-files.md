@@ -8,7 +8,7 @@ formats] as well.
 
 This document does not contain any mappings that are particularly useful in a
 real-world scenario. Instead, it illustrate how you can use *wordrow* through
-made-up examples.
+made-up examples. But, there is a [list of ready-to-use mapping files].
 
 In this document you can read about:
 
@@ -438,6 +438,7 @@ Then, a text containing the phrase _"a duck"_ will be transformed as follows.
 ```
 
 [expletive infixation]: https://www.youtube.com/watch?v=dt22yWYX64w
+[list of ready-to-use mapping files]: ./example-mappings.md
 [mapping formats]: ./mapping-formats.md
 [whitespace matters]: #whitespace
 [*wordrow* CLI]: ./cli.md

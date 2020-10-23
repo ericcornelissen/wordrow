@@ -22,6 +22,10 @@ Versioning].
 
 - Log when a mapping is overwritten. ([#134])
 
+### Documentation
+
+- Provide a list of ready-to-use mapping files. ([#141])
+
 ## [0.6.0-beta] - 2020-08-18
 
 ### Breaking Changes
@@ -167,3 +171,4 @@ Versioning].
 [#136]: https://github.com/ericcornelissen/wordrow/pull/136
 [#138]: https://github.com/ericcornelissen/wordrow/pull/138
 [#139]: https://github.com/ericcornelissen/wordrow/pull/139
+[#141]: https://github.com/ericcornelissen/wordrow/pull/141

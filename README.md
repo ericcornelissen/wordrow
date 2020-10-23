@@ -29,8 +29,10 @@ First, download the [latest release] for your system and add the *wordrow*
 binary to your PATH.
 
 To get started, you can read [how to use the CLI](./docs/cli.md) and [how to
-define a mapping](./docs/mapping-files.md). For quick access to help on the
-command line use:
+define a mapping](./docs/mapping-files.md). Alternatively, you can grab one of
+the [ready-to-use mapping files](./docs/example-mappings.md).
+
+For quick access to help on the command line use:
 
 ```shell
 $ wordrow --help
