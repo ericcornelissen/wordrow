@@ -7,20 +7,21 @@ Versioning].
 
 ## [Unreleased]
 
+- _No changes yet_
+
+## [0.7.0-beta] - 2020-10-23
+
 ### Features
 
 - Run on STDIN. ([#119])
 - Process input files in parallel. ([#132])
+- Log when a mapping is overwritten. ([#134])
 - Exit with a non-zero exit code on errors. ([#139])
 
 ### Bug Fixes
 
 - Allow for prefix notation in inline mappings. ([#136])
 - Prevent runtime errors due to invalid mappings. ([#138])
-
-### Miscellaneous
-
-- Log when a mapping is overwritten. ([#134])
 
 ### Documentation
 
