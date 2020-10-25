@@ -1,4 +1,6 @@
 exclude:
+  # The cmd folder contains code that connects all other code.
+  - /cmd/.*
   # Code quality of testing utilities is not relevant.
   - .*/testing/.*
   # Code quality of fuzz code is not relevant.
