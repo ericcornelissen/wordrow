@@ -141,18 +141,13 @@ func doParseProgramArguments(args []string, arguments *Arguments) error {
 // ParseArgs parses a list of arguments (e.g. `os.Args`) into an Arguments
 // instance.
 func ParseArgs(args []string) (run bool, arguments Arguments) {
-	if noArgumentsProvided(args) {
-		printUsage()
-		return false, arguments
-	}
-
 	err := doParseProgramArguments(args[1:], &arguments)
 	if err != nil {
 		logger.Fatalf("An error occurred while parsing arguments: %s", err)
 		return false, arguments
 	}
 
-	if arguments.help {
+	if noArgumentsProvided(args) || arguments.help {
 		printUsage()
 		return false, arguments
 	}
