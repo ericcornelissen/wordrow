@@ -103,15 +103,15 @@ of this project. Note that the table is (intentionally) incomplete.
 
 | Command          | Description                                          |
 | ---------------- | ---------------------------------------------------- |
-| `make`           | Compile a binary called `wordrow` for the current OS |
 | `make init`      | Initialize the development environment               |
 | `make install`   | Install all dependencies for the project             |
+| `make build`     | Compile a binary called `wordrow` for the current OS |
 | `make test`      | Run all test suites for the project                  |
 | `make coverage`  | Run all test suites and show the coverage results    |
 | `make format`    | Format the source files of the project               |
 | `make lint`      | Lint the source files of the project                 |
 | `make analysis`  | Run static analysis tools on the code base           |
-| `make build-all` | Compile all target binaries for the project          |
+| `make help`      | Show a help message for available commands           |
 | `make clean`     | Delete all generated files                           |
 
 ### Git Hooks
