@@ -20,6 +20,13 @@ import (
 	"github.com/ericcornelissen/wordrow/internal/logger"
 )
 
+// Mapping is a utility struct representing a single mapping `from` one string
+// `to` another.
+type mapping struct {
+	from string
+	to   string
+}
+
 // Get the replacement string including prefix/suffix given the match `m`.
 func getReplacement(m *match, s string) string {
 	keepPrefix, keepSuffix := detectAffix(s)
@@ -36,13 +43,13 @@ func getReplacement(m *match, s string) string {
 	return replacement
 }
 
-// Replace all instances of `from` by `to` in `s`.
-func replaceOne(s, from, to string) string {
+// Replace all instances of `from` by `to` defined b `m` in `s`.
+func replaceOne(s string, m *mapping) string {
 	var sb stringsx.Builder
 
 	lastIndex := 0
-	for match := range matches(s, from) {
-		replacement := getReplacement(match, to)
+	for match := range matches(s, m.from) {
+		replacement := getReplacement(match, m.to)
 		replacement, offset := maintainFormatting(match.full, replacement)
 
 		sb.WriteString(s[lastIndex:maxInt(match.start, lastIndex)])
@@ -57,28 +64,28 @@ func replaceOne(s, from, to string) string {
 	return sb.String()
 }
 
-// Replace all instances of `from` by `to` in `s`, or return the original string
-// if the mapping is invalid.
-func safeReplaceOne(s, from, to string) string {
-	if !stringsx.IsValidUTF8(from) {
-		logger.Warningf("Invalid character in mapping '%s'", from)
+// Replace all instances of `from` by `to` defined b `m` in `s`, or return the
+// original string if the mapping is invalid.
+func safeReplaceOne(s string, m *mapping) string {
+	if !stringsx.IsValidUTF8(m.from) {
+		logger.Warningf("Invalid character in mapping '%s'", m.from)
 		return s
 	}
 
-	cleanFrom := stringsx.TrimSpace(removeAffixNotation(from))
-	cleanTo := stringsx.TrimSpace(removeAffixNotation(to))
+	cleanFrom := stringsx.TrimSpace(removeAffixNotation(m.from))
+	cleanTo := stringsx.TrimSpace(removeAffixNotation(m.to))
 	if stringsx.IsEmpty(cleanFrom) || stringsx.IsEmpty(cleanTo) {
-		logger.Warningf("Invalid mapping value '%s,%s'", from, to)
+		logger.Warningf("Invalid mapping value '%s,%s'", m.from, m.to)
 		return s
 	}
 
-	return replaceOne(s, from, to)
+	return replaceOne(s, m)
 }
 
 // All replaces substrings of `s` according to the mapping defined by `m`.
 func All(s string, m map[string]string) string {
 	for from, to := range m {
-		s = safeReplaceOne(s, from, to)
+		s = safeReplaceOne(s, &mapping{from: from, to: to})
 	}
 
 	return s
