@@ -112,8 +112,7 @@ func matches(s, query string) chan *match {
 		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, safeQuery)
 		expr := regexp.MustCompile(rawExpr)
 		for _, indices := range expr.FindAllStringSubmatchIndex(s, -1) {
-			m := indicesToMatch(s, indices)
-			if isValidFor(m, query) {
+			if m := indicesToMatch(s, indices); isValidFor(m, query) {
 				ch <- m
 			}
 		}
