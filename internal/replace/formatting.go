@@ -40,6 +40,36 @@ func maintainAllCaps(from, to string) string {
 	return to
 }
 
+// Maintain the capitalization as it is found in `fromWords` in `toWords` for
+// each word in `fromWords`. If len(toWords) > len(fromWords) the trailing words
+// are omitted.
+func maintainCapitalizationWordByWord(fromWords, toWords [][]string) string {
+	var sb stringsx.Builder
+	shortestLen := minInt(len(fromWords), len(toWords))
+	for i := 0; i < shortestLen; i++ {
+		fromWord, toWord, toDivider := fromWords[i][1], toWords[i][1], toWords[i][2]
+		if startsWithCapital(fromWord) {
+			toWord = toSentenceCase(toWord)
+		}
+
+		sb.WriteString(toWord + toDivider)
+	}
+
+	return sb.String()
+}
+
+// Get the trailing words in `toWords` compared to `fromWords`.
+func getTrailingWords(fromWords, toWords [][]string) string {
+	var sb stringsx.Builder
+
+	shortestLen := minInt(len(fromWords), len(toWords))
+	for i := shortestLen; i < len(toWords); i++ {
+		sb.WriteString(toWords[i][0])
+	}
+
+	return sb.String()
+}
+
 // If the `from` string starts with a capital letter, it will return the `to`
 // string starting with a capital letter as well. Otherwise, the `to` string is
 // returned unchanged.
@@ -47,29 +77,13 @@ func maintainAllCaps(from, to string) string {
 // If the `from` string consists of multiple words, the capitalization will be
 // maintained for every word in the string.
 func maintainCapitalization(fromPhrase, toPhrase string) string {
-	var sb stringsx.Builder
-
 	fromWords := phraseToWordsExpr.FindAllStringSubmatch(fromPhrase, -1)
 	toWords := phraseToWordsExpr.FindAllStringSubmatch(toPhrase, -1)
 
-	shortestLen := lowestInt(len(fromWords), len(toWords))
-	for i := 0; i < shortestLen; i++ {
-		fromWord, toWord := fromWords[i][1], toWords[i][1]
-		toDivider := toWords[i][2]
+	replacement := maintainCapitalizationWordByWord(fromWords, toWords)
+	trailingWords := getTrailingWords(fromWords, toWords)
 
-		if startsWithCapital(fromWord) {
-			toWord = toSentenceCase(toWord)
-		}
-
-		sb.WriteString(toWord)
-		sb.WriteString(toDivider)
-	}
-
-	for i := shortestLen; i < len(toWords); i++ {
-		sb.WriteString(toWords[i][0])
-	}
-
-	return sb.String()
+	return replacement + trailingWords
 }
 
 // If the `from` phrase contains whitespace (spaces, tabs, newlines), it will
@@ -79,7 +93,7 @@ func maintainWhitespace(from, to string) (newTo string, offset int) {
 	fromWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(from, -1)
 	toWhitespace := whitespaceExpr.FindAllStringSubmatchIndex(to, -1)
 
-	shortestLen := lowestInt(len(fromWhitespace), len(toWhitespace))
+	shortestLen := minInt(len(fromWhitespace), len(toWhitespace))
 	for i := 0; i < shortestLen; i++ {
 		fromMatch, toMatch := fromWhitespace[i], toWhitespace[i]
 		fromStart, fromEnd := fromMatch[0], fromMatch[1]

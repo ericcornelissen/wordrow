@@ -671,7 +671,7 @@ func TestReplaceEscapeEscapeCharacter(t *testing.T) {
 	})
 }
 
-func TestEmptyFromValue(t *testing.T) {
+func TestReplaceEmptyFromValue(t *testing.T) {
 	mapping := make(map[string]string)
 	mapping[""] = "foobar"
 
@@ -681,4 +681,189 @@ func TestEmptyFromValue(t *testing.T) {
 	if !bytes.Equal(s, result) {
 		t.Errorf("Unexpected result (got '%s')", result)
 	}
+}
+
+func TestKeepNonExistentAffix(t *testing.T) {
+	t.Run("keep non-existent prefix", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`r`] = `-x`
+
+		source := []byte(`foo r bar`)
+		result := All(source, mapping)
+
+		expected := []byte(`foo x bar`)
+		if !bytes.Equal(result, expected) {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("keep non-existent suffix", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`b`] = `x-`
+
+		source := []byte(`foo b bar`)
+		result := All(source, mapping)
+
+		expected := []byte(`foo x bar`)
+		if !bytes.Equal(result, expected) {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("keep non-existent prefix and suffix", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`a`] = `-x-`
+
+		source := []byte(`foo a bar`)
+		result := All(source, mapping)
+
+		expected := []byte(`foo x bar`)
+		if !bytes.Equal(result, expected) {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+}
+
+func TestReplaceCornerCases(t *testing.T) {
+	t.Run("empty search string", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping["foo"] = "bar"
+
+		source := []byte{}
+		result := All(source, mapping)
+
+		if !bytes.Equal(result, source) {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+	t.Run("empty from string", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[""] = "bar"
+
+		source := []byte("foobar")
+		result := All(source, mapping)
+
+		if !bytes.Equal(result, source) {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+	t.Run("empty to string", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping["foo"] = ""
+
+		source := []byte("foo bar foo")
+		result := All(source, mapping)
+
+		if !bytes.Equal(result, source) {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+	t.Run("search string contains UTF-8 character", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping["\xbf"] = "pikachu"
+
+		source := []byte("foobar")
+		result := All(source, mapping)
+
+		if !bytes.Equal(result, source) {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+}
+
+func TestReplaceAffixInFromCornerCases(t *testing.T) {
+	t.Run("only a hyphen", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`-`] = `x`
+
+		source := []byte(`Hello world!`)
+		result := All(source, mapping)
+
+		if !bytes.Equal(result, source) {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+	t.Run("only two hyphens", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`--`] = `x`
+
+		source := []byte(`Hello world!`)
+		result := All(source, mapping)
+
+		if !bytes.Equal(result, source) {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+	t.Run("two hyphens with a space", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`- -`] = `-`
+
+		source := []byte(`Hello world!`)
+		result := All(source, mapping)
+
+		if !bytes.Equal(result, source) {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+}
+
+func TestReplaceAffixInToCornerCases(t *testing.T) {
+	t.Run("only a hyphen", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`world`] = `-`
+
+		source := []byte(`Hello world!`)
+		result := All(source, mapping)
+
+		if !bytes.Equal(result, source) {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+	t.Run("only two hyphens", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`hello`] = `--`
+
+		source := []byte(`Hello world!`)
+		result := All(source, mapping)
+
+		if !bytes.Equal(result, source) {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+	t.Run("two hyphens with a space", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping[`hello`] = `- -`
+
+		source := []byte(`Hello world!`)
+		result := All(source, mapping)
+
+		if !bytes.Equal(result, source) {
+			reportIncorrectReplacement(t, source, result)
+		}
+	})
+}
+
+func TestDoublePrefixSuffixMatch(t *testing.T) {
+	t.Run("double prefix", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping["b -"] = "bulbasaur"
+
+		source := []byte("b b\nfoobar")
+		result := All(source, mapping)
+
+		expected := []byte("bulbasaur\nfoobar")
+		if !bytes.Equal(result, expected) {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
+	t.Run("double suffix", func(t *testing.T) {
+		mapping := make(map[string]string)
+		mapping["- b"] = "bulbasaur"
+
+		source := []byte("a\nb b")
+		result := All(source, mapping)
+
+		expected := []byte("bulbasaur\nbulbasaur")
+		if !bytes.Equal(result, expected) {
+			reportIncorrectReplacement(t, expected, result)
+		}
+	})
 }

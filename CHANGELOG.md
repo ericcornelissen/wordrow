@@ -7,8 +7,25 @@ Versioning].
 
 ## [Unreleased]
 
+- _No changes yet_
+
+## [0.7.0-beta] - 2020-10-23
+
+### Features
+
 - Run on STDIN. ([#119])
 - Process input files in parallel. ([#132])
+- Log when a mapping is overwritten. ([#134])
+- Exit with a non-zero exit code on errors. ([#139])
+
+### Bug Fixes
+
+- Allow for prefix notation in inline mappings. ([#136])
+- Prevent runtime errors due to invalid mappings. ([#138])
+
+### Documentation
+
+- Provide a list of ready-to-use mapping files. ([#141])
 
 ## [0.6.0-beta] - 2020-08-18
 
@@ -151,3 +168,8 @@ Versioning].
 [#118]: https://github.com/ericcornelissen/wordrow/pull/118
 [#119]: https://github.com/ericcornelissen/wordrow/pull/119
 [#132]: https://github.com/ericcornelissen/wordrow/pull/132
+[#134]: https://github.com/ericcornelissen/wordrow/pull/134
+[#136]: https://github.com/ericcornelissen/wordrow/pull/136
+[#138]: https://github.com/ericcornelissen/wordrow/pull/138
+[#139]: https://github.com/ericcornelissen/wordrow/pull/139
+[#141]: https://github.com/ericcornelissen/wordrow/pull/141

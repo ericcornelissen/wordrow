@@ -15,7 +15,19 @@ original text. Namely:
 */
 package replace
 
-import "bytes"
+import (
+	"bytes"
+
+	"github.com/ericcornelissen/stringsx"
+	"github.com/ericcornelissen/wordrow/internal/logger"
+)
+
+// Mapping is a utility struct representing a single mapping `from` one string
+// `to` another.
+type mapping struct {
+	from string
+	to   string
+}
 
 // Get the replacement string including prefix/suffix given the match `m`.
 func getReplacement(m *match, s string) string {
@@ -34,15 +46,15 @@ func getReplacement(m *match, s string) string {
 }
 
 // Replace all instances of `from` by `to` in `s`.
-func replaceOne(s []byte, from, to string) []byte {
+func replaceOne(s []byte, m *mapping) []byte {
 	var bb bytes.Buffer
 
 	lastIndex := 0
-	for match := range matches(s, from) {
-		replacement := getReplacement(match, to)
+	for match := range matches(s, m.from) {
+		replacement := getReplacement(match, m.to)
 		replacement, offset := maintainFormatting(string(match.full), replacement)
 
-		bb.Write(s[lastIndex:match.start])
+		bb.Write(s[lastIndex:maxInt(match.start, lastIndex)])
 		bb.WriteString(replacement)
 		lastIndex = match.end + offset
 	}
@@ -54,10 +66,28 @@ func replaceOne(s []byte, from, to string) []byte {
 	return bb.Bytes()
 }
 
+// Replace all instances of `from` by `to` defined b `m` in `s`, or return the
+// original string if the mapping is invalid.
+func safeReplaceOne(s []byte, m *mapping) []byte {
+	if !stringsx.IsValidUTF8(m.from) {
+		logger.Warningf("Invalid character in mapping '%s'", m.from)
+		return s
+	}
+
+	cleanFrom := stringsx.TrimSpace(removeAffixNotation(m.from))
+	cleanTo := stringsx.TrimSpace(removeAffixNotation(m.to))
+	if stringsx.IsEmpty(cleanFrom) || stringsx.IsEmpty(cleanTo) {
+		logger.Warningf("Invalid mapping value '%s,%s'", m.from, m.to)
+		return s
+	}
+
+	return replaceOne(s, m)
+}
+
 // All replaces substrings of `s` according to the mapping defined by `m`.
 func All(s []byte, m map[string]string) []byte {
 	for from, to := range m {
-		s = replaceOne(s, from, to)
+		s = safeReplaceOne(s, &mapping{from: from, to: to})
 	}
 
 	return s

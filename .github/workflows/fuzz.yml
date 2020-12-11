@@ -2,7 +2,7 @@ name: Fuzz
 on:
   push:
     branches:
-      - master
+    - master
 
 jobs:
   fuzz:
@@ -11,16 +11,17 @@ jobs:
     env:
       FUZZIT_API_KEY: ${{ secrets.FUZZIT_API_KEY }}
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
     - name: Set up Go 1.13
       uses: actions/setup-go@v2
       with:
         go-version: 1.13
-    - name: Get Fuzzit-CLI
+    - name: Install the Fuzzit CLI
       run: |
         wget -q -O fuzzit https://github.com/fuzzitdev/fuzzit/releases/latest/download/fuzzit_Linux_x86_64
         chmod a+x fuzzit
-    - name: Get go-fuzz-build
+    - name: Install go-fuzz-build
       run: go get -u github.com/dvyukov/go-fuzz/go-fuzz-build
     - name: Rename package main
       run: sed -i "s|package main|package _main|g" ./cmd/wordrow/*.go

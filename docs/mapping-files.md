@@ -8,7 +8,7 @@ formats] as well.
 
 This document does not contain any mappings that are particularly useful in a
 real-world scenario. Instead, it illustrate how you can use *wordrow* through
-made-up examples.
+made-up examples. But, there is a [list of ready-to-use mapping files].
 
 In this document you can read about:
 
@@ -24,7 +24,6 @@ In this document you can read about:
   - [Escaping a Prefix or Suffix Dash](#escaping-a-prefix-or-suffix-dash)
 - [Order Matters](#order-matters)
   - [Using Ordering to Your Advantage](#using-ordering-to-your-advantage)
-- [Notes](#notes)
 
 ## The Basics
 
@@ -438,13 +437,8 @@ Then, a text containing the phrase _"a duck"_ will be transformed as follows.
 + I see an owl, is it your owl?
 ```
 
-## Notes
-
-1. A mapping containing characters that are not in the [UTF-8 character set]
-   won't be processed.
-
 [expletive infixation]: https://www.youtube.com/watch?v=dt22yWYX64w
+[list of ready-to-use mapping files]: ./example-mappings.md
 [mapping formats]: ./mapping-formats.md
-[UTF-8 character set]: https://en.wikipedia.org/wiki/UTF-8
 [whitespace matters]: #whitespace
 [*wordrow* CLI]: ./cli.md

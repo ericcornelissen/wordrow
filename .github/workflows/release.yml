@@ -1,0 +1,66 @@
+name: Release
+on:
+  push:
+    tags:
+    - 'v*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v1
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.13
+    - name: Get dependencies
+      run: go get -v -t -d ./...
+
+    # Verify release validity
+    - name: Build
+      run: make build
+    - name: Test
+      run: make test
+
+    # Create release
+    - name: Get release version
+      id: tag_version
+      uses: dawidd6/action-get-tag@v1
+    - name: Get release text
+      id: tag_text
+      uses: ericcornelissen/git-tag-annotation-action@v1
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ steps.tag_version.outputs.tag }}
+        body: ${{ steps.tag_text.outputs.git-tag-annotation }}
+        draft: false
+        prerelease: true
+
+    # Upload release assets
+    - name: Build assets
+      run: make build-all
+    - name: Upload linux-amd64 Binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./wordrow_linux-amd64.o
+        asset_name: wordrow_linux-amd64.o
+        asset_content_type: application/exe
+    - name: Upload win-amd64 Binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./wordrow_win-amd64.exe
+        asset_name: wordrow_win-amd64.exe
+        asset_content_type: application/exe

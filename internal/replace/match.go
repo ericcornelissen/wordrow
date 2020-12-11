@@ -5,7 +5,6 @@ import (
 	"regexp"
 
 	"github.com/ericcornelissen/stringsx"
-	"github.com/ericcornelissen/wordrow/internal/logger"
 )
 
 // The match type represents a matching substring in a larger string of a
@@ -30,13 +29,6 @@ type match struct {
 	end int
 }
 
-// Get an empty channel of matches.
-func emptyChannel() chan *match {
-	ch := make(chan *match)
-	close(ch)
-	return ch
-}
-
 // Detect whether the string `s` contains the *wordrow* syntax for prefixes
 // and/or suffixes.
 func detectAffix(s string) (prefix, suffix bool) {
@@ -51,18 +43,24 @@ func detectAffix(s string) (prefix, suffix bool) {
 	return prefix, suffix
 }
 
-// Get string `s` as a safe regular expression (escaping special characters) as
-// well as removing any *wordrow* specific syntax.
-func toSafeString(s string) (safeString string) {
+// Remove from the string `s` the *wordrow* syntax for prefixes and/or suffixes.
+func removeAffixNotation(s string) string {
 	prefix, suffix := detectAffix(s)
-	if prefix {
+	if prefix && !stringsx.IsEmpty(s) {
 		s = s[1:]
 	}
-	if suffix {
+	if suffix && !stringsx.IsEmpty(s) {
 		s = s[:len(s)-1]
 	}
 
-	safeString = stringsx.ReplaceAll(s, `\\`, `\`)
+	return s
+}
+
+// Get string `s` as a safe regular expression (escaping special characters) as
+// well as removing any *wordrow* specific syntax.
+func toSafeString(s string) (safeString string) {
+	safeString = removeAffixNotation(s)
+	safeString = stringsx.ReplaceAll(safeString, `\\`, `\`)
 	safeString = stringsx.ReplaceAll(safeString, `\-`, `-`)
 	safeString = regexp.QuoteMeta(safeString)
 	return whitespaceExpr.ReplaceAllString(safeString, `\s+`)
@@ -105,7 +103,7 @@ func indicesToMatch(s []byte, indices []int) *match {
 //
 // Note that non-UTF8 characters are not allowed, if any non-UTF characters are
 // detected the function will panic.
-func findMatches(s []byte, query string) chan *match {
+func matches(s []byte, query string) chan *match {
 	ch := make(chan *match)
 	go func() {
 		defer close(ch)
@@ -114,25 +112,11 @@ func findMatches(s []byte, query string) chan *match {
 		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, safeQuery)
 		expr := regexp.MustCompile(rawExpr)
 		for _, indices := range expr.FindAllSubmatchIndex(s, -1) {
-			m := indicesToMatch(s, indices)
-			if isValidFor(m, query) {
+			if m := indicesToMatch(s, indices); isValidFor(m, query) {
 				ch <- m
 			}
 		}
 	}()
 
 	return ch
-}
-
-// Find all matches of a `query` string in a target string `s`.
-//
-// Note that non-UTF8 characters are not allowed, if any non-UTF characters are
-// detected no matches will be returned.
-func matches(s []byte, query string) chan *match {
-	if !stringsx.IsValidUTF8(query) || stringsx.IsEmpty(query) {
-		logger.Warningf("Invalid mapping value '%s'", query)
-		return emptyChannel()
-	}
-
-	return findMatches(s, query)
 }

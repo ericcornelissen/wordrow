@@ -1,8 +1,8 @@
 program_main:=./cmd/wordrow
 executable_file:=wordrow
 
-unit_test_root:=./internal/...
-integration_test_root:=./cmd/wordrow/...
+default_test_root:=.
+coverage_root:=./internal/...
 coverage_file:=coverage.out
 fuzz_dir:=./_fuzz
 
@@ -11,7 +11,7 @@ markdown_files:=./*.md ./docs/*.md ./.github/**/*.md
 go_install:=GO111MODULE=on go get -u
 
 
-default: build
+default: help
 
 init: hooks install
 
@@ -38,6 +38,10 @@ install-dev-deps:
 	$(go_install) github.com/alexkohler/nakedret
 	$(go_install) github.com/alexkohler/prealloc
 	$(go_install) github.com/alexkohler/unimport
+	$(go_install) github.com/client9/misspell/cmd/misspell
+	$(go_install) github.com/ericcornelissen/gofunchecks/cmd/goparamcount
+	$(go_install) github.com/ericcornelissen/gofunchecks/cmd/goreturncount
+	$(go_install) github.com/fzipp/gocyclo/cmd/gocyclo
 	$(go_install) github.com/go-critic/go-critic/cmd/gocritic
 	$(go_install) github.com/gordonklaus/ineffassign
 	$(go_install) github.com/jgautheron/goconst/cmd/goconst
@@ -46,8 +50,10 @@ install-dev-deps:
 	$(go_install) github.com/mdempsky/unconvert
 	$(go_install) github.com/nishanths/exhaustive/...
 	$(go_install) github.com/remyoudompheng/go-misc/deadcode
+	$(go_install) github.com/sanposhiho/wastedassign/cmd/wastedassign
 	$(go_install) github.com/tommy-muehle/go-mnd/cmd/mnd
 	$(go_install) golang.org/x/lint/golint
+	$(go_install) golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow
 	$(go_install) honnef.co/go/tools/cmd/staticcheck
 	$(go_install) mvdan.cc/unparam
 	@echo INSTALLING MANUAL ANALYSIS TOOLS...
@@ -60,16 +66,14 @@ build-all:
 	GOOS=windows GOARCH=amd64 go build -o $(executable_file)_win-amd64.exe $(program_main)
 	GOOS=linux GOARCH=amd64 go build -o $(executable_file)_linux-amd64.o $(program_main)
 
-test: test-unit test-integration
+test%: PKG?=$(default_test_root)
+test: test-unit
 
 test-unit:
-	go test $(unit_test_root)
-
-test-integration:
-	go test $(integration_test_root)
+	go test ${PKG}/...
 
 coverage:
-	go test $(unit_test_root) -coverprofile $(coverage_file)
+	go test $(coverage_root) -coverprofile $(coverage_file)
 	go tool cover -html=$(coverage_file)
 
 fuzz%: FUNC?=Fuzz  # Set default fuzzing function to "Fuzz"
@@ -89,11 +93,16 @@ benchmark:
 analysis:
 	@echo VETTING...
 	@go vet ./...
+	@go vet -vettool=`which wastedassign` ./...
+	@go vet -vettool=`which shadow` ./...
 	@aligncheck ./...
 	@dogsled -n 1 -set_exit_status ./...
-	@exhaustive -maps ./...
+	@exhaustive ./...
 	@goconst -ignore-tests -set-exit-status ./...
 	@gocritic check -enableAll ./...
+	@gocyclo -over 15 ./
+	@goparamcount -set_exit_status -max 3 ./...
+	@goreturncount -set_exit_status -max 2 ./...
 	@looppointer ./...
 	@mnd -ignored-numbers "0,1" ./...
 	@prealloc -set_exit_status ./...
@@ -110,6 +119,9 @@ analysis:
 	@ineffassign ./*
 	@deadcode ./internal/*
 	@deadcode ./cmd/*
+
+	@echo CHECKING SPELLING...
+	@misspell -error .
 
 format:
 	go fmt ./...
@@ -136,3 +148,31 @@ clean:
 	rm `find ./ -name '*-fuzz.zip'` -rf
 
 .PHONY: default init hooks install build clean format lint analysis test fuzz
+
+help:
+	@echo "USAGE:"
+	@echo "  make [SUBCOMMANDS] <OPTIONS>"
+	@echo
+	@echo "SUBCOMMANDS:"
+	@echo "  init       Initialze the environment for development."
+	@echo "  hooks      Install git hooks."
+	@echo "  install    Install all project dependencies"
+	@echo "  build      Build the wordrow binary (for the current OS)."
+	@echo "  clean      Remove all generated files."
+	@echo "  test       Run all tests. Use the option PKG to specify the package"
+	@echo "               to test."
+	@echo "  coverage   Run all tests and create a coverage report."
+	@echo "  fuzz       Run go-fuzz on the source code. Use the option PKG to"
+	@echo "               specifythe package to fuzz and option FUNC to specify"
+	@echo "               the fuzzing function."
+	@echo "  format     Automatically format the source code."
+	@echo "  lint       Lint the source code."
+	@echo "  analysis   Analyze the source code."
+	@echo
+	@echo "EXAMPLES:"
+	@echo "  make init"
+	@echo "  make build"
+	@echo "  make analysis"
+	@echo "  make test PKG=./internal"
+	@echo "  make fuzz PKG=./internal/replace FUNC=FuzzReplaceAll"
+

@@ -84,7 +84,7 @@ func doParseOneOption(
 ) (newContext argContext, err error) {
 	if equalsSplit := stringsx.Split(arg, "="); len(equalsSplit) > 1 {
 		option, value := equalsSplit[0], stringsx.Join(equalsSplit[1:], "=")
-		err := doParseProgramArguments([]string{option, value}, arguments)
+		err = doParseProgramArguments([]string{option, value}, arguments)
 		return contextDefault, err
 	}
 
@@ -106,11 +106,7 @@ func doParseOneArgument(
 	context argContext,
 	arguments *Arguments,
 ) (newContext argContext, err error) {
-	if stringsx.HasPrefix(arg, "-") {
-		if context != contextDefault {
-			return context, errors.Newf("Missing value for %s option", context)
-		}
-
+	if context == contextDefault && stringsx.HasPrefix(arg, "-") {
 		newContext, err = doParseOneOption(arg, arguments)
 	} else {
 		context.parseValue(arg, arguments)
@@ -145,18 +141,13 @@ func doParseProgramArguments(args []string, arguments *Arguments) error {
 // ParseArgs parses a list of arguments (e.g. `os.Args`) into an Arguments
 // instance.
 func ParseArgs(args []string) (run bool, arguments Arguments) {
-	if noArgumentsProvided(args) {
-		printUsage()
-		return false, arguments
-	}
-
 	err := doParseProgramArguments(args[1:], &arguments)
 	if err != nil {
 		logger.Fatalf("An error occurred while parsing arguments: %s", err)
 		return false, arguments
 	}
 
-	if arguments.help {
+	if noArgumentsProvided(args) || arguments.help {
 		printUsage()
 		return false, arguments
 	}
