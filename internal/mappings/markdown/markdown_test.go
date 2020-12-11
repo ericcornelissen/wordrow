@@ -1,10 +1,13 @@
 package markdown
 
 import (
+	"bufio"
 	"fmt"
+	"io/ioutil"
 	"strings"
 	"testing"
 
+	"github.com/ericcornelissen/stringsx"
 	. "github.com/ericcornelissen/wordrow/internal/mappings/testing"
 )
 
@@ -216,5 +219,41 @@ func TestMarkdownIncompleteTableEndOfFile(t *testing.T) {
 
 	if err == nil {
 		t.Fatal("Error should be set for incomplete table at the end of the file")
+	}
+}
+
+func BenchmarkParseCsvWithString(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		reader := stringsx.NewReader(`
+			# Benchmark test
+
+			| from | to  |
+			| ---- | --- |
+			| foo  | bar |
+		`)
+		r := bufio.NewReader(reader)
+		s, _ := ioutil.ReadAll(r)
+		x := string(s)
+		_, err := Parse(&x)
+		if err != nil {
+			b.Errorf("Unexpected error: %s", err)
+		}
+	}
+}
+
+func BenchmarkParseCsvWithReader(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		reader := stringsx.NewReader(`
+			# Benchmark test
+
+			| from | to  |
+			| ---- | --- |
+			| foo  | bar |
+		`)
+		r := bufio.NewReader(reader)
+		_, err := ParseReader(r)
+		if err != nil {
+			b.Errorf("Unexpected error: %s", err)
+		}
 	}
 }

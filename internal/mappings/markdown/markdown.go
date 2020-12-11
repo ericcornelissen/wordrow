@@ -1,6 +1,8 @@
 package markdown
 
 import (
+	"bufio"
+	"bytes"
 	"regexp"
 
 	"github.com/ericcornelissen/stringsx"
@@ -123,6 +125,113 @@ func Parse(rawFileData *string) (map[string]string, error) {
 			}
 
 			i += tableLength
+		}
+	}
+
+	return mapping, nil
+}
+
+var pipeByte = []byte("|")
+
+// Check whether or not a line in a MarkDown file is part of a table.
+func isTableRowBytes(line []byte) bool {
+	line = bytes.TrimSpace(line)
+	return bytes.HasPrefix(line, pipeByte) && bytes.HasSuffix(line, pipeByte)
+}
+
+// Parse a row of a MarkDown table into it's column values.
+//
+// The error will be set if the row has an unexpected format, for example an
+// incorrect number of columns.
+func parseTableRowBytes(row []byte) ([][]byte, error) {
+	rowValuesCount := 4
+
+	rowValues := bytes.Split(row, pipeByte)
+	if len(rowValues) < rowValuesCount {
+		return nil, errors.NewIncorrectFormat(row)
+	}
+
+	rowValues = rowValues[1 : len(rowValues)-1]
+
+	for i, rowValue := range rowValues {
+		rowValues[i] = bytes.TrimSpace(rowValue)
+		if len(rowValues[i]) == 0 {
+			return nil, errors.NewMissingValue(row)
+		}
+	}
+
+	return rowValues, nil
+}
+
+// Parse the header of a MarkDown table.
+//
+// The error will be set if the table header has an unexpected format, such as
+// an incorrect number of columns or a missing divider.
+func verifyTableHeaderBytes(r *bufio.Reader) (err error) {
+	dividerLine, _, _ := r.ReadLine()
+	if _, e := parseTableRowBytes(dividerLine); e != nil {
+		err = errors.Newf("Missing table divider (in '%s')", dividerLine)
+	} else if !tableDividerExpr.Match(dividerLine) {
+		err = errors.Newf("Incorrect table divider (in '%s')", dividerLine)
+	}
+
+	return err
+}
+
+// Parse a MarkDown table body and put its values into the `mapping`.
+//
+// The error will be set if any table row has an incorrect format.
+func parseTableBodyBytes(r *bufio.Reader, mapping *ByteMap) (err error) {
+	row, _, err := r.ReadLine()
+	if err != nil || !isTableRowBytes(row) {
+		return errors.Newf("Missing table body (in '%s')", row)
+	}
+
+	for ; err == nil; row, _, err = r.ReadLine() {
+		if !isTableRowBytes(row) {
+			break
+		}
+
+		rowValues, err := parseTableRowBytes(row)
+		if err != nil {
+			return err
+		}
+
+		last := len(rowValues) - 1
+		mapping.AddMany(rowValues[0:last], rowValues[last])
+	}
+
+	return nil
+}
+
+// Parse a MarkDown table and put its values into the `mapping`.
+//
+// The error will be set if the table head or any table row has an incorrect
+// format.
+func parseTableBytes(r *bufio.Reader, mapping *ByteMap) error {
+	if err := verifyTableHeaderBytes(r); err != nil {
+		return err
+	}
+
+	err := parseTableBodyBytes(r, mapping)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ParseReader parses a MarkDown (MD) file from a reader into a ByteMap.
+//
+// The error will be set if any error occurred while parsing the MarkDown file.
+func ParseReader(r *bufio.Reader) (mapping ByteMap, err error) {
+	var line []byte
+	for ; err == nil; line, _, err = r.ReadLine() {
+		if isTableRowBytes(line) {
+			err := parseTableBytes(r, &mapping)
+			if err != nil {
+				return mapping, err
+			}
 		}
 	}
 
