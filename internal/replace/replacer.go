@@ -60,11 +60,11 @@ func replaceOne(s []byte, m *mapping) []byte {
 	lastIndex := 0
 	for match := range matches(s, m.from) {
 		replacement := getReplacement(match, m.to)
-		// replacement, offset := maintainFormatting(string(match.full), replacement)
+		replacement, offset := maintainFormatting(string(match.full), replacement)
 
 		bb.Write(s[lastIndex:maxInt(match.start, lastIndex)])
 		bb.WriteString(replacement)
-		lastIndex = match.end + 0
+		lastIndex = match.end + offset
 	}
 
 	if lastIndex < len(s) {
@@ -101,6 +101,8 @@ func All(s []byte, m map[string]string) []byte {
 	return s
 }
 
+// V -- Bytes implementation -- V //
+
 // Get the replacement string including prefix/suffix given the match `m`.
 func getReplacementBytes(m *match, s []byte) (replacement []byte) {
 	keepPrefix, keepSuffix := detectAffixBytes(s)
@@ -123,11 +125,11 @@ func replaceOneBytes(s []byte, m *byteMapping) []byte {
 	lastIndex := 0
 	for match := range matchesBytes(s, m.from) {
 		replacement := getReplacementBytes(match, m.to)
-		// replacement, offset := maintainFormattingBytes(match.full, replacement)
+		replacement, offset := maintainFormattingBytes(match.full, replacement)
 
 		bb.Write(s[lastIndex:maxInt(match.start, lastIndex)])
 		bb.Write(replacement)
-		lastIndex = match.end + 0
+		lastIndex = match.end + offset
 	}
 
 	if lastIndex < len(s) {

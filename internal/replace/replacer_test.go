@@ -912,33 +912,3 @@ func BenchmarkAllWithByteMap2(b *testing.B) {
 		AllBytes2(s, m)
 	}
 }
-
-
-
-
-
-func BenchmarkWithStringMap(b *testing.B) {
-	m := make(map[string]string, 3)
-	m["Lorem"] = "Lroem"
-	m["amet"] = "tema"
-	m["mollis"] = "millos"
-	for n := 0; n < b.N; n++ {
-		for range m {
-			fmt.Sprint('a');
-		}
-	}
-}
-
-func BenchmarkWithByteMap(b *testing.B) {
-	m := [][]byte{
-		[]byte("Lorem"), []byte("Lroem"),
-		[]byte("amet"), []byte("tema"),
-		[]byte("mollis"), []byte("millos"),
-	}
-	for n := 0; n < b.N; n++ {
-		for i := range m {
-			if i%2 == 0 { continue }
-			fmt.Sprint('a');
-		}
-	}
-}
