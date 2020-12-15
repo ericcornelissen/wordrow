@@ -144,3 +144,22 @@ func maintainFormatting(from, to string) (newTo string, offset int) {
 	to, offset = maintainWhitespace(from, to)
 	return to, offset
 }
+
+// Format the `to` string based on the format of the `from` string.
+//
+// This function does the following:
+//  - Maintain all caps.
+//  - Maintain first letter capitalization.
+//  - Maintain newlines, tabs, etc.
+func maintainFormattingBytes(_from, _to []byte) (newTo []byte, offset int) {
+	from, to := string(_from), string(_to)
+
+	if !changesFormattingOnly(from, to) {
+		to = stringsx.ToLower(to)
+		to = maintainAllCaps(from, to)
+		to = maintainCapitalization(from, to)
+	}
+
+	to, offset = maintainWhitespace(from, to)
+	return []byte(to), offset
+}

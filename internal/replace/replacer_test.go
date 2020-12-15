@@ -867,3 +867,78 @@ func TestDoublePrefixSuffixMatch(t *testing.T) {
 		}
 	})
 }
+
+var s = []byte(`
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec arcu est,
+	consequat at scelerisque accumsan, mollis quis justo. Curabitur velit risus,
+	vulputate vitae turpis at, lacinia posuere nunc. Nam ornare non quam.
+`)
+
+func BenchmarkAllWithStringMap(b *testing.B) {
+	m := make(map[string]string, 3)
+	m["Lorem"] = "Lroem"
+	m["amet"] = "tema"
+	m["mollis"] = "millos"
+	for n := 0; n < b.N; n++ {
+		All(s, m)
+	}
+}
+
+func BenchmarkAllWithByteMap(b *testing.B) {
+	m := [][]byte{
+		{76, 111, 114, 101, 109}, {76, 114, 111, 101, 109},
+		{97, 109, 101, 116}, {116, 101, 109, 97},
+		{109, 111, 108, 108 ,105, 115}, {109 ,105, 108, 108 ,111, 115},
+	}
+	for n := 0; n < b.N; n++ {
+		AllBytes(s, m)
+	}
+}
+
+func BenchmarkAllWithByteMap2(b *testing.B) {
+	m := ByteMap{
+		from: [][]byte{
+			[]byte("Lorem"),
+			[]byte("amet"),
+			[]byte("mollis"),
+		},
+		to: [][]byte{
+			[]byte("Lroem"),
+			[]byte("tema"),
+			[]byte("millos"),
+		},
+	}
+	for n := 0; n < b.N; n++ {
+		AllBytes2(s, m)
+	}
+}
+
+
+
+
+
+func BenchmarkWithStringMap(b *testing.B) {
+	m := make(map[string]string, 3)
+	m["Lorem"] = "Lroem"
+	m["amet"] = "tema"
+	m["mollis"] = "millos"
+	for n := 0; n < b.N; n++ {
+		for range m {
+			fmt.Sprint('a');
+		}
+	}
+}
+
+func BenchmarkWithByteMap(b *testing.B) {
+	m := [][]byte{
+		[]byte("Lorem"), []byte("Lroem"),
+		[]byte("amet"), []byte("tema"),
+		[]byte("mollis"), []byte("millos"),
+	}
+	for n := 0; n < b.N; n++ {
+		for i := range m {
+			if i%2 == 0 { continue }
+			fmt.Sprint('a');
+		}
+	}
+}
