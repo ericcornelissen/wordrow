@@ -99,3 +99,52 @@ func ParseReader(r *bufio.Reader) (ByteMap, error) {
 
 	return wm, nil
 }
+
+// Parse a single row of a CSV file and add it to the WordMap.
+//
+// The error will be set if the row has an unexpected format, for example an
+// incorrect number of columns.
+func parseRowAsBytesString(row []byte, wm map[string]string) error {
+	rowValuesCount := 2
+
+	rowValues := bytes.Split(row, []byte(","))
+	if len(rowValues) < rowValuesCount {
+		return errors.Newf("Unexpected row format (in '%s')", row)
+	}
+
+	for _, v := range rowValues {
+		if len(bytes.TrimSpace(v)) == 0 {
+			return errors.Newf("Missing value (in '%s')", row)
+		}
+	}
+
+	last := len(rowValues) - 1
+	to := string(rowValues[last])
+	for _, from := range rowValues[0:last] {
+		wm[string(from)] = to
+	}
+	return nil
+}
+
+// ParseReaderString parses a Comma Separated Values (CSV) file from a reader
+// into a map[string]string.
+//
+// The error will be set if any error occurred while parsing the CSV file.
+func ParseReaderString(r *bufio.Reader) (map[string]string, error) {
+	mapping := make(map[string]string, 1)
+
+	var line []byte
+	var err error
+	for ; err == nil; line, _, err = r.ReadLine() {
+		if len(bytes.TrimSpace(line)) == 0 {
+			continue
+		}
+
+		err := parseRowAsBytesString(line, mapping)
+		if err != nil {
+			return mapping, err
+		}
+	}
+
+	return mapping, nil
+}

@@ -257,3 +257,20 @@ func BenchmarkParseCsvWithReader(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkParseCsvWithReaderString(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		reader := stringsx.NewReader(`
+			# Benchmark test
+
+			| from | to  |
+			| ---- | --- |
+			| foo  | bar |
+		`)
+		r := bufio.NewReader(reader)
+		_, err := ParseReaderString(r)
+		if err != nil {
+			b.Errorf("Unexpected error: %s", err)
+		}
+	}
+}

@@ -237,3 +237,69 @@ func ParseReader(r *bufio.Reader) (mapping ByteMap, err error) {
 
 	return mapping, nil
 }
+
+// Parse a MarkDown table body and put its values into the `mapping`.
+//
+// The error will be set if any table row has an incorrect format.
+func parseTableBodyBytesString(r *bufio.Reader, mapping map[string]string) (err error) {
+	row, _, err := r.ReadLine()
+	if err != nil || !isTableRowBytes(row) {
+		return errors.Newf("Missing table body (in '%s')", row)
+	}
+
+	for ; err == nil; row, _, err = r.ReadLine() {
+		if !isTableRowBytes(row) {
+			break
+		}
+
+		rowValues, err := parseTableRowBytes(row)
+		if err != nil {
+			return err
+		}
+
+		last := len(rowValues) - 1
+		to := string(rowValues[last])
+		for _, from := range rowValues[0:last] {
+			mapping[string(from)] = to
+		}
+	}
+
+	return nil
+}
+
+// Parse a MarkDown table and put its values into the `mapping`.
+//
+// The error will be set if the table head or any table row has an incorrect
+// format.
+func parseTableBytesString(r *bufio.Reader, mapping map[string]string) error {
+	if err := verifyTableHeaderBytes(r); err != nil {
+		return err
+	}
+
+	err := parseTableBodyBytesString(r, mapping)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ParseReaderString parses a MarkDown (MD) file from a reader into a
+// map[string]string.
+//
+// The error will be set if any error occurred while parsing the MarkDown file.
+func ParseReaderString(r *bufio.Reader) (mapping map[string]string, err error) {
+	mapping = make(map[string]string, 1)
+
+	var line []byte
+	for ; err == nil; line, _, err = r.ReadLine() {
+		if isTableRowBytes(line) {
+			err := parseTableBytesString(r, mapping)
+			if err != nil {
+				return mapping, err
+			}
+		}
+	}
+
+	return mapping, nil
+}
