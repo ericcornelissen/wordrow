@@ -2,11 +2,11 @@
 
 package cli
 
-import "strings"
+import "github.com/ericcornelissen/stringsx"
 
 func Fuzz(data []byte) int {
 	s := string(data)
-	args := strings.Split(s, ",")
+	args := stringsx.Split(s, ",")
 	if len(args) < 2 {
 		return -1
 	}

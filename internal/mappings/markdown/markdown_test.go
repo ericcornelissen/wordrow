@@ -2,9 +2,9 @@ package markdown
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
+	"github.com/ericcornelissen/stringsx"
 	. "github.com/ericcornelissen/wordrow/internal/mappings/testing"
 )
 
@@ -155,7 +155,7 @@ func TestMarkDownIncorrectHeader(t *testing.T) {
 		t.Fatal("Error should be set for incorrect table header")
 	}
 
-	if !strings.Contains(err.Error(), "Incorrect table header") {
+	if !stringsx.Contains(err.Error(), "Incorrect table header") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
@@ -173,7 +173,7 @@ func TestMarkDownMissingDivider(t *testing.T) {
 		t.Fatal("Error should be set for missing table divider")
 	}
 
-	if !strings.Contains(err.Error(), "Incorrect table divider") {
+	if !stringsx.Contains(err.Error(), "Missing table divider") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
@@ -192,7 +192,7 @@ func TestMarkDownIncorrectDivider(t *testing.T) {
 		t.Fatal("Error should be set for incorrect table divider")
 	}
 
-	if !strings.Contains(err.Error(), "Missing table divider") {
+	if !stringsx.Contains(err.Error(), "Missing table divider") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
@@ -211,7 +211,7 @@ func TestMarkDownMissingTableBody(t *testing.T) {
 			t.Fatal("Error should be set for missing table body")
 		}
 
-		if !strings.Contains(err.Error(), "Missing table body") {
+		if !stringsx.Contains(err.Error(), "Missing table body") {
 			t.Errorf("Incorrect error message for (got '%s')", err)
 		}
 	})
@@ -227,7 +227,7 @@ func TestMarkDownMissingTableBody(t *testing.T) {
 			t.Fatal("Error should be set for missing table body")
 		}
 
-		if !strings.Contains(err.Error(), "Missing table body") {
+		if !stringsx.Contains(err.Error(), "Missing table body") {
 			t.Errorf("Incorrect error message for (got '%s')", err)
 		}
 	})

@@ -2,9 +2,9 @@ package csv
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
+	"github.com/ericcornelissen/stringsx"
 	. "github.com/ericcornelissen/wordrow/internal/mappings/testing"
 )
 
@@ -133,7 +133,7 @@ func TestCsvToFewColumns(t *testing.T) {
 		t.Fatal("Error should be set for incorrect CSV file")
 	}
 
-	if !strings.Contains(err.Error(), "Incorrect format") {
+	if !stringsx.Contains(err.Error(), "Incorrect format") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }

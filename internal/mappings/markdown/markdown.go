@@ -58,11 +58,20 @@ func verifyTableHeader(headerLine []byte) (err error) {
 // Parse the divider of a MarkDown table.
 //
 // The error will be set if the table divider has an unexpected format.
-func verifyTableDivider(dividerLine []byte) (err error) {
-	if _, e := parseTableRow(dividerLine); e != nil {
-		err = errors.Newf("Missing table divider (in '%s')", dividerLine)
+func verifyTableDivider(reader *bufio.Reader) (err error) {
+	problem := false
+
+	dividerLine, _, err := reader.ReadLine()
+	if err != nil {
+		problem = true
+	} else if _, e := parseTableRow(dividerLine); e != nil {
+		problem = true
 	} else if !tableDividerExpr.Match(dividerLine) {
-		err = errors.Newf("Incorrect table divider (in '%s')", dividerLine)
+		problem = true
+	}
+
+	if problem {
+		err = errors.Newf("Missing table divider (in '%s')", dividerLine)
 	}
 
 	return err
@@ -105,8 +114,7 @@ func parseTableBody(
 // The error will be set if the table head or any table row has an incorrect
 // format.
 func parseTable(reader *bufio.Reader, mapping map[string]string) error {
-	dividerLine, _, _ := reader.ReadLine()
-	if err := verifyTableDivider(dividerLine); err != nil {
+	if err := verifyTableDivider(reader); err != nil {
 		return err
 	}
 
@@ -130,7 +138,7 @@ func Parse(reader *bufio.Reader) (mapping map[string]string, err error) {
 			continue
 		}
 
-		if err = verifyTableHeader(line); err != nil {
+		if err := verifyTableHeader(line); err != nil {
 			return mapping, err
 		}
 
