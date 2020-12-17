@@ -6,6 +6,8 @@ import (
 
 	"github.com/ericcornelissen/wordrow/internal/mappings/csv"
 	"github.com/ericcornelissen/wordrow/internal/mappings/markdown"
+
+	. "github.com/ericcornelissen/wordrow/internal/mappings/testing"
 )
 
 func TestGetParserForUnknownFileType(t *testing.T) {
@@ -98,28 +100,31 @@ func TestGetParserForCSVFile(t *testing.T) {
 	})
 }
 
-func TestParseFileNoParser(t *testing.T) {
+func TestParseReaderNoParser(t *testing.T) {
 	content := "Hello world!"
 
-	_, err := ParseFile(&content, ".bar")
+	reader := NewTestReader(&content)
+	_, err := ParseReader(reader, ".bar")
 	if err == nil {
 		t.Fatal("The error should set for this test")
 	}
 }
 
-func TestParseFileFormatError(t *testing.T) {
+func TestParseReaderFormatError(t *testing.T) {
 	content := "this is definitely not a real CSV file"
 
-	_, err := ParseFile(&content, ".csv")
+	reader := NewTestReader(&content)
+	_, err := ParseReader(reader, ".csv")
 	if err == nil {
 		t.Fatal("The error should set for this test")
 	}
 }
 
-func TestParseFileParseCSV(t *testing.T) {
+func TestParseReaderParseCSV(t *testing.T) {
 	content := "foo,bar"
 
-	mapping, err := ParseFile(&content, ".csv")
+	reader := NewTestReader(&content)
+	mapping, err := ParseReader(reader, ".csv")
 	if err != nil {
 		t.Fatalf("The error should not be set for this test (got '%s')", err)
 	}
@@ -129,14 +134,63 @@ func TestParseFileParseCSV(t *testing.T) {
 	}
 }
 
-func TestParseFileParseMarkDown(t *testing.T) {
+func TestParseReaderParseMarkDown(t *testing.T) {
 	content := `
 		| From | To  |
 		| ---- | --- |
 		| foo  | bar |
 	`
 
-	mapping, err := ParseFile(&content, ".md")
+	reader := NewTestReader(&content)
+	mapping, err := ParseReader(reader, ".md")
+	if err != nil {
+		t.Fatalf("The error should not be set for this test (got '%s')", err)
+	}
+
+	if len(mapping) == 0 {
+		t.Error("The size of the mapping should be greater than 0")
+	}
+}
+
+func TestParseStringNoParser(t *testing.T) {
+	content := "Hello world!"
+
+	_, err := ParseString(&content, ".bar")
+	if err == nil {
+		t.Fatal("The error should set for this test")
+	}
+}
+
+func TestParseStringFormatError(t *testing.T) {
+	content := "this is definitely not a real CSV file"
+
+	_, err := ParseString(&content, ".csv")
+	if err == nil {
+		t.Fatal("The error should set for this test")
+	}
+}
+
+func TestParseStringParseCSV(t *testing.T) {
+	content := "foo,bar"
+
+	mapping, err := ParseString(&content, ".csv")
+	if err != nil {
+		t.Fatalf("The error should not be set for this test (got '%s')", err)
+	}
+
+	if len(mapping) == 0 {
+		t.Error("The size of the mapping should be greater than 0")
+	}
+}
+
+func TestParseStringParseMarkDown(t *testing.T) {
+	content := `
+		| From | To  |
+		| ---- | --- |
+		| foo  | bar |
+	`
+
+	mapping, err := ParseString(&content, ".md")
 	if err != nil {
 		t.Fatalf("The error should not be set for this test (got '%s')", err)
 	}

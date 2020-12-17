@@ -1,7 +1,7 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/cli"
@@ -47,16 +47,10 @@ func parseMapFileArgument(argument string) (filePath, format string) {
 // determines how the contents of the file are parsed. This function returns an
 // error if either the reading or parsing fails.
 func processMapFile(
-	reader fs.Reader,
+	reader io.Reader,
 	format string,
 ) (map[string]string, error) {
-	data, err := ioutil.ReadAll(reader)
-	if err != nil {
-		return nil, err
-	}
-
-	content := string(data)
-	mapping, err := mappings.ParseFile(&content, format)
+	mapping, err := mappings.ParseReader(reader, format)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +88,7 @@ func openAndProcessMapFileWith(mapping map[string]string) handler {
 // `target`. Of the value cannot be parsed as a CSV mapping the handler returns
 // an error.
 func processInlineMapping(value string, target map[string]string) error {
-	mapping, err := mappings.ParseFile(&value, "csv")
+	mapping, err := mappings.ParseString(&value, "csv")
 	if err != nil {
 		return err
 	}

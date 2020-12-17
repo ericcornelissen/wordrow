@@ -1,5 +1,11 @@
 package testing
 
+import (
+	"bufio"
+
+	"github.com/ericcornelissen/stringsx"
+)
+
 type testingT interface {
 	Errorf(format string, args ...interface{})
 
@@ -34,4 +40,11 @@ func CheckMapping(
 			t.Errorf("Incorrect to value for '%s' (got '%s')", from, actualTo)
 		}
 	}
+}
+
+// NewTestReader returns a bufio.Reader instance for the provided string.
+func NewTestReader(s *string) *bufio.Reader {
+	rawReader := stringsx.NewReader(*s)
+	bufReader := bufio.NewReader(rawReader)
+	return bufReader
 }
