@@ -29,25 +29,6 @@ jobs:
     - name: Perform CodeQL analysis
       uses: github/codeql-action/analyze@v1
 
-  fuzz:
-    name: Fuzz (build only)
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    - name: Set up Go 1.13
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.13
-    - name: Get go-fuzz-build
-      run: go get -u github.com/dvyukov/go-fuzz/go-fuzz-build
-
-    # Attempt building the fuzz target for package main
-    - name: Rename package main
-      run: sed -i "s|package main|package _main|g" ./cmd/wordrow/*.go
-    - name: Build fuzz target
-      run: make fuzz-build PKG=cmd/wordrow
-
   gosec:
     name: Gosec
     runs-on: ubuntu-latest
