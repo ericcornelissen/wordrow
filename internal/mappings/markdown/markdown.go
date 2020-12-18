@@ -5,19 +5,20 @@ import (
 	"bytes"
 	"regexp"
 
+	"github.com/ericcornelissen/wordrow/internal/mappings/common"
 	"github.com/ericcornelissen/wordrow/internal/mappings/errors"
 )
 
-// Byte-slice representing a pipe/vertical bar ('|')
+// Byte-slice representing a pipe/vertical bar ('|').
 var pipeByte = []byte{'|'}
 
 // Regular expression of a MarkDown table row.
 var tableDividerExpr = regexp.MustCompile(`^\s*\|(\s*-+\s*\|){2,}\s*$`)
 
 // Check whether or not a line in a MarkDown file is part of a table.
-func isTableRow(line []byte) bool {
-	line = bytes.TrimSpace(line)
-	return bytes.HasPrefix(line, pipeByte) && bytes.HasSuffix(line, pipeByte)
+func isTableRow(row []byte) bool {
+	row = bytes.TrimSpace(row)
+	return bytes.HasPrefix(row, pipeByte) && bytes.HasSuffix(row, pipeByte)
 }
 
 // Parse a row of a MarkDown table into it's column values.
@@ -33,12 +34,9 @@ func parseTableRow(row []byte) ([][]byte, error) {
 	}
 
 	rowValues = rowValues[1 : len(rowValues)-1]
-
-	for i, rowValue := range rowValues {
-		rowValues[i] = bytes.TrimSpace(rowValue)
-		if len(rowValues[i]) == 0 {
-			return nil, errors.NewMissingValue(row)
-		}
+	rowValues, err := common.TrimValues(rowValues)
+	if err != nil {
+		return nil, errors.NewMissingValue(row)
 	}
 
 	return rowValues, nil
@@ -99,11 +97,7 @@ func parseTableBody(
 			return err
 		}
 
-		last := len(rowValues) - 1
-		to := string(rowValues[last])
-		for _, from := range rowValues[0:last] {
-			mapping[string(from)] = to
-		}
+		common.AddValuesToMap(mapping, rowValues)
 	}
 
 	return nil
@@ -126,7 +120,7 @@ func parseTable(reader *bufio.Reader, mapping map[string]string) error {
 	return nil
 }
 
-// Parse parses a MarkDown (MD) file into a map[string]string.
+// Parse a MarkDown (MD) formatted file into a map[string]string.
 //
 // The error will be set if any error occurred while parsing the MarkDown file.
 func Parse(reader *bufio.Reader) (mapping map[string]string, err error) {
