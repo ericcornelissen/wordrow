@@ -11,7 +11,7 @@ import (
 // Byte-slice representing a comma (',').
 var comma = []byte{','}
 
-// Parse a single row of a CSV file and add it to the map[string]string.
+// Parse a single row of a CSV file and add it to the `mapping`.
 //
 // The error will be set if the row has an unexpected format, for example an
 // incorrect number of columns.

@@ -122,7 +122,7 @@ func parseTable(reader *bufio.Reader, mapping map[string]string) error {
 
 // Parse a MarkDown (MD) formatted file into a map[string]string.
 //
-// The error will be set if any error occurred while parsing the MarkDown file.
+// The error will be set if any error occurred while parsing the MD file.
 func Parse(reader *bufio.Reader) (mapping map[string]string, err error) {
 	mapping = make(map[string]string, 1)
 
