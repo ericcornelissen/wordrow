@@ -1,8 +1,9 @@
 package cli
 
 import (
-	"strings"
 	"testing"
+
+	"github.com/ericcornelissen/stringsx"
 )
 
 func TestAsWhitespace(t *testing.T) {
@@ -13,7 +14,7 @@ func TestAsWhitespace(t *testing.T) {
 		t.Errorf("Length of string as whitespace incorrect (%d != %d)", len(result), len(original))
 	}
 
-	if strings.TrimSpace(result) != "" {
+	if stringsx.TrimSpace(result) != "" {
 		t.Errorf("The string as whitespace was not only whitespace (%s)", result)
 	}
 }

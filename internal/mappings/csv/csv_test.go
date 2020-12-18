@@ -2,9 +2,9 @@ package csv
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
+	"github.com/ericcornelissen/stringsx"
 	. "github.com/ericcornelissen/wordrow/internal/mappings/testing"
 )
 
@@ -12,7 +12,8 @@ func TestCsvOneRow(t *testing.T) {
 	from, to := "cat", "dog"
 	csv := fmt.Sprintf("%s,%s", from, to)
 
-	mapping, err := Parse(&csv)
+	reader := NewTestReader(&csv)
+	mapping, err := Parse(reader)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -30,7 +31,8 @@ func TestCsvMultipleRows(t *testing.T) {
 		%s,%s
 	`, from0, to0, from1, to1)
 
-	mapping, err := Parse(&csv)
+	reader := NewTestReader(&csv)
+	mapping, err := Parse(reader)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -44,7 +46,8 @@ func TestCsvMultipleRows(t *testing.T) {
 func TestCsvManyColumns(t *testing.T) {
 	from1, from2, to := "cat", "dog", "horse"
 	csv := fmt.Sprintf("%s,%s,%s", from1, from2, to)
-	mapping, err := Parse(&csv)
+	reader := NewTestReader(&csv)
+	mapping, err := Parse(reader)
 
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (Error: %s)", err)
@@ -60,7 +63,8 @@ func TestCsvEmptyColumnValues(t *testing.T) {
 	t.Run("Empty from value", func(t *testing.T) {
 		csv := `,bar`
 
-		_, err := Parse(&csv)
+		reader := NewTestReader(&csv)
+		_, err := Parse(reader)
 
 		if err == nil {
 			t.Fatalf("Error should be set if the from value is empty")
@@ -69,7 +73,8 @@ func TestCsvEmptyColumnValues(t *testing.T) {
 	t.Run("Empty to value", func(t *testing.T) {
 		csv := `foo,`
 
-		_, err := Parse(&csv)
+		reader := NewTestReader(&csv)
+		_, err := Parse(reader)
 
 		if err == nil {
 			t.Fatalf("Error should be set if the to value is empty")
@@ -86,7 +91,8 @@ func TestCsvIgnoreEmptyLines(t *testing.T) {
 		%s,%s
 	`, from0, to0, from1, to1)
 
-	mapping, err := Parse(&csv)
+	reader := NewTestReader(&csv)
+	mapping, err := Parse(reader)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -106,7 +112,8 @@ func TestCsvIgnoresWhitespaceInRow(t *testing.T) {
 		%s  , %s
 	`, from0, to0, from1, to1)
 
-	mapping, err := Parse(&csv)
+	reader := NewTestReader(&csv)
+	mapping, err := Parse(reader)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -119,13 +126,14 @@ func TestCsvIgnoresWhitespaceInRow(t *testing.T) {
 
 func TestCsvToFewColumns(t *testing.T) {
 	csv := `zebra`
-	_, err := Parse(&csv)
+	reader := NewTestReader(&csv)
+	_, err := Parse(reader)
 
 	if err == nil {
 		t.Fatal("Error should be set for incorrect CSV file")
 	}
 
-	if !strings.Contains(err.Error(), "Incorrect format") {
+	if !stringsx.Contains(err.Error(), "Incorrect format") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }

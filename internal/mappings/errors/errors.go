@@ -18,11 +18,11 @@ func Newf(s string, args ...interface{}) error {
 }
 
 // NewIncorrectFormat returns a new error for an incorrect format.
-func NewIncorrectFormat(s string) error {
+func NewIncorrectFormat(s interface{}) error {
 	return errors.Newf(incorrectFormat, s)
 }
 
 // NewMissingValue returns a new error for a missing value.
-func NewMissingValue(s string) error {
+func NewMissingValue(s interface{}) error {
 	return errors.Newf(missingValue, s)
 }

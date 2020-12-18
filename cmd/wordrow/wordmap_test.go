@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"testing"
-	"testing/iotest"
 
 	"github.com/ericcornelissen/stringsx"
 )
@@ -114,21 +113,6 @@ func TestProcessMapFile(t *testing.T) {
 		mapping, err := processMapFile(handle, format)
 		if err != nil {
 			t.Fatalf("Unexpected error (%s)", err)
-		}
-
-		mappingSize := len(mapping)
-		if mappingSize != 0 {
-			t.Fatalf("Unexpected mapping size (got %d)", mappingSize)
-		}
-	})
-	t.Run("Reading error", func(t *testing.T) {
-		format := "csv"
-		content := "foo,bar"
-		handle := iotest.TimeoutReader(stringsx.NewReader(content))
-
-		mapping, err := processMapFile(handle, format)
-		if err == nil {
-			t.Error("Expected an error but didn't get one")
 		}
 
 		mappingSize := len(mapping)

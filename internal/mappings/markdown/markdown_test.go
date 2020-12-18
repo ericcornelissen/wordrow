@@ -2,9 +2,9 @@ package markdown
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
+	"github.com/ericcornelissen/stringsx"
 	. "github.com/ericcornelissen/wordrow/internal/mappings/testing"
 )
 
@@ -16,7 +16,8 @@ func TestMarkDownTableOnly(t *testing.T) {
 		| %s   | %s  |
 	`, from, to)
 
-	mapping, err := Parse(&markdown)
+	reader := NewTestReader(&markdown)
+	mapping, err := Parse(reader)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -44,7 +45,8 @@ func TestMarkDownTextAndTable(t *testing.T) {
 		Suspendisse ante ante, interdum id felis vel, posuere.
 	`, from0, to0, from1, to1)
 
-	mapping, err := Parse(&markdown)
+	reader := NewTestReader(&markdown)
+	mapping, err := Parse(reader)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -68,7 +70,8 @@ func TestMarkDownTwoTables(t *testing.T) {
 		| %s   | %s  |
 	`, from0, to0, from1, to1)
 
-	mapping, err := Parse(&markdown)
+	reader := NewTestReader(&markdown)
+	mapping, err := Parse(reader)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -89,7 +92,8 @@ func TestMarkDownManyColumns(t *testing.T) {
 		| %s     | %s     | %s  |
 	`, from01, from02, to0, from11, from12, to1)
 
-	mapping, err := Parse(&markdown)
+	reader := NewTestReader(&markdown)
+	mapping, err := Parse(reader)
 	if err != nil {
 		t.Fatalf("Error should be nil for this test (got '%s')", err)
 	}
@@ -112,7 +116,8 @@ func TestMarkDownEmptyColumnValues(t *testing.T) {
 			| from | to  |
 		`
 
-		_, err := Parse(&markdown)
+		reader := NewTestReader(&markdown)
+		_, err := Parse(reader)
 
 		if err == nil {
 			t.Fatalf("Error should be set if the from value is empty")
@@ -127,7 +132,8 @@ func TestMarkDownEmptyColumnValues(t *testing.T) {
 			| from | to |
 		`
 
-		_, err := Parse(&markdown)
+		reader := NewTestReader(&markdown)
+		_, err := Parse(reader)
 
 		if err == nil {
 			t.Fatalf("Error should be set if the to value is empty")
@@ -142,13 +148,14 @@ func TestMarkDownIncorrectHeader(t *testing.T) {
 		| cat | dog |
 	`
 
-	_, err := Parse(&markdown)
+	reader := NewTestReader(&markdown)
+	_, err := Parse(reader)
 
 	if err == nil {
 		t.Fatal("Error should be set for incorrect table header")
 	}
 
-	if !strings.Contains(err.Error(), "Incorrect table header") {
+	if !stringsx.Contains(err.Error(), "Incorrect table header") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
@@ -159,13 +166,14 @@ func TestMarkDownMissingDivider(t *testing.T) {
 		| cat | dog |
 	`
 
-	_, err := Parse(&markdown)
+	reader := NewTestReader(&markdown)
+	_, err := Parse(reader)
 
 	if err == nil {
 		t.Fatal("Error should be set for missing table divider")
 	}
 
-	if !strings.Contains(err.Error(), "Incorrect table divider") {
+	if !stringsx.Contains(err.Error(), "Missing table divider") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
@@ -177,44 +185,80 @@ func TestMarkDownIncorrectDivider(t *testing.T) {
 		| cat | dog |
 	`
 
-	_, err := Parse(&markdown)
+	reader := NewTestReader(&markdown)
+	_, err := Parse(reader)
 
 	if err == nil {
 		t.Fatal("Error should be set for incorrect table divider")
 	}
 
-	if !strings.Contains(err.Error(), "Missing table divider") {
+	if !stringsx.Contains(err.Error(), "Missing table divider") {
 		t.Errorf("Incorrect error message for (got '%s')", err)
 	}
 }
 
 func TestMarkDownMissingTableBody(t *testing.T) {
-	markdown := `
-		| foo | bar |
-		| --- | --- |
-	`
+	t.Run("with final newline", func(t *testing.T) {
+		markdown := `
+			| foo | bar |
+			| --- | --- |
+		`
 
-	_, err := Parse(&markdown)
+		reader := NewTestReader(&markdown)
+		_, err := Parse(reader)
 
-	if err == nil {
-		t.Fatal("Error should be set for missing table body")
-	}
+		if err == nil {
+			t.Fatal("Error should be set for missing table body")
+		}
 
-	if !strings.Contains(err.Error(), "Missing table body") {
-		t.Errorf("Incorrect error message for (got '%s')", err)
-	}
+		if !stringsx.Contains(err.Error(), "Missing table body") {
+			t.Errorf("Incorrect error message for (got '%s')", err)
+		}
+	})
+	t.Run("without final newline", func(t *testing.T) {
+		markdown := `
+			| foo | bar |
+			| --- | --- |`
+
+		reader := NewTestReader(&markdown)
+		_, err := Parse(reader)
+
+		if err == nil {
+			t.Fatal("Error should be set for missing table body")
+		}
+
+		if !stringsx.Contains(err.Error(), "Missing table body") {
+			t.Errorf("Incorrect error message for (got '%s')", err)
+		}
+	})
 }
 
 func TestMarkdownIncompleteTableEndOfFile(t *testing.T) {
-	markdown := `
-		# Foobar
+	t.Run("with final newline", func(t *testing.T) {
+		markdown := `
+			# Foobar
 
-		| foo | bar |
-	`
+			| foo | bar |
+		`
 
-	_, err := Parse(&markdown)
+		reader := NewTestReader(&markdown)
+		_, err := Parse(reader)
 
-	if err == nil {
-		t.Fatal("Error should be set for incomplete table at the end of the file")
-	}
+		if err == nil {
+			t.Fatal("Error should be set for incomplete table at the end of the file")
+		}
+	})
+	t.Run("without final newline", func(t *testing.T) {
+		markdown := `
+			# Foobar
+
+			| foo | bar |`
+
+		reader := NewTestReader(&markdown)
+		_, err := Parse(reader)
+
+		if err == nil {
+			t.Fatal("Error should be set for incomplete table at the end of the file")
+		}
+	})
 }

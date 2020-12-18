@@ -15,19 +15,17 @@ import (
 func doReplace(
 	reader fs.Reader,
 	mapping map[string]string,
-) (updatedContent string, er error) {
+) (updatedContent []byte, er error) {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return updatedContent, err
 	}
 
-	content := string(data)
-	return replace.All(content, mapping), nil
+	return replace.All(data, mapping), nil
 }
 
 // Writes the `updatedContents` to the `writer`.
-func doWriteBack(writer fs.Writer, updatedContent string) error {
-	data := []byte(updatedContent)
+func doWriteBack(writer fs.Writer, data []byte) error {
 	_, err := writer.Write(data)
 	return err
 }
@@ -39,9 +37,9 @@ func processStdin(rw *bufio.ReadWriter, mapping map[string]string) error {
 	output := rw.Writer
 
 	for input.Scan() {
-		line := input.Text()
+		line := input.Bytes()
 		fixedLine := replace.All(line, mapping)
-		output.WriteString(fixedLine)
+		output.Write(fixedLine)
 		output.WriteRune('\n')
 	}
 

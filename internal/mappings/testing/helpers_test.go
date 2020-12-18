@@ -89,3 +89,51 @@ func TestCheckMapping(t *testing.T) {
 		CheckMapping(&mock, mapping, expected)
 	})
 }
+
+func TestNewTestReader(t *testing.T) {
+	t.Run("empty string", func(t *testing.T) {
+		emptyString := ""
+		reader := NewTestReader(&emptyString)
+		line, _, err := reader.ReadLine()
+		if len(line) != 0 {
+			t.Errorf("Unexpected length of first line (got %d)", len(line))
+		}
+
+		if err == nil {
+			t.Error("Expected error on second read, got none")
+		}
+	})
+	t.Run("single line string", func(t *testing.T) {
+		s := "Hello world!"
+		reader := NewTestReader(&s)
+		line, _, err := reader.ReadLine()
+		if len(line) != len(s) {
+			t.Errorf("Unexpected length of first line (got %d)", len(line))
+		}
+
+		if err != nil {
+			t.Errorf("Unexpected error for first read (got '%s')", err)
+		}
+
+		_, _, err = reader.ReadLine()
+		if err == nil {
+			t.Error("Expected error on second read, got none")
+		}
+	})
+	t.Run("multi-line string", func(t *testing.T) {
+		s := "foo\nbar"
+		reader := NewTestReader(&s)
+
+		for i := 0; i < 2; i++ {
+			_, _, err := reader.ReadLine()
+			if err != nil {
+				t.Errorf("Unexpected error for %dth read (got '%s')", (i + 1), err)
+			}
+		}
+
+		_, _, err := reader.ReadLine()
+		if err == nil {
+			t.Error("Expected error on last read, got none")
+		}
+	})
+}

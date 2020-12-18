@@ -16,6 +16,8 @@ original text. Namely:
 package replace
 
 import (
+	"bytes"
+
 	"github.com/ericcornelissen/stringsx"
 	"github.com/ericcornelissen/wordrow/internal/logger"
 )
@@ -33,40 +35,40 @@ func getReplacement(m *match, s string) string {
 
 	replacement := s
 	if keepPrefix {
-		replacement = m.prefix + replacement[1:]
+		replacement = string(m.prefix) + replacement[1:]
 	}
 
 	if keepSuffix {
-		replacement = replacement[:len(replacement)-1] + m.suffix
+		replacement = replacement[:len(replacement)-1] + string(m.suffix)
 	}
 
 	return replacement
 }
 
-// Replace all instances of `from` by `to` defined b `m` in `s`.
-func replaceOne(s string, m *mapping) string {
-	var sb stringsx.Builder
+// Replace all instances of `from` by `to` in `s`.
+func replaceOne(s []byte, m *mapping) []byte {
+	var bb bytes.Buffer
 
 	lastIndex := 0
 	for match := range matches(s, m.from) {
 		replacement := getReplacement(match, m.to)
-		replacement, offset := maintainFormatting(match.full, replacement)
+		replacement, offset := maintainFormatting(string(match.full), replacement)
 
-		sb.WriteString(s[lastIndex:maxInt(match.start, lastIndex)])
-		sb.WriteString(replacement)
+		bb.Write(s[lastIndex:maxInt(match.start, lastIndex)])
+		bb.WriteString(replacement)
 		lastIndex = match.end + offset
 	}
 
 	if lastIndex < len(s) {
-		sb.WriteString(s[lastIndex:])
+		bb.Write(s[lastIndex:])
 	}
 
-	return sb.String()
+	return bb.Bytes()
 }
 
 // Replace all instances of `from` by `to` defined b `m` in `s`, or return the
 // original string if the mapping is invalid.
-func safeReplaceOne(s string, m *mapping) string {
+func safeReplaceOne(s []byte, m *mapping) []byte {
 	if !stringsx.IsValidUTF8(m.from) {
 		logger.Warningf("Invalid character in mapping '%s'", m.from)
 		return s
@@ -83,7 +85,7 @@ func safeReplaceOne(s string, m *mapping) string {
 }
 
 // All replaces substrings of `s` according to the mapping defined by `m`.
-func All(s string, m map[string]string) string {
+func All(s []byte, m map[string]string) []byte {
 	for from, to := range m {
 		s = safeReplaceOne(s, &mapping{from: from, to: to})
 	}

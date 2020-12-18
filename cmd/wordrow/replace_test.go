@@ -24,7 +24,7 @@ func TestDoReplace(t *testing.T) {
 			t.Fatalf("Unexpected error for reader (%s)", err)
 		}
 
-		if fixed == content {
+		if bytes.Equal(fixed, []byte(content)) {
 			t.Error("Content should have been changed but wasn't")
 		}
 	})
@@ -37,7 +37,7 @@ func TestDoReplace(t *testing.T) {
 			t.Fatalf("Unexpected error for reader (%s)", err)
 		}
 
-		if fixed != content {
+		if !bytes.Equal(fixed, []byte(content)) {
 			t.Errorf("Content should not have been changed but was (got '%s')", fixed)
 		}
 	})
@@ -58,14 +58,14 @@ func TestDoReplace(t *testing.T) {
 			t.Fatalf("Unexpected error for reader (%s)", err)
 		}
 
-		if fixed != "" {
+		if len(fixed) != 0 {
 			t.Errorf("Updated content should have been empty (got '%s')", fixed)
 		}
 	})
 }
 
 func TestDoWriteBack(t *testing.T) {
-	content := "Hello world!"
+	content := []byte("Hello world!")
 
 	t.Run("Write something", func(t *testing.T) {
 		handle := new(bytes.Buffer)
@@ -76,7 +76,7 @@ func TestDoWriteBack(t *testing.T) {
 		}
 
 		written := handle.Bytes()
-		if string(written) != content {
+		if !bytes.Equal(written, content) {
 			t.Errorf("Unexpected value written (got '%s')", written)
 		}
 	})
