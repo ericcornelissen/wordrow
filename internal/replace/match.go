@@ -108,7 +108,6 @@ func matches(s []byte, query string) chan *match {
 	go func() {
 		defer close(ch)
 
-		toSafeString(query)
 		safeQuery := toSafeString(query)
 		rawExpr := fmt.Sprintf(`(?i)([A-z0-9]*)(%s)([A-z0-9]*)`, safeQuery)
 		expr := regexp.MustCompile(rawExpr)
