@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"regexp"
 
-	"github.com/ericcornelissen/wordrow/internal/mappings/common"
+	"github.com/ericcornelissen/wordrow/internal/common"
 	"github.com/ericcornelissen/wordrow/internal/mappings/errors"
 )
 
