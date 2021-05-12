@@ -82,7 +82,7 @@ If you decide to make a contribution, please do use the following workflow:
 
 ## Project Setup
 
-This project is build for version `1.13` of Go and uses [GNU Make] as build
+This project is build for version `1.15` of Go and uses [GNU Make] as build
 tool. In addition [golint] and [markdownlint] are used to lint the source files
 and [gofmt] is used to format source files.
 
@@ -90,7 +90,7 @@ and [gofmt] is used to format source files.
 
 The prerequisites for contributing to this project are:
 
-- Go; version `1.13`
+- Go; version `1.15`
 - Git
 - [GNU Make] (_Windows users can use [Make by GNUWin32]_)
 - [go-fuzz] (_only for fuzzing_)
