@@ -40,7 +40,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     - name: Set up NodeJS  # NodeJS required for MarkDown linting
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v2
       with:
         node-version: 12.x
     - name: Set up Go 1.15
